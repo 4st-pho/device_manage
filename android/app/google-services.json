@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "394838439647",
+    "project_id": "manage-devices-4st",
+    "storage_bucket": "manage-devices-4st.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394838439647:android:cedd52994fb0ce7adb5b6a",
+        "android_client_info": {
+          "package_name": "com.example.manage_devices_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394838439647-753oa85koh5ou1a8ddu1uka3ce7s1ig2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjy3P8iJx0EnUa5f3fZW_dZ1Z4CCLa4R4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "394838439647-753oa85koh5ou1a8ddu1uka3ce7s1ig2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

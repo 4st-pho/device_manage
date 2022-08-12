@@ -1,0 +1,1 @@
+enum DeviceType { laptop, pc, screen, keybroad, headphone }
