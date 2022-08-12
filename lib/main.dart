@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         StreamProvider(
             create: (context) =>
                 AuthService(firebaseAuth: FirebaseAuth.instance).authState,
-            initialData: Null)
+            initialData: null)
       ],
       child: MaterialApp(
         theme: getApplicationTheme(),
@@ -46,12 +46,6 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<User?>();
-    return Scaffold(
-      body: StreamBuilder<User?>(
-        builder: (conext, snapshot) {
-          return user == null ? const LoginPage() : const InitPage();
-        },
-      ),
-    );
+    return Scaffold(body: user == null ? const LoginPage() : const InitPage());
   }
 }
