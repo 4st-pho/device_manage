@@ -32,8 +32,7 @@ class OnbroadBloc {
     if (nextPageIndex >= listOnbroadItem.length) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => const LoginPage()));
-      SharedPreferencesMethod()
-          .setBool(key: AppString.skipOnbroading, value: true);
+      SharedPreferencesMethod.saveSkipOnbroading();
       return;
     }
     _pageIndex++;

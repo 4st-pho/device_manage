@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
-import 'package:manage_devices_app/model/device_category.dart';
+import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_category_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
 import 'package:manage_devices_app/services/init/init_data.dart';
@@ -95,17 +95,17 @@ class DetailRequestPage extends StatelessWidget {
     );
   }
 
-  FutureBuilder<DeviceCategory> _buildDeviceInfo() {
-    return FutureBuilder<DeviceCategory>(
+  FutureBuilder<Device> _buildDeviceInfo() {
+    return FutureBuilder<Device>(
       future:
-          DeviceCategoryMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getDeviceCategory(request.deviceCategoryId),
+          DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+              .getDevice(request.deviceId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final deviceCategory = snapshot.data!;
+        final device = snapshot.data!;
           return _buildInfo(
-              imagePath: deviceCategory.imagePath,
-              text1: deviceCategory.name,
+              imagePath: device.imagePaths[0],
+              text1: device.name,
               text2: '',
               text3: '');
         } else if (snapshot.hasError) {
@@ -125,11 +125,11 @@ class DetailRequestPage extends StatelessWidget {
         Text('Time: ${DateFormat("dd MMM yyyy").format(request.createdAt)}'),
         Text('Status: ${request.requestStatus.name}'),
         const TextDivider(text: AppString.title),
-        Text(request.title, style: AppFont.whiteText),
+        Text(request.title, style: AppStyle.whiteText),
         const TextDivider(text: AppString.content),
-        Text(request.content, style: AppFont.whiteText),
+        Text(request.content, style: AppStyle.whiteText),
         const TextDivider(text: AppString.errorStatus),
-        Text(request.errorStatus.name, style: AppFont.whiteText),
+        Text(request.errorStatus.name, style: AppStyle.whiteText),
       ],
     );
   }
@@ -137,7 +137,7 @@ class DetailRequestPage extends StatelessWidget {
   FutureBuilder<User> _buildUserInfo() {
     return FutureBuilder<User>(
       future: UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getUser(uid: request.uid),
+          .getUser(request.uid),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final user = snapshot.data!;
@@ -179,10 +179,10 @@ class DetailRequestPage extends StatelessWidget {
             children: [
               Text(
                 text1.toUpperCase(),
-                style: AppFont.blueTitle,
+                style: AppStyle.blueTitle,
               ),
-              Text(text2, style: AppFont.whiteText),
-              Text(text3, style: AppFont.whiteText),
+              Text(text2, style: AppStyle.whiteText),
+              Text(text3, style: AppStyle.whiteText),
             ],
           ),
         ),

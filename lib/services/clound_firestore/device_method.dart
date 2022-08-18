@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
+import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/helper/show_snackbar.dart';
 import 'package:manage_devices_app/model/device.dart';
 
@@ -9,6 +10,31 @@ class DeviceMethod {
   DeviceMethod({
     required this.firebaseFirestore,
   });
+
+  Future<List<Device>> getDeviceByName(String name) async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.device)
+        .where('name', isEqualTo: name);
+    final snapshot = await doc.get();
+    return snapshot.docs.map((e) => Device.fromMap(e.data())).toList();
+  }
+
+  Future<List<Device>> getAvailableDevice() async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.device)
+        .where('ownerType', isEqualTo: OwnerType.none.name);
+    final snapshot = await doc.get();
+    return snapshot.docs.map((e) => Device.fromMap(e.data())).toList();
+  }
+
+  Future<List<String>> getDeviceIdByName(String name) async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.device)
+        .where('name', isEqualTo: name.trim());
+    final snapshot = await doc.get();
+    return snapshot.docs.map((e) => e.data()['id'] as String).toList();
+  }
+
   Future<List<String>> getAllDeviceName() async {
     final doc = firebaseFirestore.collection(AppCollectionPath.device);
     final value = await doc.get();
@@ -26,6 +52,28 @@ class DeviceMethod {
     }
   }
 
+  Future<void> recallDevice(BuildContext context, String id) async {
+    try {
+      final doc =
+          firebaseFirestore.collection(AppCollectionPath.device).doc(id);
+      doc.update({'ownerId': null});
+      showSnackBar(context: context, content: 'Recall device success!');
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString(), error: true);
+    }
+  }
+
+  Future<void> deleteDevice(BuildContext context, String id) async {
+    try {
+      final doc =
+          firebaseFirestore.collection(AppCollectionPath.device).doc(id);
+      await doc.delete();
+      showSnackBar(context: context, content: 'Deleted!');
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString(), error: true);
+    }
+  }
+
   Future<Device> getDevice(String deviceId) async {
     final doc = firebaseFirestore
         .collection(AppCollectionPath.device)
@@ -36,6 +84,22 @@ class DeviceMethod {
 
   Future<List<Device>> getAllDevice() async {
     final doc = firebaseFirestore.collection(AppCollectionPath.device);
+    final value = await doc.get();
+    return value.docs.map((e) => Device.fromMap(e.data())).toList();
+  }
+
+  Future<List<Device>> getAllUserDevice() async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.device)
+        .where('ownerType', isEqualTo: OwnerType.user.name);
+    final value = await doc.get();
+    return value.docs.map((e) => Device.fromMap(e.data())).toList();
+  }
+
+  Future<List<Device>> getAllTeamDevice() async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.device)
+        .where('ownerType', isEqualTo: OwnerType.team.name);
     final value = await doc.get();
     return value.docs.map((e) => Device.fromMap(e.data())).toList();
   }

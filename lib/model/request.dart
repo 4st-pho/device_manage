@@ -6,7 +6,7 @@ import 'package:manage_devices_app/enums/request_status.dart';
 class Request {
   String id;
   String uid;
-  String deviceCategoryId;
+  String deviceId;
   String title;
   String content;
   ErrorStatus errorStatus;
@@ -15,7 +15,7 @@ class Request {
   Request(
       {required this.id,
       required this.uid,
-      required this.deviceCategoryId,
+      required this.deviceId,
       required this.title,
       required this.content,
       required this.errorStatus,
@@ -27,7 +27,7 @@ class Request {
     return <String, dynamic>{
       'id': id,
       'uid': uid,
-      'deviceCategoryId': deviceCategoryId,
+      'deviceId': deviceId,
       'title': title,
       'content': content,
       'errorStatus': errorStatus.name,
@@ -40,7 +40,7 @@ class Request {
     return Request(
       id: map['id'] as String,
       uid: map['uid'] as String,
-      deviceCategoryId: map['deviceCategoryId'] as String,
+      deviceId: map['deviceId'] as String,
       title: map['title'] as String,
       content: map['content'] as String,
       errorStatus: ErrorStatus.values.byName(map['errorStatus']),
@@ -56,6 +56,6 @@ class Request {
 
   @override
   String toString() {
-    return 'Request(id: $id,  deviceCategoryId: $deviceCategoryId, title: $title, content: $content, errorStatus: $errorStatus, status: $requestStatus)';
+    return 'Request(id: $id,  deviceId: $deviceId, title: $title, content: $content, errorStatus: $errorStatus, status: $requestStatus)';
   }
 }

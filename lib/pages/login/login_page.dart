@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_icon.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/helper/unfocus.dart';
+import 'package:manage_devices_app/pages/login/widgets/email_text_form_field.dart';
+import 'package:manage_devices_app/pages/login/widgets/password_text_form_field.dart';
 import 'package:manage_devices_app/services/clound_firestore/auth_service.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
-import 'package:manage_devices_app/widgets/text_form_field/email_text_form_field.dart';
-import 'package:manage_devices_app/widgets/text_form_field/password_text_form_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -49,13 +49,14 @@ class _LoginGogolePageState extends State<LoginPage> {
             children: [
               const SizedBox(height: 100),
               Image.asset(AppIcon.logo, width: size.width / 2),
-              const SizedBox(height: 100),
-              _buildForm(),
-              const SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.only(top: 100, bottom: 40),
+                child: _buildForm(),
+              ),
               CustomButton(
                 text: AppString.login,
-                onPressed: () async{
-                 await AuthService(firebaseAuth: FirebaseAuth.instance)
+                onPressed: () async {
+                  await AuthService(firebaseAuth: FirebaseAuth.instance)
                       .signinWithEmailAndPassword(
                     email: _emailController.text,
                     password: _passwordController.text,
@@ -63,13 +64,7 @@ class _LoginGogolePageState extends State<LoginPage> {
                   );
                 },
               ),
-              const SizedBox(height: 40),
-              // CustomRichText(
-              //   firstText: AppString.dontHaveAnAccount,
-              //   lastText: AppString.signup,
-              //   onTap: () {},
-              // ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 60),
             ],
           ),
         ),

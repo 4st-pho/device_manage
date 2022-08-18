@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:manage_devices_app/bloc/create_request_bloc.dart';
+import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_decoration.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
@@ -23,6 +23,10 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   late TextEditingController _contentController;
   final createRequestBloc = CreateRequestBloc();
   final _formKey = GlobalKey<FormState>();
+  // final List<ErrorStatus> _listError = [
+  //   ErrorStatus.hardware,
+  //   ErrorStatus.hardware
+  // ];
 
   @override
   void initState() {
@@ -73,7 +77,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                   ),
                   _buildLabel(AppString.errorStatus),
                   DropdownButtonFormField<ErrorStatus>(
-                    isExpanded: true,
+                      isExpanded: true,
                       value: createRequestBloc.request.errorStatus,
                       decoration: const InputDecoration(
                           filled: true,
@@ -120,7 +124,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
     return Column(
       children: [
         const SizedBox(height: 8),
-        Text(label, style: AppFont.whiteText),
+        Text(label, style: AppStyle.whiteText),
         const SizedBox(height: 8),
       ],
     );

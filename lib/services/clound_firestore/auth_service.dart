@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'package:manage_devices_app/helper/show_snackbar.dart';
 import 'package:manage_devices_app/model/user.dart' as model;
@@ -77,22 +78,18 @@ class AuthService {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email.trim(), password: password.trim());
-          // ignore: use_build_context_synchronously
-          // Navigator.of(context).pushReplacementNamed(Routes.initRoute);
+      // ignore: use_build_context_synchronously
+      // Navigator.of(context).pushReplacementNamed(Routes.initRoute);
     } on FirebaseAuthException catch (e) {
       showSnackBar(context: context, content: e.message!, error: true);
     }
   }
 
-  Future<void> logOut({required BuildContext context}) async {
+  Future<void> logOut(BuildContext context) async {
     try {
       await firebaseAuth.signOut();
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pushNamed(Routes.loginRoute);
-      showSnackBar(
-        context: context,
-        content: 'Log out',
-      );
+      Navigator.of(context).pushReplacementNamed(Routes.authWrapper);
     } on FirebaseAuthException catch (e) {
       showSnackBar(context: context, content: e.message!, error: true);
     }

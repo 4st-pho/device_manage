@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../constants/app_font.dart';
+import '../constants/app_style.dart';
 
-void showSnackBar(
-    {required BuildContext context,
-    required String content,
-    String title = '',
-    bool error = false,
-    int milisecond = 1200}) {
+void showSnackBar({
+  required BuildContext context,
+  required String content,
+  String title = '',
+  bool error = false,
+  int milisecond = 2000,
+}) {
   final snackBar = SnackBar(
     content: Column(
       mainAxisSize: MainAxisSize.min,
@@ -14,21 +15,26 @@ void showSnackBar(
         if (title.isNotEmpty)
           Row(children: [
             Expanded(
-                child:
-                    Text(title.trim().toUpperCase(), style: AppFont.whiteText))
+                child: Text(
+              title.trim().toUpperCase(),
+              style: error ? AppStyle.redText : AppStyle.whiteText,
+            ))
           ]),
         if (title.isNotEmpty) const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
-              child: Text(content.trim(), style: AppFont.whiteText),
+              child: Text(
+                content.trim(),
+                style: error ? AppStyle.redText : AppStyle.whiteText,
+              ),
             ),
           ],
         ),
       ],
     ),
     duration: Duration(milliseconds: milisecond),
-    backgroundColor: error ? Colors.red : Colors.green,
+    backgroundColor: Colors.black.withOpacity(.6),
     // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
     // margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
     // behavior: SnackBarBehavior.floating,

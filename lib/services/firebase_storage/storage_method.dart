@@ -21,4 +21,16 @@ class StorageMethos {
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
   }
+
+  Future<List<String>> uploadAndGetImagesLink(
+    String childName,
+    List<File> files,
+  ) async {
+    List<String> result = [];
+    for (File file in files) {
+      final temp = await uploadAndGetImageLink(childName, file);
+      result.add(temp);
+    }
+    return result;
+  }
 }

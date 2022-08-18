@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 
 class CustomRichText extends StatelessWidget {
   final String firstText;
@@ -17,12 +17,12 @@ class CustomRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        style: AppFont.whiteText,
+        style: AppStyle.whiteText,
         text: '$firstText ',
         children: [
           TextSpan(
             text: lastText,
-            style: AppFont.blueText,
+            style: AppStyle.blueText,
             recognizer: TapGestureRecognizer()..onTap = onTap,
           ),
         ],

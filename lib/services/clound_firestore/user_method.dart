@@ -20,20 +20,36 @@ class UserMethod {
     }
   }
 
-  //get curent user in cloud firebaseFirestore
+  // get curent user in cloud firebaseFirestore
 
-  Future<User> getUser({required String uid}) async {
+  Future<List<String>> getAllUserName() async {
+    final doc = firebaseFirestore.collection(AppCollectionPath.user);
+    final snapshot = await doc.get();
+    return snapshot.docs.map((e) => e.data()['name'] as String).toList();
+  }
+
+  Future<User> getUser( String uid) async {
     final doc = firebaseFirestore.collection(AppCollectionPath.user).doc(uid);
     final snapshot = await doc.get();
     return User.fromMap(snapshot.data()!);
   }
 
+  Future<List<String>> getUserIdByName(String name) async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.user)
+        .where('name', isEqualTo: name);
+    final snapshot = await doc.get();
+    return snapshot.docs.map((e) => e.data()['id'] as String).toList();
+  }
+
   Future<List<User>> getUserByName({required String name}) async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.user).where('name', isEqualTo: name);
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.user)
+        .where('name', isEqualTo: name);
     final snapshot = await doc.get();
     return snapshot.docs.map((e) => User.fromMap(e.data())).toList();
   }
-  
+
   Future<List<User>> getAllUser() async {
     final doc = firebaseFirestore.collection(AppCollectionPath.user);
     final snapshot = await doc.get();

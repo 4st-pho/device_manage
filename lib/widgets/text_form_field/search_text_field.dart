@@ -4,17 +4,19 @@ import 'package:manage_devices_app/constants/app_decoration.dart';
 
 class SearchTextField extends StatelessWidget {
   final String hintText;
-  final TextInputType type;
   final Function(String)? onChanged;
   final TextEditingController controller;
   final Function(String)? onSubmitted;
+  final VoidCallback onSuffixPresses;
+  final bool isShowSuffixIcon;
   const SearchTextField({
     Key? key,
     this.onChanged,
     this.onSubmitted,
     required this.hintText,
     required this.controller,
-    required this.type,
+    required this.onSuffixPresses,
+    this.isShowSuffixIcon = true,
   }) : super(key: key);
 
   @override
@@ -24,19 +26,20 @@ class SearchTextField extends StatelessWidget {
       children: [
         TextField(
           controller: controller,
-          textInputAction: type == TextInputType.multiline
-              ? TextInputAction.newline
-              : TextInputAction.next,
-          keyboardType: type,
+          textInputAction: TextInputAction.search,
+          keyboardType: TextInputType.text,
           cursorColor: Colors.white,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
+          autofocus: true,
           decoration: InputDecoration(
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () => onSubmitted,
-              color: AppColor.lightBlue,
-            ),
+            suffixIcon: isShowSuffixIcon
+                ? IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: onSuffixPresses,
+                    color: AppColor.lightBlue,
+                  )
+                : null,
             filled: true,
             fillColor: AppColor.lightBlack,
             hintText: hintText.toLowerCase(),

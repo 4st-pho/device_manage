@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/app_font.dart';
+import '../../../constants/app_style.dart';
 
 class OnroadItem extends StatelessWidget {
   final String image;
@@ -36,7 +36,7 @@ class OnroadItem extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title,
-                          style: AppFont.blueTitle,
+                          style: AppStyle.blueTitle,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -48,7 +48,7 @@ class OnroadItem extends StatelessWidget {
                       Expanded(
                         child: Text(
                           content,
-                          style: AppFont.whiteText,
+                          style: AppStyle.whiteText,
                           textAlign: TextAlign.justify,
                         ),
                       )

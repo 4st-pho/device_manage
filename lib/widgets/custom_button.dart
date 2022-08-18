@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton(
@@ -27,7 +27,7 @@ class CustomButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(text, style: AppFont.whiteText),
+      child: Text(text, style: AppStyle.whiteText),
     );
   }
 }

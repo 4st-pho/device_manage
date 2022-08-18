@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_icon.dart';
 import 'package:manage_devices_app/helper/show_snackbar.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
+import 'package:manage_devices_app/services/clound_firestore/auth_service.dart';
 import 'package:manage_devices_app/services/init/init_method.dart';
 
 class InitPage extends StatefulWidget {
@@ -17,7 +19,9 @@ class _InitPageState extends State<InitPage> {
       await InitMethod().getCurrentUser();
       InitMethod().getUserSameTeam();
       InitMethod().getAllDeviceCategory();
+      InitMethod().getAllTeam();
     } catch (e) {
+      AuthService(firebaseAuth: FirebaseAuth.instance).logOut(context);
       showSnackBar(context: context, content: e.toString(), error: true);
     }
     // ignore: use_build_context_synchronously

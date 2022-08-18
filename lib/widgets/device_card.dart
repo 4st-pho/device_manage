@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/widgets/fade_image.dart';
@@ -41,7 +41,7 @@ class DeviceCard extends StatelessWidget {
         children: [
           Text(
             device.name.toUpperCase(),
-            style: AppFont.blueTitle,
+            style: AppStyle.blueTitle,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),
@@ -50,13 +50,13 @@ class DeviceCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   'TYPE:  ${device.deviceType.name}',
-                  style: AppFont.whiteText,
+                  style: AppStyle.whiteText,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(
                 'MFG: ${DateFormat("dd MMM yyyy").format(device.manufacturingDate)}',
-                style: AppFont.whiteText,
+                style: AppStyle.whiteText,
               ),
             ],
           )

@@ -4,4 +4,5 @@ class AppCollectionPath {
   static const device = 'device';
   static const deviceCategory = 'deviceCategory';
   static const request = 'request';
+  static const image = 'image';
 }

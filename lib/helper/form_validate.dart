@@ -14,6 +14,16 @@ class FormValidate {
     return null;
   }
 
+  String? numberValidate(String? value) {
+    if (value == null || value.isEmpty) {
+      return AppString.enterValue;
+    }
+    if (int.parse(value) <= 0 || int.parse(value) > 200) {
+      return AppString.enterValue;
+    }
+    return null;
+  }
+
   String? contentValidate(String? value) {
     if (value == null || value.isEmpty) {
       return AppString.enterSomeText;
@@ -27,8 +37,8 @@ class FormValidate {
     return null;
   }
 
-  String? selectOption(String? value) {
-    if (value == null || value.isEmpty) {
+  String? selectOption(dynamic value) {
+    if (value == null) {
       return AppString.selectOneOption;
     }
     return null;

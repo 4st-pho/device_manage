@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/helper/get_status_color.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
@@ -24,7 +24,7 @@ class RequestItem extends StatelessWidget {
             children: [
               Text(
                 request.title.toUpperCase(),
-                style: AppFont.whiteText,
+                style: AppStyle.whiteText,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

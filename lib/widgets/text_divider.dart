@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manage_devices_app/constants/app_font.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 
 class TextDivider extends StatelessWidget {
   final String text;
@@ -18,7 +18,7 @@ class TextDivider extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             text,
-            style: AppFont.blueTitle,
+            style: AppStyle.blueTitle,
           ),
           const SizedBox(width: 4),
           const Expanded(
