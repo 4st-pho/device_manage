@@ -8,6 +8,7 @@ import 'package:manage_devices_app/pages/create_request/create_request_page.dart
 import 'package:manage_devices_app/pages/create_user/create_user_page.dart';
 import 'package:manage_devices_app/pages/detail_device/detail_device_page.dart';
 import 'package:manage_devices_app/pages/device_manage/device_manage_page.dart';
+import 'package:manage_devices_app/pages/edit_device/edit_device_page.dart';
 import 'package:manage_devices_app/pages/login/login_page.dart';
 import 'package:manage_devices_app/pages/main_page/main_page.dart';
 import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
@@ -29,6 +30,7 @@ class Routes {
   static const String detailDeviceRoute = "/detailDeviceRoute";
   static const String createRequestRoute = "/createRequestRoute ";
   static const String manageDeviceRoute = "/manageDeviceRoute ";
+  static const String editDeviceRoute = "/editDeviceRoute ";
 }
 
 class RouteGenerator {
@@ -81,6 +83,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (context) =>
               SearchResultPage(keywork: args[0], data: args[1] as List<Device>),
+        );
+      case Routes.editDeviceRoute:
+        final args = routeSettings.arguments as Device;
+        return MaterialPageRoute(
+          builder: (context) => EditDevicePage(device: args),
         );
       case Routes.initRoute:
         return MaterialPageRoute(

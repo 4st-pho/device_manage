@@ -21,7 +21,9 @@ class _InitPageState extends State<InitPage> {
       // ignore: use_build_context_synchronously
       context.read<AppData>().getUserSameTeam(context);
       // ignore: use_build_context_synchronously
-      context.read<AppData>().getAllDeviceCategory();
+      context.read<AppData>().getMyDevice(context);
+      // ignore: use_build_context_synchronously
+      context.read<AppData>().getTeamDevice(context);
       // ignore: use_build_context_synchronously
       context.read<AppData>().getAllTeam();
       // ignore: use_build_context_synchronously

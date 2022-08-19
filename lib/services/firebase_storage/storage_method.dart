@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 
-class StorageMethos {
+class StorageMethods {
   final FirebaseStorage firebaseStorage;
-  StorageMethos({
+  StorageMethods({
     required this.firebaseStorage,
   });
 

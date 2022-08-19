@@ -11,6 +11,14 @@ class DeviceMethod {
     required this.firebaseFirestore,
   });
 
+  Future<List<Device>> getDeviceById(String id) async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.device)
+        .where('ownerId', isEqualTo: id);
+    final snapshot = await doc.get();
+    return snapshot.docs.map((e) => Device.fromMap(e.data())).toList();
+  }
+
   Future<List<Device>> getDeviceByName(String name) async {
     final doc = firebaseFirestore
         .collection(AppCollectionPath.device)
@@ -56,8 +64,20 @@ class DeviceMethod {
     try {
       final doc =
           firebaseFirestore.collection(AppCollectionPath.device).doc(id);
-      doc.update({'ownerId': null});
+      doc.update({'ownerId': null, 'ownerType': OwnerType.none.name});
       showSnackBar(context: context, content: 'Recall device success!');
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString(), error: true);
+    }
+  }
+
+  Future<void> updateDevice(
+      BuildContext context, Map<String, dynamic> map) async {
+    try {
+      final doc =
+          firebaseFirestore.collection(AppCollectionPath.device).doc(map['id']);
+      doc.update(map);
+      showSnackBar(context: context, content: 'Update success!');
     } catch (e) {
       showSnackBar(context: context, content: e.toString(), error: true);
     }

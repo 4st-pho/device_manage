@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ class AppData extends ChangeNotifier {
   List<model.User> teamMember = [];
   List<model.User> allUser = [];
   List<Team> allTeam = [];
-  List<Device> deviceCategory = [];
+  List<Device> myDevice = [];
+  List<Device> teamDevice = [];
   model.User? currentUser;
 
   Future<void> getUserSameTeam(BuildContext context) async {
@@ -29,16 +31,18 @@ class AppData extends ChangeNotifier {
     return false;
   }
 
-  Future<void> getAllDeviceCategory() async {
-    final tempList =
-        await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getAllDevice();
-    for (var e in tempList) {
-      if (!isContainList(e, deviceCategory)) {
-        deviceCategory.add(e);
-      }
-    }
+  Future<void> getMyDevice(BuildContext context) async {
+    final currentUser = context.read<AppData>().currentUser;
+    myDevice = await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+        .getDeviceById(currentUser!.id);
   }
+  Future<void> getTeamDevice(BuildContext context) async {
+    final currentUser = context.read<AppData>().currentUser;
+    teamDevice = await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+        .getDeviceById(currentUser!.teamId);
+  }
+
+
 
   Future<void> getCurrentUser() async {
     currentUser =
