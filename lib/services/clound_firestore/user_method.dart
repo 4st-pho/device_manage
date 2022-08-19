@@ -1,11 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/helper/show_snackbar.dart';
 
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 
 class UserMethod {
   FirebaseFirestore firebaseFirestore;
@@ -28,7 +29,7 @@ class UserMethod {
     return snapshot.docs.map((e) => e.data()['name'] as String).toList();
   }
 
-  Future<User> getUser( String uid) async {
+  Future<User> getUser(String uid) async {
     final doc = firebaseFirestore.collection(AppCollectionPath.user).doc(uid);
     final snapshot = await doc.get();
     return User.fromMap(snapshot.data()!);
@@ -59,18 +60,18 @@ class UserMethod {
   UserMethod({
     required this.firebaseFirestore,
   });
-  Future<List<User>> getUserSameTeam() async {
-    final doc = firebaseFirestore
-        .collection(AppCollectionPath.user)
-        .where('teamId', isEqualTo: currentUser!.teamId);
+  Future<List<User>> getUserSameTeam(BuildContext context) async {
+    final doc = firebaseFirestore.collection(AppCollectionPath.user).where(
+        'teamId',
+        isEqualTo: context.read<AppData>().currentUser!.teamId);
     final value = await doc.get();
     return value.docs.map((e) => User.fromMap(e.data())).toList();
   }
 
-  Future<List<User>> getLeader() async {
+  Future<List<User>> getLeader(BuildContext context) async {
     final doc = firebaseFirestore
         .collection(AppCollectionPath.user)
-        .where('teamId', isEqualTo: currentUser!.teamId)
+        .where('teamId', isEqualTo: context.read<AppData>().currentUser!.teamId)
         .where('role', isEqualTo: 'leader');
     final value = await doc.get();
     return value.docs.map((e) => User.fromMap(e.data())).toList();

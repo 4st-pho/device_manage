@@ -33,9 +33,10 @@ class AppString {
   static const availableDevice = 'Available device';
   static const teamDevice = 'TEAM DEVICE';
   static const deleteDevice = 'Delete device';
-  static const userDevices= 'User devices';
-  static const teamDevices= 'Team devices';
-  static const availableDevices= 'Available devices';
+  static const userDevices = 'User devices';
+  static const teamDevices = 'Team devices';
+  static const searchDevice = 'Search device';
+  static const availableDevices = 'Available devices';
   static const request = 'Request';
   static const deviceRecall = 'Device recall';
   static const deviceManage = 'Device manage';

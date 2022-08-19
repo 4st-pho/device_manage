@@ -1,3 +1,5 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -6,7 +8,6 @@ import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/pages/request/widgets/request_item.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 
 class RequestPage extends StatelessWidget {
@@ -19,18 +20,18 @@ class RequestPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           _buildAppBar(context),
-          _buildContent(),
+          _buildContent(context),
           const SliverToBoxAdapter(child: SizedBox(height: 70)),
         ],
       ),
     );
   }
 
-  SliverToBoxAdapter _buildContent() {
+  SliverToBoxAdapter _buildContent(BuildContext ctx) {
     return SliverToBoxAdapter(
       child: StreamBuilder<List<Request>>(
         stream: RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .streamListRequest(),
+            .streamListRequest(ctx),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!;
@@ -55,6 +56,7 @@ class RequestPage extends StatelessWidget {
   }
 
   SliverAppBar _buildAppBar(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser;
     return SliverAppBar(
       floating: true,
       title: const Text(AppString.allrequest),

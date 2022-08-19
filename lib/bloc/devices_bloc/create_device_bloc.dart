@@ -20,9 +20,9 @@ class CreateDeviceBloc {
     imagePaths: [],
     info: '',
     deviceType: DeviceType.headphone,
-    ownerType: OwnerType.none,
     healthyStatus: HealthyStatus.good,
     ownerId: null,
+    ownerType: OwnerType.none,
     transferDate: null,
     manufacturingDate: DateTime.now(),
   );

@@ -1,3 +1,6 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +12,6 @@ import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/pages/admin/widgets/manage_device.dart';
 import 'package:manage_devices_app/services/clound_firestore/owner_method.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/text_divider.dart';
 
@@ -19,6 +21,7 @@ class DetailDevicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

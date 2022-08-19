@@ -1,3 +1,6 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_decoration.dart';
 import 'package:manage_devices_app/constants/app_image.dart';
@@ -6,7 +9,6 @@ import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/helper/show_date_picker.dart';
 import 'package:manage_devices_app/helper/unfocus.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_form_field/custom_text_form_field.dart';
 
@@ -47,6 +49,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    final allTeam = context.read<AppData>().allTeam;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -113,7 +116,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                 isExpanded: true,
                 validator: FormValidate().selectOption,
                 decoration: AppDecoration.inputDecoration,
-                items: allteam
+                items: allTeam
                     .map((e) =>
                         DropdownMenuItem(value: e.id, child: Text(e.name)))
                     .toList(),

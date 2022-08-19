@@ -1,3 +1,5 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
@@ -5,7 +7,6 @@ import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/show_snackbar.dart';
 import 'package:manage_devices_app/model/request.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 
 class RequestMethod {
   final FirebaseFirestore firebaseFirestore;
@@ -49,11 +50,11 @@ class RequestMethod {
     Navigator.of(context).pop();
   }
 
-  Stream<List<Request>> streamListRequest() {
-    if (currentUser!.role == Role.user) {
-      return streamListRequestUser();
-    } else if (currentUser!.role == Role.leader) {
-      return streamListRequestLeader();
+  Stream<List<Request>> streamListRequest(BuildContext context) {
+    if (context.read<AppData>().currentUser!.role == Role.user) {
+      return streamListRequestUser(context);
+    } else if (context.read<AppData>().currentUser!.role == Role.leader) {
+      return streamListRequestLeader(context);
     }
     return streamListRequestAdmin();
   }
@@ -73,8 +74,9 @@ class RequestMethod {
         );
   }
 
-  Stream<List<Request>> streamListRequestLeader() {
-    List<String> menderId = teamMember.map((e) => e.id).toList();
+  Stream<List<Request>> streamListRequestLeader(BuildContext context) {
+    List<String> menderId =
+        context.read<AppData>().teamMember.map((e) => e.id).toList();
     return firebaseFirestore
         .collection(AppCollectionPath.request)
         .where('uid', whereIn: menderId)
@@ -84,10 +86,10 @@ class RequestMethod {
             (snap) => snap.docs.map((e) => Request.fromMap(e.data())).toList());
   }
 
-  Stream<List<Request>> streamListRequestUser() {
+  Stream<List<Request>> streamListRequestUser(BuildContext context) {
     return firebaseFirestore
         .collection(AppCollectionPath.request)
-        .where('uid', isEqualTo: currentUser!.id)
+        .where('uid', isEqualTo: context.read<AppData>().currentUser!.id)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(

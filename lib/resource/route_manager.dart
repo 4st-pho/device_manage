@@ -48,7 +48,7 @@ class RouteGenerator {
         );
       case Routes.manageDeviceRoute:
         return MaterialPageRoute(
-          builder: (context) =>  const DeviceManagePage(),
+          builder: (context) => const DeviceManagePage(),
         );
       case Routes.createUserRoute:
         return MaterialPageRoute(
@@ -77,9 +77,10 @@ class RouteGenerator {
           builder: (context) => DetailDevicePage(device: args),
         );
       case Routes.searchResultRoute:
-        final args = routeSettings.arguments as String;
+        final args = routeSettings.arguments as List<dynamic>;
         return MaterialPageRoute(
-          builder: (context) => SearchResultPage(keywork: args),
+          builder: (context) =>
+              SearchResultPage(keywork: args[0], data: args[1] as List<Device>),
         );
       case Routes.initRoute:
         return MaterialPageRoute(
