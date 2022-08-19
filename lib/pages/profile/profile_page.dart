@@ -1,15 +1,17 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/pages/profile/widgets/profile_item.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser;
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -17,7 +19,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           children: [
             if (currentUser!.role != Role.admin) _buildUserWidget(context),
-            if (currentUser!.role == Role.admin) _buildAdminWidget(context)
+            if (currentUser.role == Role.admin) _buildAdminWidget(context)
           ],
         ),
       ),

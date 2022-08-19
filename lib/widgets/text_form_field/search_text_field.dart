@@ -8,11 +8,13 @@ class SearchTextField extends StatelessWidget {
   final TextEditingController controller;
   final Function(String)? onSubmitted;
   final VoidCallback onSuffixPresses;
+  final IconData iconData;
   final bool isShowSuffixIcon;
   const SearchTextField({
     Key? key,
     this.onChanged,
     this.onSubmitted,
+    this.iconData = Icons.search,
     required this.hintText,
     required this.controller,
     required this.onSuffixPresses,
@@ -35,7 +37,7 @@ class SearchTextField extends StatelessWidget {
           decoration: InputDecoration(
             suffixIcon: isShowSuffixIcon
                 ? IconButton(
-                    icon: const Icon(Icons.search),
+                    icon: Icon(iconData),
                     onPressed: onSuffixPresses,
                     color: AppColor.lightBlue,
                   )

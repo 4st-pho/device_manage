@@ -4,10 +4,11 @@ import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/model/device.dart';
+import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/device_card.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,18 +20,18 @@ class HomePage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           _buildTitle(AppString.teamDevice),
-          _buildListTeamDevice(),
+          _buildListTeamDevice(context),
         ],
       ),
     );
   }
 
-  SliverToBoxAdapter _buildListTeamDevice() {
+  SliverToBoxAdapter _buildListTeamDevice(BuildContext ctx) {
     return SliverToBoxAdapter(
       child: FutureBuilder<List<Device>>(
         initialData: const [],
         future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getOwnerDevices(currentUser!.teamId),
+            .getOwnerDevices(ctx.read<AppData>().currentUser!.teamId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final userDevices = snapshot.data as List<Device>;

@@ -1,9 +1,11 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/device_card.dart';
 
@@ -17,11 +19,12 @@ class MyDevicePage extends StatelessWidget {
         title: const Text(AppString.myDevice),
         centerTitle: true,
       ),
-      body: _buildListMyDevice(),
+      body: _buildListMyDevice(context),
     );
   }
 
-  Widget _buildListMyDevice() {
+  Widget _buildListMyDevice(BuildContext ctx) {
+    final currentUser = ctx.read<AppData>().currentUser;
     return FutureBuilder<List<Device>>(
       future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
           .getOwnerDevices(currentUser!.id),

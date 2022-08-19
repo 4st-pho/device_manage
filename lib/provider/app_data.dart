@@ -1,15 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:manage_devices_app/model/device.dart';
+import 'package:manage_devices_app/model/team.dart';
+import 'package:manage_devices_app/model/user.dart' as model;
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 
-class InitMethod {
-  Future<void> getUserSameTeam() async {
+class AppData extends ChangeNotifier {
+  List<model.User> teamMember = [];
+  List<model.User> allUser = [];
+  List<Team> allTeam = [];
+  List<Device> deviceCategory = [];
+  model.User? currentUser;
+
+  Future<void> getUserSameTeam(BuildContext context) async {
     teamMember = await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .getUserSameTeam();
+        .getUserSameTeam(context);
   }
 
   bool isContainList(Device device, List<Device> devices) {
@@ -40,7 +48,12 @@ class InitMethod {
   }
 
   Future<void> getAllTeam() async {
-    allteam = await TeamMethod(firebaseFirestore: FirebaseFirestore.instance)
+    allTeam = await TeamMethod(firebaseFirestore: FirebaseFirestore.instance)
         .getAllTeam();
+  }
+
+  Future<void> getAllUser() async {
+    allUser = await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
+        .getAllUser();
   }
 }

@@ -33,4 +33,7 @@ class AppDecoration {
     errorBorder: errorOutlineInputBorder,
     focusedErrorBorder: focusOutlineInputBorder,
   );
+  static final boxDecoration = BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      color: AppColor.backgroudNavigation);
 }

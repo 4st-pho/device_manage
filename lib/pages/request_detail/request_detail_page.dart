@@ -1,3 +1,5 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +13,6 @@ import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_divider.dart';
@@ -53,6 +54,7 @@ class DetailRequestPage extends StatelessWidget {
   }
 
   Padding _buildButtom(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser;
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
@@ -68,8 +70,8 @@ class DetailRequestPage extends StatelessWidget {
                             request.id, RequestStatus.refuse, context),
               ),
             ),
-          if (currentUser!.role == Role.admin) const SizedBox(width: 24),
-          if (currentUser!.role == Role.leader &&
+          if (currentUser.role == Role.admin) const SizedBox(width: 24),
+          if (currentUser.role == Role.leader &&
               request.requestStatus == RequestStatus.pending)
             Expanded(
               child: CustomButton(
@@ -80,7 +82,7 @@ class DetailRequestPage extends StatelessWidget {
                             request.id, RequestStatus.approved, context),
               ),
             ),
-          if (currentUser!.role == Role.admin)
+          if (currentUser.role == Role.admin)
             Expanded(
               child: CustomButton(
                 text: AppString.accept,
@@ -97,12 +99,11 @@ class DetailRequestPage extends StatelessWidget {
 
   FutureBuilder<Device> _buildDeviceInfo() {
     return FutureBuilder<Device>(
-      future:
-          DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getDevice(request.deviceId),
+      future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+          .getDevice(request.deviceId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-        final device = snapshot.data!;
+          final device = snapshot.data!;
           return _buildInfo(
               imagePath: device.imagePaths[0],
               text1: device.name,

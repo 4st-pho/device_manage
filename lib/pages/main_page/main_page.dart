@@ -22,7 +22,7 @@ class _MainPageState extends State<MainPage> {
         stream: _mainPageBloc.stream,
         initialData: 0,
         builder: (context, snapshot) {
-          return _mainPageBloc.pages[snapshot.data!];
+          return _mainPageBloc.pages(context)[snapshot.data!];
         },
       ),
       bottomNavigationBar: Container(

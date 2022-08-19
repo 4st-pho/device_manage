@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/pages/login/login_page.dart';
 import 'package:manage_devices_app/pages/onbroad/onbroad_page.dart';
+import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/resource/theme_manager.dart';
 import 'package:manage_devices_app/services/init/init_page.dart';
 import 'package:manage_devices_app/services/load/firebase_load.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   await firebaseLoad();
@@ -20,7 +22,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => AppData())],
       child: MaterialApp(
         theme: getApplicationTheme(),
         onGenerateRoute: RouteGenerator.getRoute,
@@ -50,6 +53,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (_, snapshot) {
+          // print('***'*20);
+          // print(snapshot.data);
           if (snapshot.hasData) {
             return const InitPage();
           }

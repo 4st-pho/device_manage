@@ -70,11 +70,13 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
               ],
             ),
             Expanded(
-              child: TabBarView(children: [
-                _buildTabBarContent(),
-                _buildTabBarContent(),
-                _buildTabBarContent(),
-              ]),
+              child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildTabBarContent(),
+                    _buildTabBarContent(),
+                    _buildTabBarContent(),
+                  ]),
             )
           ],
         ),

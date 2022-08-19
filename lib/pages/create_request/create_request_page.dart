@@ -1,3 +1,5 @@
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
@@ -7,7 +9,6 @@ import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/helper/unfocus.dart';
-import 'package:manage_devices_app/services/init/init_data.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_form_field/custom_text_form_field.dart';
 
@@ -44,6 +45,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceCategory = context.read<AppData>().deviceCategory;
     return GestureDetector(
       onTap: () => unFocus(context),
       child: Scaffold(
