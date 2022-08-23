@@ -60,7 +60,7 @@ class CreateDeviceBloc {
       device.info = info.trim();
       device.manufacturingDate = date!;
       final imagesLink =
-          await StorageMethos(firebaseStorage: FirebaseStorage.instance)
+          await StorageMethods(firebaseStorage: FirebaseStorage.instance)
               .uploadAndGetImagesLink(AppCollectionPath.image, files!);
       device.imagePaths = imagesLink;
 
@@ -68,7 +68,7 @@ class CreateDeviceBloc {
       DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
           .createDevice(context, device);
       // ignore: use_build_context_synchronously
-      Navigator.of(context, rootNavigator: true).pop();
+      Navigator.of(context).pop();
     }
   }
 }

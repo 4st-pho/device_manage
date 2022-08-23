@@ -139,12 +139,12 @@ class _SearchPageState extends State<SearchPage> {
                   SwitchListTile.adaptive(
                     value: data!.contains(SearchFilter.avalbleDevice),
                     onChanged: _searchBloc.avalbleDeviceFilter,
-                    title: const Text('Search avalble devices'),
+                    title: const Text(AppString.searchAvalbleDevices),
                   ),
                   SwitchListTile.adaptive(
                     value: data.contains(SearchFilter.team),
                     onChanged: _searchBloc.teamFilter,
-                    title: const Text('Search team devices'),
+                    title: const Text(AppString.searchTeamDevices),
                   ),
                   if (data.contains(SearchFilter.team))
                     _buildSelectBox(
@@ -157,11 +157,11 @@ class _SearchPageState extends State<SearchPage> {
                           );
                         },
                         onClear: () => _searchBloc.onClearTeam(),
-                        lable: 'Choose team'),
+                        lable: AppString.chooseTeam),
                   SwitchListTile.adaptive(
                     value: data.contains(SearchFilter.user),
                     onChanged: _searchBloc.userFilter,
-                    title: const Text('Search user devices'),
+                    title: const Text(AppString.searchUserDevices),
                   ),
                   if (data.contains(SearchFilter.user))
                     _buildSelectBox(
@@ -174,7 +174,7 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       },
                       onClear: () => _searchBloc.onClearUser(),
-                      lable: 'Choose user',
+                      lable: AppString.chooseUser,
                     ),
                 ],
               );

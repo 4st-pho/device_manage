@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/search_filter.dart';
 import 'package:manage_devices_app/helper/debounce.dart';
-import 'package:manage_devices_app/helper/unfocus.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';

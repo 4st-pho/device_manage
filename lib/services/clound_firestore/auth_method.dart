@@ -23,7 +23,7 @@ class AuthMethod {
       required String avataLink}) async {
     String avatar = file == null
         ? avataLink
-        : await StorageMethos(firebaseStorage: FirebaseStorage.instance)
+        : await StorageMethods(firebaseStorage: FirebaseStorage.instance)
             .uploadAndGetImageLink(AppCollectionPath.user, file);
     final docUser = firebaseFirestore
         .collection(AppCollectionPath.user)

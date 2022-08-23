@@ -7,6 +7,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType type;
   final bool showLabel;
   final String? Function(String?)? validator;
+  final void Function(String?)? onChanged;
 
   final TextEditingController controller;
   const CustomTextFormField({
@@ -15,6 +16,7 @@ class CustomTextFormField extends StatelessWidget {
     required this.controller,
     required this.type,
     this.showLabel = true,
+    this.onChanged,
     required this.validator,
   }) : super(key: key);
 
@@ -23,12 +25,14 @@ class CustomTextFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if(showLabel) Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(laber),
-        ),
+        if (showLabel)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(laber),
+          ),
         TextFormField(
           controller: controller,
+          onChanged: onChanged,
           textInputAction: type == TextInputType.multiline
               ? TextInputAction.newline
               : TextInputAction.next,

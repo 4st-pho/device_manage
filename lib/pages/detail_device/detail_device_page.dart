@@ -1,4 +1,5 @@
 import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:provider/provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,46 +40,68 @@ class DetailDevicePage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildImage(context),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildContentItem(
-                      title: AppString.name, content: device.name),
-                  _buildContentItem(
-                      title: AppString.type, content: device.deviceType.name),
-                  _buildContentItem(
-                      title: AppString.healthyStatus,
-                      content: device.healthyStatus.name),
-                  _buildContentItem(
-                      title: AppString.info, content: device.info),
-                  if (device.transferDate != null)
-                    _buildContentItem(
-                      title: AppString.transferDate,
-                      content: DateFormat('dd MMM yyyy')
-                          .format(device.transferDate!),
+      body: StreamBuilder<Device>(
+        stream: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+            .streamDevice(device.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          if (snapshot.hasData) {
+            final data = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildImage(context),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildContentItem(
+                                  title: AppString.name, content: data.name),
+                              _buildContentItem(
+                                  title: AppString.type,
+                                  content: data.deviceType.name),
+                              _buildContentItem(
+                                  title: AppString.healthyStatus,
+                                  content: data.healthyStatus.name),
+                              _buildContentItem(
+                                  title: AppString.info, content: data.info),
+                              if (data.transferDate != null)
+                                _buildContentItem(
+                                  title: AppString.transferDate,
+                                  content: DateFormat('dd MMM yyyy')
+                                      .format(data.transferDate!),
+                                ),
+                              _buildContentItem(
+                                title: AppString.manufacturingDate,
+                                content: DateFormat('dd MMM yyyy')
+                                    .format(data.manufacturingDate),
+                              ),
+                              if (data.ownerId != null)
+                                _buildUserInfo(data.ownerId as String),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                  _buildContentItem(
-                    title: AppString.manufacturingDate,
-                    content: DateFormat('dd MMM yyyy')
-                        .format(device.manufacturingDate),
                   ),
-                  if (device.ownerId != null)
-                    _buildUserInfo(device.ownerId as String),
-                  if (currentUser!.role == Role.admin)
-                    ManageDevice(device: device),
-                ],
-              ),
-            )
-          ],
-        ),
+                ),
+                if (currentUser!.role == Role.admin) ManageDevice(device: data),
+              ],
+            );
+          }
+          return Container();
+        },
       ),
     );
   }

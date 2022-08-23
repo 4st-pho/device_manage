@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/model/device.dart';
+import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 
@@ -15,11 +17,20 @@ class ManageDevice extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
+          Expanded(
+            flex: 5,
+            child: CustomButton(
+              text: AppString.edit,
+              onPressed: () => Navigator.of(context)
+                  .pushNamed(Routes.editDeviceRoute, arguments: device),
+            ),
+          ),
+          const SizedBox(width: 16),
           if (isOwner)
             Expanded(
               flex: 5,
               child: CustomButton(
-                  text: 'Recall',
+                  text: AppString.recall,
                   onPressed: () {
                     Navigator.of(context).pop();
                     DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
@@ -30,7 +41,7 @@ class ManageDevice extends StatelessWidget {
             Expanded(
               flex: 5,
               child: CustomButton(
-                text: 'Delete',
+                text: AppString.delete,
                 onPressed: () {
                   Navigator.of(context).pop();
                   DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
