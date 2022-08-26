@@ -1,5 +1,5 @@
+import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
-import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +48,7 @@ class RequestPage extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final currentUser = context.read<AppData>().currentUser!;
+    final requestBloc = context.read<RequestBloc>();
     return StreamBuilder<List<Request>>(
       stream: RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
           .streamListRequest(
@@ -58,19 +59,7 @@ class RequestPage extends StatelessWidget {
           return Center(child: Text(error));
         } else if (snapshot.hasData) {
           final List<Request> myRequestManage = snapshot.data ?? [];
-          List<Request> myProcessingRequestManage = [];
-          List<Request> myHandledRequestManage = [];
-          List<RequestStatus> processingStatus = [
-            RequestStatus.pending,
-            RequestStatus.approved
-          ];
-          for (Request e in myRequestManage) {
-            if (processingStatus.contains(e.requestStatus)) {
-              myProcessingRequestManage.add(e);
-            } else {
-              myHandledRequestManage.add(e);
-            }
-          }
+          requestBloc.onRequestChange(myRequestManage);
           return DefaultTabController(
             length: 2,
             child: Column(
@@ -83,29 +72,9 @@ class RequestPage extends StatelessWidget {
                   child: TabBarView(
                     physics: const BouncingScrollPhysics(),
                     children: [
-                      ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        primary: false,
-                        shrinkWrap: true,
-                        itemCount: myProcessingRequestManage.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: RequestItem(
-                              request: myProcessingRequestManage[index]),
-                        ),
-                      ),
-                      ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        primary: false,
-                        shrinkWrap: true,
-                        itemCount: myHandledRequestManage.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: RequestItem(
-                            request: myHandledRequestManage[index],
-                          ),
-                        ),
-                      ),
+                      _buildRequestContent(
+                          requestBloc.myProcessingRequestManage),
+                      _buildRequestContent(requestBloc.myHandledRequestManage),
                     ],
                   ),
                 ),
@@ -115,6 +84,19 @@ class RequestPage extends StatelessWidget {
         }
         return ShimmerList.requestItem;
       },
+    );
+  }
+
+  ListView _buildRequestContent(List<Request> requests) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      primary: false,
+      shrinkWrap: true,
+      itemCount: requests.length,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: RequestItem(request: requests[index]),
+      ),
     );
   }
 }

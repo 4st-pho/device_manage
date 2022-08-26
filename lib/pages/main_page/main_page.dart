@@ -1,3 +1,4 @@
+import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,10 @@ class _MainPageState extends State<MainPage> {
         dispose: (_, prov) => prov.dispose(),
         child: const SearchPage(),
       ),
-      const RequestPage(),
+      Provider<RequestBloc>(
+        create: (context) =>  RequestBloc(),
+        dispose: (_, prov) => prov.dispose(),
+        child: const RequestPage()),
       const ProfilePage(),
     ];
   }
