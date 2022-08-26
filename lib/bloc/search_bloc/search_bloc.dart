@@ -8,185 +8,191 @@ import 'package:manage_devices_app/helper/debounce.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 
 class SearchBloc {
-  Team? team;
-  User? user;
-  String keywork = '';
-  List<SearchFilter> searchFilter = [];
+  Team? _team;
+  User? _user;
+  String _keywork = '';
+  List<SearchFilter> _searchFilter = [];
   List<Device> allDevice = [];
-  List<Device> currentDevices = [];
-  final StreamController<List<Device>> _controller =
+  List<Device> _currentDevices = [];
+  final StreamController<List<Device>> _currentDevicesController =
       StreamController<List<Device>>();
 
-  Stream<List<Device>> get stream => _controller.stream;
   final StreamController<List<SearchFilter>> _filterController =
       StreamController<List<SearchFilter>>.broadcast();
+  final StreamController<String?> _userController =
+      StreamController<String?>.broadcast();
+  final StreamController<String?> _teamController =
+      StreamController<String?>.broadcast();
+
+  Stream<List<Device>> get currentDevicesStream =>
+      _currentDevicesController.stream;
 
   Stream<List<SearchFilter>> get filterStream => _filterController.stream;
 
-  final StreamController<dynamic> _userController =
-      StreamController<dynamic>.broadcast();
+  Stream<String?> get userStream => _userController.stream;
 
-  Stream<dynamic> get userStream => _userController.stream;
-  final StreamController<dynamic> _teamController =
-      StreamController<dynamic>.broadcast();
-
-  Stream<dynamic> get teamStream => _teamController.stream;
-  Future<void> getAlldevice() async {
+  Stream<String?> get teamStream => _teamController.stream;
+  String get keywork => _keywork;
+  List<Device> get currentDevices => _currentDevices;
+  List<SearchFilter> get searchFilter => _searchFilter;
+  Future<void> getAndSetAlldevice() async {
     allDevice =
         await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
             .getAllDevice();
   }
 
   SearchBloc() {
-    getAlldevice().then((_) {
-      init();
+    Future.wait([
+      getAndSetAlldevice(),
+    ]).then((value) {
+      searchAction();
     });
   }
-  void searchAvailableDevice() {
-    currentDevices =
-        allDevice.where((e) => e.ownerType == OwnerType.none).toList();
-    currentDevices = currentDevices
-        .where(
-            (e) => e.name.toLowerCase().contains(keywork.trim().toLowerCase()))
-        .toList();
-  }
 
-  void searchTeamDevices() {
-    currentDevices =
-        allDevice.where((e) => e.ownerType == OwnerType.team).toList();
-    if (team != null) {
-      currentDevices =
-          currentDevices.where((e) => e.ownerId == team!.id).toList();
-    }
-    currentDevices = currentDevices
-        .where(
-            (e) => e.name.toLowerCase().contains(keywork.trim().toLowerCase()))
-        .toList();
-  }
-
-  void searchUserDevices() {
-    currentDevices =
-        allDevice.where((e) => e.ownerType == OwnerType.user).toList();
-    if (user != null) {
-      currentDevices =
-          currentDevices.where((e) => e.ownerId == user!.id).toList();
-    }
-    currentDevices = currentDevices
-        .where(
-            (e) => e.name.toLowerCase().contains(keywork.trim().toLowerCase()))
-        .toList();
-  }
-
-  void init() {
-    if (searchFilter.contains(SearchFilter.avalbleDevice)) {
-      searchAvailableDevice();
-    } else if (searchFilter.contains(SearchFilter.team)) {
-      searchTeamDevices();
-    } else if (searchFilter.contains(SearchFilter.user)) {
-      searchUserDevices();
+  void searchAction() {
+    if (_searchFilter.contains(SearchFilter.avalbleDevice)) {
+      _currentDevices = searchAvailableDevice();
+    } else if (_searchFilter.contains(SearchFilter.team)) {
+      _currentDevices = searchTeamDevices();
+    } else if (_searchFilter.contains(SearchFilter.user)) {
+      _currentDevices = searchUserDevices();
     } else {
-      searchDevice();
+      _currentDevices = searchDevice();
     }
-    sinkDevices();
+    _currentDevicesController.sink.add(currentDevices);
+  }
+
+  List<Device> searchAvailableDevice() {
+    List<Device> listCurrentDevices =
+        allDevice.where((e) => e.ownerType == OwnerType.none).toList();
+    listCurrentDevices = listCurrentDevices
+        .where(
+            (e) => e.name.toLowerCase().contains(_keywork.trim().toLowerCase()))
+        .toList();
+    return listCurrentDevices;
+  }
+
+  List<Device> searchTeamDevices() {
+    List<Device> listTeamDevice =
+        allDevice.where((e) => e.ownerType == OwnerType.team).toList();
+    if (_team != null) {
+      listTeamDevice =
+          listTeamDevice.where((e) => e.ownerId == _team!.id).toList();
+    }
+    listTeamDevice = listTeamDevice
+        .where(
+            (e) => e.name.toLowerCase().contains(_keywork.trim().toLowerCase()))
+        .toList();
+    return listTeamDevice;
+  }
+
+  List<Device> searchUserDevices() {
+    List<Device> listUserDevice =
+        allDevice.where((e) => e.ownerType == OwnerType.user).toList();
+    if (_user != null) {
+      listUserDevice =
+          listUserDevice.where((e) => e.ownerId == _user!.id).toList();
+    }
+    listUserDevice = listUserDevice
+        .where(
+            (e) => e.name.toLowerCase().contains(_keywork.trim().toLowerCase()))
+        .toList();
+    return listUserDevice;
   }
 
   void onTextChange(String? query) {
-    keywork = query!.trim();
+    _keywork = query!.trim();
     Debounce().run(() {
-      init();
+      searchAction();
     });
   }
 
-  void searchDevice() {
-    currentDevices = allDevice
+  List<Device> searchDevice() {
+    return allDevice
         .where(
-            (e) => e.name.toLowerCase().contains(keywork.trim().toLowerCase()))
+            (e) => e.name.toLowerCase().contains(_keywork.trim().toLowerCase()))
         .toList();
   }
 
   void avalbleDeviceFilter(bool value) {
     if (value) {
-      searchFilter = [SearchFilter.avalbleDevice];
+      _searchFilter = [SearchFilter.avalbleDevice];
     } else {
-      searchFilter = [];
+      _searchFilter = [];
     }
-    _filterController.sink.add(searchFilter);
-    init();
+    _filterController.sink.add(_searchFilter);
+    searchAction();
   }
 
   void teamFilter(bool value) {
     if (value) {
-      searchFilter = [SearchFilter.team];
+      _searchFilter = [SearchFilter.team];
     } else {
-      searchFilter = [];
+      _searchFilter = [];
     }
-    _filterController.sink.add(searchFilter);
-    init();
+    _filterController.sink.add(_searchFilter);
+    searchAction();
   }
 
   void userFilter(bool value) {
     if (value) {
-      searchFilter = [SearchFilter.user];
+      _searchFilter = [SearchFilter.user];
     } else {
-      searchFilter = [];
+      _searchFilter = [];
     }
-    _filterController.sink.add(searchFilter);
-    init();
+    _filterController.sink.add(_searchFilter);
+    searchAction();
   }
 
-  void onChooseUser(dynamic userParam) {
-    user = userParam as User;
-    _userController.sink.add(user);
-    init();
+  void onChooseUser(User user) {
+    _user = user;
+    _userController.sink.add(user.name);
+    searchAction();
   }
 
   void onClearUser() {
-    user = null;
-    _userController.sink.add(user);
-    init();
+    _user = null;
+    _userController.sink.add(_user?.name);
+    searchAction();
   }
 
   void onClearTeam() {
-    team = null;
+    _team = null;
     _teamController.sink.add(null);
-    init();
+    searchAction();
   }
 
-  void onSubmitted(BuildContext context,TextEditingController controller, {String? query}) {
+  void onSubmitted(TextEditingController controller, {String? query}) {
     if (query != null) {
-      keywork = query.trim();
-      controller.text = keywork;
+      _keywork = query.trim();
+      controller.text = _keywork;
     }
-    init();
-    Navigator.of(context).pushNamed(Routes.searchResultRoute,
-        arguments: [keywork, currentDevices]);
+    searchAction();
   }
 
-  void onChooseTeam(dynamic teamParam) {
-    team = teamParam as Team;
-    _teamController.sink.add(team);
-    init();
-  }
-
-  void sinkDevices() {
-    _controller.sink.add(currentDevices);
+  void onChooseTeam(Team team) {
+    _team = team;
+    _teamController.sink.add(team.name);
+    searchAction();
   }
 
   void sinkSearchFilter() {
-    _filterController.sink.add(searchFilter);
+    _filterController.sink.add(_searchFilter);
   }
 
-  void sinkUserAndTeam() {
-    _userController.sink.add(user);
-    _teamController.sink.add(team);
+  void sinkUser() {
+    _userController.sink.add(_user?.name);
+  }
+
+  void sinkTeam() {
+    _teamController.sink.add(_team?.name);
   }
 
   void dispose() {
-    _controller.close();
+    _currentDevicesController.close();
     _userController.close();
     _teamController.close();
     _filterController.close();

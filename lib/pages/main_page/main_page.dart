@@ -1,8 +1,16 @@
+import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
+import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
+import 'package:manage_devices_app/enums/role.dart';
+import 'package:manage_devices_app/pages/home/home_page.dart';
+import 'package:manage_devices_app/pages/profile/profile_page.dart';
+import 'package:manage_devices_app/pages/request/request_page.dart';
+import 'package:manage_devices_app/pages/search/search_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -14,6 +22,29 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final _mainPageBloc = MainPageBloc();
   @override
+  void dispose() {
+    _mainPageBloc.dispose();
+    super.dispose();
+  }
+
+  List<Widget> pages(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser;
+    return [
+      currentUser!.role == Role.admin
+          // ? const DashboardPage()
+          ? Container()
+          : const HomePage(),
+      Provider<SearchBloc>(
+        create: (context) => SearchBloc(),
+        dispose: (_, prov) => prov.dispose(),
+        child: const SearchPage(),
+      ),
+      const RequestPage(),
+      const ProfilePage()
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
@@ -22,7 +53,7 @@ class _MainPageState extends State<MainPage> {
         stream: _mainPageBloc.stream,
         initialData: 0,
         builder: (context, snapshot) {
-          return _mainPageBloc.pages(context)[snapshot.data!];
+          return pages(context)[snapshot.data!];
         },
       ),
       bottomNavigationBar: Container(

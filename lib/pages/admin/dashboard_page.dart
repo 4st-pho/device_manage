@@ -7,11 +7,14 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(children: const[
-          BarChartSample2()
-        ],),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding:  const EdgeInsets.all(8),
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: const [BarChartSample3()],
+          ),
+        ),
       ),
     );
   }

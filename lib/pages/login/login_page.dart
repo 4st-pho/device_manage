@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_icon.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
-import 'package:manage_devices_app/helper/unfocus.dart';
+import 'package:manage_devices_app/helper/show_snackbar.dart';
 import 'package:manage_devices_app/pages/login/widgets/email_text_form_field.dart';
 import 'package:manage_devices_app/pages/login/widgets/password_text_form_field.dart';
 import 'package:manage_devices_app/services/clound_firestore/auth_service.dart';
@@ -38,35 +38,35 @@ class _LoginGogolePageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return GestureDetector(
-      onTap: () => unFocus(context),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          reverse: true,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const SizedBox(height: 100),
-              Image.asset(AppIcon.logo, width: size.width / 2),
-              Padding(
-                padding: const EdgeInsets.only(top: 100, bottom: 40),
-                child: _buildForm(),
-              ),
-              CustomButton(
+    return Scaffold(
+      body: SingleChildScrollView(
+        reverse: true,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 100),
+              child: Image.asset(AppIcon.logo, width: size.width / 2),
+            ),
+            _buildForm(),
+            Padding(
+              padding: const EdgeInsets.only(top: 40, bottom: 60),
+              child: CustomButton(
                 text: AppString.login,
                 onPressed: () async {
                   await AuthService(firebaseAuth: FirebaseAuth.instance)
                       .signinWithEmailAndPassword(
                     email: _emailController.text,
                     password: _passwordController.text,
-                    context: context,
-                  );
+                  )
+                      .catchError((e) {
+                    showSnackBar(context: context, content: e.toString());
+                  });
                 },
               ),
-              const SizedBox(height: 60),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

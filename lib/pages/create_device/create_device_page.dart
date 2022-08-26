@@ -11,6 +11,7 @@ import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/device_type.dart';
 import 'package:manage_devices_app/enums/healthy_status.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
+import 'package:manage_devices_app/helper/show_date_picker.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_form_field/custom_text_form_field.dart';
 
@@ -73,7 +74,6 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
                 text: 'Create device',
                 onPressed: () {
                   createDeviceBloc.createDevice(
-                    context: context,
                     formKey: _formKey,
                     name: _nameController.text,
                     info: _infoController.text,
@@ -157,8 +157,10 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
         Expanded(
           child: CustomButton(
             text: AppString.chooseDate,
-            onPressed: () {
-              _pickDateBloc.pickTime(context);
+            onPressed: () async {
+              final DateTime? date = await showDatePickerCustom(context,
+                  initDate: _pickDateBloc.date);
+              _pickDateBloc.pickTime(date);
             },
           ),
         ),

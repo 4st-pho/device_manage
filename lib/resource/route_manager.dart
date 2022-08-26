@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
+import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/main.dart';
 import 'package:manage_devices_app/model/device.dart';
@@ -12,9 +14,11 @@ import 'package:manage_devices_app/pages/edit_device/edit_device_page.dart';
 import 'package:manage_devices_app/pages/login/login_page.dart';
 import 'package:manage_devices_app/pages/main_page/main_page.dart';
 import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
+import 'package:manage_devices_app/pages/provide_device/provide_device_page.dart';
 import 'package:manage_devices_app/pages/request_detail/request_detail_page.dart';
 import 'package:manage_devices_app/pages/search_result/search_result_page.dart';
-import 'package:manage_devices_app/services/init/init_page.dart';
+import 'package:manage_devices_app/services/splash/splash_page.dart';
+import 'package:provider/provider.dart';
 
 class Routes {
   static const String splashRoute = "/";
@@ -31,6 +35,7 @@ class Routes {
   static const String createRequestRoute = "/createRequestRoute ";
   static const String manageDeviceRoute = "/manageDeviceRoute ";
   static const String editDeviceRoute = "/editDeviceRoute ";
+  static const String provideDeviceRoute = "/provideDeviceRoute ";
 }
 
 class RouteGenerator {
@@ -46,7 +51,11 @@ class RouteGenerator {
         );
       case Routes.createRequestRoute:
         return MaterialPageRoute(
-          builder: (context) => const CreateRequestPage(),
+          builder: (context) => Provider<CreateRequestBloc>(
+            create: (context) => CreateRequestBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: const CreateRequestPage(),
+          ),
         );
       case Routes.manageDeviceRoute:
         return MaterialPageRoute(
@@ -79,19 +88,27 @@ class RouteGenerator {
           builder: (context) => DetailDevicePage(device: args),
         );
       case Routes.searchResultRoute:
-        final args = routeSettings.arguments as List<dynamic>;
+        final args = routeSettings.arguments as SearchBloc;
         return MaterialPageRoute(
-          builder: (context) =>
-              SearchResultPage(keywork: args[0], data: args[1] as List<Device>),
-        );
+            builder: (context) => Provider<SearchBloc>.value(
+                  value: args,
+                  builder: (context, _) {
+                    return const SearchResultPage();
+                  },
+                ));
       case Routes.editDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
           builder: (context) => EditDevicePage(device: args),
         );
+      case Routes.provideDeviceRoute:
+        final args = routeSettings.arguments as Device;
+        return MaterialPageRoute(
+          builder: (context) => ProvideDevicePage(device: args),
+        );
       case Routes.initRoute:
         return MaterialPageRoute(
-          builder: (context) => const InitPage(),
+          builder: (context) => const SplashPage(),
         );
       default:
         return unDefinedRoute();

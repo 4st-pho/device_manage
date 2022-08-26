@@ -1,7 +1,13 @@
+import 'package:manage_devices_app/helper/shared_preferences.dart';
+import 'package:manage_devices_app/resource/route_manager.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import '../../bloc/onbroad_bloc.dart';
-import '../../constants/app_color.dart';
-import '../../widgets/custom_button.dart';
+import 'package:manage_devices_app/bloc/onbroad_bloc.dart';
+import 'package:manage_devices_app/constants/app_color.dart';
+import 'package:manage_devices_app/constants/app_image.dart';
+import 'package:manage_devices_app/constants/app_strings.dart';
+import 'package:manage_devices_app/pages/onbroad/widgets/onbroad_item.dart';
+import 'package:manage_devices_app/widgets/custom_button.dart';
 
 class OnbroadPage extends StatefulWidget {
   const OnbroadPage({Key? key}) : super(key: key);
@@ -11,8 +17,28 @@ class OnbroadPage extends StatefulWidget {
 }
 
 class _OnbroadPageState extends State<OnbroadPage> {
-  final _onbroadBloc = OnbroadBloc();
+  late final OnbroadBloc _onbroadBloc;
+  @override
+  void initState() {
+    _onbroadBloc = context.read<OnbroadBloc>();
+    super.initState();
+  }
+
   final PageController _pageController = PageController(initialPage: 0);
+  final List<OnroadItem> _listOnbroadItem = [
+    const OnroadItem(
+        image: AppImage.onbroad1,
+        title: AppString.onbroadTitle1,
+        content: AppString.onbroadContent1),
+    const OnroadItem(
+        image: AppImage.onbroad2,
+        title: AppString.onbroadTitle2,
+        content: AppString.onbroadContent1),
+    const OnroadItem(
+        image: AppImage.onbroad3,
+        title: AppString.onbroadTitle3,
+        content: AppString.onbroadContent1),
+  ];
   @override
   void dispose() {
     _onbroadBloc.dispose();
@@ -30,7 +56,7 @@ class _OnbroadPageState extends State<OnbroadPage> {
                 physics: const BouncingScrollPhysics(),
                 controller: _pageController,
                 onPageChanged: _onbroadBloc.onPageChanged,
-                children: _onbroadBloc.listOnbroadItem,
+                children: _listOnbroadItem,
               ),
             ),
             _buildControlPageView()
@@ -45,16 +71,18 @@ class _OnbroadPageState extends State<OnbroadPage> {
       initialData: 0,
       stream: _onbroadBloc.stream,
       builder: (context, snapshot) {
-        final currentIndex = snapshot.data!;
+        final currentIndex = snapshot.data ?? 0;
+
         return Column(
           children: [
             Row(
               children: [
                 const Spacer(),
                 _buildSelectBox(currentIndex: currentIndex, index: 0),
-                const SizedBox(width: 5),
-                _buildSelectBox(currentIndex: currentIndex, index: 1),
-                const SizedBox(width: 5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: _buildSelectBox(currentIndex: currentIndex, index: 1),
+                ),
                 _buildSelectBox(currentIndex: currentIndex, index: 2),
                 const Spacer(),
               ],
@@ -62,11 +90,19 @@ class _OnbroadPageState extends State<OnbroadPage> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: CustomButton(
-                text: _onbroadBloc.isFinish ? 'Get Started' : 'Next',
-                onPressed: () => _onbroadBloc.selectPage(
-                  pageController: _pageController,
-                  context: context,
-                ),
+                text: _onbroadBloc.isFinish(_listOnbroadItem.length)
+                    ? 'Get Started'
+                    : 'Next',
+                onPressed: _onbroadBloc.isFinish(_listOnbroadItem.length)
+                    ? () {
+                        SharedPreferencesMethod.saveSkipOnbroading();
+                        Navigator.of(context)
+                            .pushReplacementNamed(Routes.authWrapper);
+                      }
+                    : () => _onbroadBloc.selectPage(
+                          pageController: _pageController,
+                          listLength: _listOnbroadItem.length,
+                        ),
               ),
             ),
             const SizedBox(height: 12),
