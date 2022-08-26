@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -43,7 +44,10 @@ class RouteGenerator {
     switch (routeSettings.name) {
       case Routes.mainRoute:
         return MaterialPageRoute(
-          builder: (context) => const MainPage(),
+          builder: (context) => Provider<MainPageBloc>(
+            create: (context) => MainPageBloc(),
+            child: const MainPage(),
+          ),
         );
       case Routes.loginRoute:
         return MaterialPageRoute(

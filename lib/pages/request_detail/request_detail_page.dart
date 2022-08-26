@@ -119,7 +119,7 @@ class DetailRequestPage extends StatelessWidget {
     );
   }
 
-  Column _buildRequestInfo() {
+  Widget _buildRequestInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
