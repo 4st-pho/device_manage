@@ -34,6 +34,8 @@ class AppString {
   static const chooseUser = 'Choose user';
   static const ok = 'Ok';
   static const send = 'Send';
+  static const provide = 'Provide';
+  static const chooseDate = 'Choose date';
   static const search = 'Search';
   static const user = 'User';
   static const myDevice = 'My device';
@@ -48,13 +50,15 @@ class AppString {
   static const userDevices = 'User devices';
   static const teamDevices = 'Team devices';
   static const searchDevice = 'Search device';
+  static const role = 'Role';
   static const availableDevices = 'Available devices';
   static const request = 'Request';
   static const deviceRecall = 'Device recall';
   static const deviceManage = 'Device manage';
   static const createUser = 'Create user';
   static const createDevice = 'Create device';
-  static const chooseDate = 'Choose date';
+  static const availbleDevice = 'Availble device';
+  static const dateStartWork = 'Date start work';
   static const searchUserNameOrTeam = 'Search user name or team';
   static const imageIsRequired = 'Image is required';
   static const dateIsRequired = 'Date is required';

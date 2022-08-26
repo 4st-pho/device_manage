@@ -15,10 +15,11 @@ void showSnackBar({
         if (title.isNotEmpty)
           Row(children: [
             Expanded(
-                child: Text(
-              title.trim().toUpperCase(),
-              style: error ? AppStyle.redText : AppStyle.whiteText,
-            ))
+              child: Text(
+                title.trim().toUpperCase(),
+                style: error ? AppStyle.redText : AppStyle.whiteText,
+              ),
+            ),
           ]),
         if (title.isNotEmpty) const SizedBox(height: 10),
         Row(

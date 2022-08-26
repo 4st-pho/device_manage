@@ -1,24 +1,18 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:manage_devices_app/provider/app_data.dart';
-import 'package:provider/provider.dart';
+import 'package:manage_devices_app/enums/role.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
-import 'package:manage_devices_app/helper/show_snackbar.dart';
 
 import 'package:manage_devices_app/model/user.dart';
 
 class UserMethod {
   FirebaseFirestore firebaseFirestore;
-  Future<void> createUser(BuildContext context, User user) async {
-    try {
-      final doc =
-          firebaseFirestore.collection(AppCollectionPath.user).doc(user.id);
-      await doc.set(user.toMap());
-      showSnackBar(context: context, content: 'Create user success!');
-    } catch (e) {
-      showSnackBar(context: context, content: e.toString(), error: true);
-    }
+  UserMethod({
+    required this.firebaseFirestore,
+  });
+  Future<void> createUser(User user) async {
+    final doc =
+        firebaseFirestore.collection(AppCollectionPath.user).doc(user.id);
+    await doc.set(user.toMap());
   }
 
   // get curent user in cloud firebaseFirestore
@@ -26,12 +20,23 @@ class UserMethod {
   Future<List<String>> getAllUserName() async {
     final doc = firebaseFirestore.collection(AppCollectionPath.user);
     final snapshot = await doc.get();
+    if (snapshot.docs.isEmpty) return [];
+
     return snapshot.docs.map((e) => e.data()['name'] as String).toList();
+  }
+
+  Future<List<String>> getAllUserIdSameTeam(String teamId) async {
+    final doc = firebaseFirestore.collection(AppCollectionPath.user);
+    final snapshot = await doc.where('teamId', isEqualTo: teamId).get();
+    if (snapshot.docs.isEmpty) return [];
+
+    return snapshot.docs.map((e) => e.data()['id'] as String).toList();
   }
 
   Future<User> getUser(String uid) async {
     final doc = firebaseFirestore.collection(AppCollectionPath.user).doc(uid);
     final snapshot = await doc.get();
+
     return User.fromMap(snapshot.data()!);
   }
 
@@ -40,6 +45,8 @@ class UserMethod {
         .collection(AppCollectionPath.user)
         .where('name', isEqualTo: name);
     final snapshot = await doc.get();
+    if (snapshot.docs.isEmpty) return [];
+
     return snapshot.docs.map((e) => e.data()['id'] as String).toList();
   }
 
@@ -48,32 +55,35 @@ class UserMethod {
         .collection(AppCollectionPath.user)
         .where('name', isEqualTo: name);
     final snapshot = await doc.get();
+    if (snapshot.docs.isEmpty) return [];
     return snapshot.docs.map((e) => User.fromMap(e.data())).toList();
   }
 
   Future<List<User>> getAllUser() async {
     final doc = firebaseFirestore.collection(AppCollectionPath.user);
     final snapshot = await doc.get();
+    if (snapshot.docs.isEmpty) return [];
     return snapshot.docs.map((e) => User.fromMap(e.data())).toList();
   }
 
-  UserMethod({
-    required this.firebaseFirestore,
-  });
-  Future<List<User>> getUserSameTeam(BuildContext context) async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.user).where(
-        'teamId',
-        isEqualTo: context.read<AppData>().currentUser!.teamId);
-    final value = await doc.get();
-    return value.docs.map((e) => User.fromMap(e.data())).toList();
-  }
-
-  Future<List<User>> getLeader(BuildContext context) async {
+  Future<List<User>> getUserSameTeam(String teamId) async {
     final doc = firebaseFirestore
         .collection(AppCollectionPath.user)
-        .where('teamId', isEqualTo: context.read<AppData>().currentUser!.teamId)
-        .where('role', isEqualTo: 'leader');
-    final value = await doc.get();
-    return value.docs.map((e) => User.fromMap(e.data())).toList();
+        .where('teamId', isEqualTo: teamId);
+    final snapshot = await doc.get();
+    if (snapshot.docs.isEmpty) return [];
+
+    return snapshot.docs.map((e) => User.fromMap(e.data())).toList();
+  }
+
+  Future<List<User>> getLeader(String teamId) async {
+    final doc = firebaseFirestore
+        .collection(AppCollectionPath.user)
+        .where('teamId', isEqualTo: teamId)
+        .where('role', isEqualTo: Role.leader.name);
+    final snapshot = await doc.get();
+    if (snapshot.docs.isEmpty) return [];
+
+    return snapshot.docs.map((e) => User.fromMap(e.data())).toList();
   }
 }

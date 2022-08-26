@@ -3,9 +3,9 @@ import 'package:manage_devices_app/bloc/devices_bloc/manage_device_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_image.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
-import 'package:manage_devices_app/helper/unfocus.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
+import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_form_field/search_text_field.dart';
 
 class DeviceManagePage extends StatefulWidget {
@@ -34,20 +34,17 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => unFocus(context),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(AppString.deviceManage),
-          centerTitle: true,
-          elevation: 0,
-        ),
-        body: Column(
-          children: [
-            _buildSearchTextField(context),
-            _buildTabBar(),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(AppString.deviceManage),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          _buildSearchTextField(context),
+          _buildTabBar(),
+        ],
       ),
     );
   }
@@ -75,7 +72,7 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
                   children: [
                     _buildTabBarContent(),
                     _buildTabBarContent(),
-                    _buildTabBarContent(),
+                    _buildTabBarContent(showProvide: true),
                   ]),
             )
           ],
@@ -84,7 +81,7 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
     );
   }
 
-  StreamBuilder<List<Device>> _buildTabBarContent() {
+  StreamBuilder<List<Device>> _buildTabBarContent({bool showProvide = false}) {
     return StreamBuilder<List<Device>>(
         stream: _deviceManageBloc.stream,
         builder: (context, snapshot) {
@@ -104,6 +101,7 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
             }
 
             return ListView.builder(
+              physics: const BouncingScrollPhysics(),
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
                 final device = data[index];
@@ -116,18 +114,44 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
                       .then((_) => _deviceManageBloc.init()),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: ListTile(
-                      title: Text(device.name),
-                      subtitle: Text(device.healthyStatus.name),
-                      trailing: Text(device.deviceType.name),
-                      leading: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: Image.network(
-                          device.imagePaths[0],
-                          fit: BoxFit.cover,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ListTile(
+                            title: Text(
+                              device.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(device.healthyStatus.name),
+                            trailing: Text(device.deviceType.name),
+                            leading: SizedBox(
+                              height: 50,
+                              width: 50,
+                              child: Image.network(
+                                device.imagePaths[0],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        if (showProvide)
+                          Container(
+                            padding: const EdgeInsets.only(right: 8),
+                            width: 100,
+                            height: 40,
+                            child: CustomButton(
+                              text: AppString.provide,
+                              color: Colors.green,
+                              onPressed: () => Navigator.of(context)
+                                  .pushNamed(
+                                    Routes.provideDeviceRoute,
+                                    arguments: device,
+                                  )
+                                  .then((_) => _deviceManageBloc.init()),
+                            ),
+                          )
+                      ],
                     ),
                   ),
                 );

@@ -67,7 +67,7 @@ class DetailRequestPage extends StatelessWidget {
                 onPressed: () =>
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
                         .updateStatusRequest(
-                            request.id, RequestStatus.refuse, context),
+                            request.id, RequestStatus.refuse),
               ),
             ),
           if (currentUser.role == Role.admin) const SizedBox(width: 24),
@@ -79,7 +79,7 @@ class DetailRequestPage extends StatelessWidget {
                 onPressed: () =>
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
                         .updateStatusRequest(
-                            request.id, RequestStatus.approved, context),
+                            request.id, RequestStatus.approved),
               ),
             ),
           if (currentUser.role == Role.admin)
@@ -89,7 +89,7 @@ class DetailRequestPage extends StatelessWidget {
                 onPressed: () =>
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
                         .updateStatusRequest(
-                            request.id, RequestStatus.accept, context),
+                            request.id, RequestStatus.accept),
               ),
             ),
         ],

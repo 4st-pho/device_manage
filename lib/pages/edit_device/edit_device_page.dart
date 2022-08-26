@@ -95,7 +95,6 @@ class _EditDevicePageState extends State<EditDevicePage> {
             child: CustomButton(
               text: AppString.done,
               onPressed: () => _editDeviceBloc.done(
-                context,
                 _formKey,
                 _pickMultiImageBloc.images,
               ),

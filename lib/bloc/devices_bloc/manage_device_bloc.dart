@@ -42,18 +42,22 @@ class ManageDeviceBloc {
         .getAllTeam();
   }
 
-  void init() async {
+  void init() {
     devices = [];
-    if (currenTab == 0) {
-      await searchUserDevice().then((value) {
+    switch (currenTab) {
+      case 0:
+        searchUserDevice().then((value) {
+          sinkDevices(devices);
+        });
+        break;
+      case 1:
+        searchTeamDevice().then((value) {
+          sinkDevices(devices);
+        });
+        break;
+      default:
+        searchDevice();
         sinkDevices(devices);
-      });
-    } else if (currenTab == 1) {
-      await searchTeamDevice();
-      sinkDevices(devices);
-    } else {
-      await searchDevice();
-      sinkDevices(devices);
     }
   }
 
@@ -68,15 +72,12 @@ class ManageDeviceBloc {
 
   void onTabChange(int index) {
     currenTab = index;
-    devices = [];
     init();
   }
 
   Future<void> recallDevice(BuildContext context, String id) async {
     await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .recallDevice(context, id);
-    // ignore: use_build_context_synchronously
-    Navigator.of(context).pop();
+        .recallDevice(id);
     init();
   }
 
@@ -110,8 +111,6 @@ class ManageDeviceBloc {
         .where((team) => team.name.trim().toLowerCase().contains(keywork))
         .toList();
     teamiIds = filterTeam.map((e) => e.id).toList();
-    // teamiIds = await TeamMethod(firebaseFirestore: FirebaseFirestore.instance)
-    //     .getTeamIdByName(keywork);
     for (var e in teamiIds) {
       final device =
           await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)

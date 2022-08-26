@@ -7,27 +7,17 @@ import 'package:manage_devices_app/helper/show_snackbar.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/services/clound_firestore/auth_service.dart';
 
-class InitPage extends StatefulWidget {
-  const InitPage({Key? key}) : super(key: key);
+class SplashPage extends StatefulWidget {
+  const SplashPage({Key? key}) : super(key: key);
 
   @override
-  State<InitPage> createState() => _InitPageState();
+  State<SplashPage> createState() => _SplashPageState();
 }
 
-class _InitPageState extends State<InitPage> {
+class _SplashPageState extends State<SplashPage> {
   void init() async {
     try {
       await context.read<AppData>().getCurrentUser();
-      // ignore: use_build_context_synchronously
-      context.read<AppData>().getUserSameTeam(context);
-      // ignore: use_build_context_synchronously
-      context.read<AppData>().getMyDevice(context);
-      // ignore: use_build_context_synchronously
-      context.read<AppData>().getTeamDevice(context);
-      // ignore: use_build_context_synchronously
-      context.read<AppData>().getAllTeam();
-      // ignore: use_build_context_synchronously
-      context.read<AppData>().getAllUser();
     } catch (e) {
       AuthService(firebaseAuth: FirebaseAuth.instance).logOut(context);
       showSnackBar(context: context, content: e.toString(), error: true);

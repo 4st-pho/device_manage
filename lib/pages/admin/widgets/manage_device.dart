@@ -34,7 +34,7 @@ class ManageDevice extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop();
                     DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .recallDevice(context, device.id);
+                        .recallDevice(device.id);
                   }),
             ),
           if (!isOwner)
@@ -45,7 +45,7 @@ class ManageDevice extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                   DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                      .deleteDevice(context, device.id);
+                      .deleteDevice( device.id);
                 },
               ),
             ),

@@ -16,52 +16,20 @@ class RequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          _buildAppBar(context),
-          _buildContent(context),
-          const SliverToBoxAdapter(child: SizedBox(height: 70)),
-        ],
+      appBar: _buildAppbar(context),
+      body: DefaultTabController(
+        length: 2,
+        child: _buildContent(context),
       ),
     );
   }
 
-  SliverToBoxAdapter _buildContent(BuildContext ctx) {
-    return SliverToBoxAdapter(
-      child: StreamBuilder<List<Request>>(
-        stream: RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .streamListRequest(ctx),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data!;
-            return ListView.builder(
-              padding: const EdgeInsets.all(8),
-              primary: false,
-              shrinkWrap: true,
-              itemCount: data.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: RequestItem(request: data[index]),
-              ),
-            );
-          }
-          if(snapshot.hasError){
-            return Center(child: Text(snapshot.error.toString()),);
-          }
-          return ShimmerList.requestItem;
-        },
-      ),
-    );
-  }
-
-  SliverAppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppbar(BuildContext context) {
     final currentUser = context.read<AppData>().currentUser;
-    return SliverAppBar(
-      floating: true,
+    return AppBar(
       title: const Text(AppString.allrequest),
       backgroundColor: Colors.black.withOpacity(.6),
-      elevation: 2,
+      elevation: 0,
       actions: [
         if (currentUser!.role != Role.admin)
           IconButton(
@@ -69,8 +37,64 @@ class RequestPage extends StatelessWidget {
                 Navigator.of(context).pushNamed(Routes.createRequestRoute),
             icon: const Icon(Icons.add),
           ),
-        const SizedBox(width: 4)
+        const SizedBox(width: 4),
       ],
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser!;
+    return StreamBuilder<List<Request>>(
+      stream: RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+          .streamListRequest(
+              currentUser.role, currentUser.id, currentUser.teamId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else if (snapshot.hasData) {
+          final data = snapshot.data!;
+          return DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                const TabBar(tabs: [
+                  Tab(child: Text('z')),
+                  Tab(child: Text('t')),
+                ]),
+                Expanded(
+                  child: TabBarView(
+                      physics: const BouncingScrollPhysics(),
+                      children: [
+                        ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          primary: false,
+                          shrinkWrap: true,
+                          itemCount: data.length,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: RequestItem(request: data[index]),
+                          ),
+                        ),
+                        ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          primary: false,
+                          shrinkWrap: true,
+                          itemCount: data.length,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: RequestItem(request: data[index]),
+                          ),
+                        ),
+                      ]),
+                ),
+              ],
+            ),
+          );
+        }
+        return ShimmerList.requestItem;
+      },
     );
   }
 }
