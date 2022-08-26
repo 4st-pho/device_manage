@@ -15,6 +15,8 @@ class AppString {
   static const done = 'Done';
   static const confirm = 'Confirm';
   static const delete = 'Delete';
+  static const getStarted = 'Get Started';
+  static const next = 'Next';
   static const pickImage = 'Pick image';
   static const all = 'All';
   static const edit = 'Edit';

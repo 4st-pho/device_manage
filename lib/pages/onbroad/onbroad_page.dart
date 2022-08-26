@@ -91,8 +91,8 @@ class _OnbroadPageState extends State<OnbroadPage> {
               padding: const EdgeInsets.all(16),
               child: CustomButton(
                 text: _onbroadBloc.isFinish(_listOnbroadItem.length)
-                    ? 'Get Started'
-                    : 'Next',
+                    ? AppString.getStarted
+                    : AppString.next,
                 onPressed: _onbroadBloc.isFinish(_listOnbroadItem.length)
                     ? () {
                         SharedPreferencesMethod.saveSkipOnbroading();
@@ -112,8 +112,10 @@ class _OnbroadPageState extends State<OnbroadPage> {
     );
   }
 
-  AnimatedContainer _buildSelectBox(
-      {required int currentIndex, required int index}) {
+  AnimatedContainer _buildSelectBox({
+    required int currentIndex,
+    required int index,
+  }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: currentIndex == index ? 30 : 10,
