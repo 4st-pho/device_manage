@@ -1,3 +1,5 @@
+import 'package:manage_devices_app/constants/app_color.dart';
+import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,16 +30,18 @@ class RequestPage extends StatelessWidget {
     final currentUser = context.read<AppData>().currentUser;
     return AppBar(
       title: const Text(AppString.allrequest),
-      backgroundColor: Colors.black.withOpacity(.6),
+      backgroundColor: Colors.black.withOpacity(0.6),
       elevation: 0,
       actions: [
         if (currentUser!.role != Role.admin)
-          IconButton(
-            onPressed: () =>
-                Navigator.of(context).pushNamed(Routes.createRequestRoute),
-            icon: const Icon(Icons.add),
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: IconButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(Routes.createRequestRoute),
+              icon: const Icon(Icons.add),
+            ),
           ),
-        const SizedBox(width: 4),
       ],
     );
   }
@@ -50,44 +54,60 @@ class RequestPage extends StatelessWidget {
               currentUser.role, currentUser.id, currentUser.teamId),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
+          final String error = snapshot.error.toString();
+          return Center(child: Text(error));
         } else if (snapshot.hasData) {
-          final data = snapshot.data!;
+          final List<Request> myRequestManage = snapshot.data ?? [];
+          List<Request> myProcessingRequestManage = [];
+          List<Request> myHandledRequestManage = [];
+          List<RequestStatus> processingStatus = [
+            RequestStatus.pending,
+            RequestStatus.approved
+          ];
+          for (Request e in myRequestManage) {
+            if (processingStatus.contains(e.requestStatus)) {
+              myProcessingRequestManage.add(e);
+            } else {
+              myHandledRequestManage.add(e);
+            }
+          }
           return DefaultTabController(
             length: 2,
             child: Column(
               children: [
                 const TabBar(tabs: [
-                  Tab(child: Text('z')),
-                  Tab(child: Text('t')),
-                ]),
+                  Tab(child: Text(AppString.processing)),
+                  Tab(child: Text(AppString.handled)),
+                ], indicatorColor: AppColor.dartBlue),
                 Expanded(
                   child: TabBarView(
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: data.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: RequestItem(request: data[index]),
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        primary: false,
+                        shrinkWrap: true,
+                        itemCount: myProcessingRequestManage.length,
+                        itemBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: RequestItem(
+                              request: myProcessingRequestManage[index]),
+                        ),
+                      ),
+                      ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        primary: false,
+                        shrinkWrap: true,
+                        itemCount: myHandledRequestManage.length,
+                        itemBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: RequestItem(
+                            request: myHandledRequestManage[index],
                           ),
                         ),
-                        ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: data.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: RequestItem(request: data[index]),
-                          ),
-                        ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

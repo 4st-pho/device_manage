@@ -20,7 +20,13 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final _mainPageBloc = MainPageBloc();
+  late final MainPageBloc _mainPageBloc;
+  @override
+  void initState() {
+    super.initState();
+    _mainPageBloc = context.read<MainPageBloc>();
+  }
+
   @override
   void dispose() {
     _mainPageBloc.dispose();
@@ -40,7 +46,7 @@ class _MainPageState extends State<MainPage> {
         child: const SearchPage(),
       ),
       const RequestPage(),
-      const ProfilePage()
+      const ProfilePage(),
     ];
   }
 

@@ -36,14 +36,15 @@ class ProfilePage extends StatelessWidget {
           onPressed: () =>
               Navigator.of(context).pushNamed(Routes.manageDeviceRoute),
         ),
-        const SizedBox(height: 16),
-        ProfileItem(
-          text: AppString.createUser,
-          icon: Icons.person_add,
-          onPressed: () =>
-              Navigator.of(context).pushNamed(Routes.createUserRoute),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: ProfileItem(
+            text: AppString.createUser,
+            icon: Icons.person_add,
+            onPressed: () =>
+                Navigator.of(context).pushNamed(Routes.createUserRoute),
+          ),
         ),
-        const SizedBox(height: 16),
         ProfileItem(
           text: AppString.createDevice,
           icon: Icons.devices,
@@ -54,16 +55,14 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Column _buildUserWidget(BuildContext context) {
-    return Column(
-      children: [
-        ProfileItem(
-          text: AppString.myDevice,
-          icon: Icons.my_library_books,
-          onPressed: () => Navigator.of(context).pushNamed(Routes.myDevice),
-        ),
-        const SizedBox(height: 16),
-      ],
+  Widget _buildUserWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ProfileItem(
+        text: AppString.myDevice,
+        icon: Icons.my_library_books,
+        onPressed: () => Navigator.of(context).pushNamed(Routes.myDevice),
+      ),
     );
   }
 }
