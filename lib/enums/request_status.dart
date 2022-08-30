@@ -1,6 +1,7 @@
 enum RequestStatus {
   pending,
-  refuse,
+  reject,
   accept,
   approved,
+  disapproved
 }

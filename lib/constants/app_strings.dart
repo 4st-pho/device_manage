@@ -75,8 +75,9 @@ class AppString {
   static const infoU = 'INFO';
   static const accept = 'Accept';
   static const pending = 'Pending';
-  static const refuse = 'Refuse';
+  static const reject = 'Reject';
   static const approved = 'Approved';
+  static const disapproved = 'Disapproved';
   static const allrequest = 'All request';
   static const manufacturingDate = 'MANUFACTURINGDATE';
   static const noRouteFound = 'NO ROUTE FOUND';

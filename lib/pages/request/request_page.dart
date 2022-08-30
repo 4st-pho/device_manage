@@ -1,15 +1,14 @@
 import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
+import 'package:manage_devices_app/enums/tab_request.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/pages/request/widgets/request_item.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
-import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 
 class RequestPage extends StatelessWidget {
@@ -47,49 +46,49 @@ class RequestPage extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    final currentUser = context.read<AppData>().currentUser!;
+    // final currentUser = context.read<AppData>().currentUser!;
     final requestBloc = context.read<RequestBloc>();
-    return StreamBuilder<List<Request>>(
-      stream: RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .streamListRequest(
-              currentUser.role, currentUser.id, currentUser.teamId),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          final String error = snapshot.error.toString();
-          return Center(child: Text(error));
-        } else if (snapshot.hasData) {
-          final List<Request> myRequestManage = snapshot.data ?? [];
-          requestBloc.onRequestChange(myRequestManage);
-          return DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                const TabBar(tabs: [
-                  Tab(child: Text(AppString.processing)),
-                  Tab(child: Text(AppString.handled)),
-                ], indicatorColor: AppColor.dartBlue),
-                Expanded(
-                  child: TabBarView(
-                    physics: const BouncingScrollPhysics(),
-                    children: [
-                      _buildRequestContent(
-                          requestBloc.myProcessingRequestManage),
-                      _buildRequestContent(requestBloc.myHandledRequestManage),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        return ShimmerList.requestItem;
-      },
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          TabBar(
+            tabs: const [
+              Tab(child: Text(AppString.processing)),
+              Tab(child: Text(AppString.handled)),
+            ],
+            indicatorColor: AppColor.dartBlue,
+            onTap: (tabIndex) {
+              if (tabIndex == 0) {
+                requestBloc.onTabChange(TabRequest.processing);
+              } else {
+                requestBloc.onTabChange(TabRequest.handled);
+              }
+            },
+          ),
+          Expanded(
+              child: StreamBuilder<List<Request>>(
+            stream: requestBloc.listRequestStream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasError) {
+                final String error = snapshot.error.toString();
+                return Center(child: Text(error));
+              } else if (snapshot.hasData) {
+                final List<Request> myRequestManage = snapshot.data ?? [];
+                return _buildRequestContent(myRequestManage);
+              }
+              return ShimmerList.requestItem;
+            },
+          ))
+        ],
+      ),
     );
   }
 
-  ListView _buildRequestContent(List<Request> requests) {
+  Widget _buildRequestContent(List<Request> requests) {
     return ListView.builder(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 80),
+      physics: const BouncingScrollPhysics(),
       primary: false,
       shrinkWrap: true,
       itemCount: requests.length,

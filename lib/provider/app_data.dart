@@ -5,11 +5,13 @@ import 'package:manage_devices_app/model/user.dart' as model;
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
 
 class AppData extends ChangeNotifier {
-  model.User? currentUser;
+  model.User? _currentUser;
+  model.User? get currentUser => _currentUser;
   Future<void> getCurrentUser() async {
-    currentUser =
+    _currentUser =
         await UserMethod(firebaseFirestore: FirebaseFirestore.instance).getUser(
       FirebaseAuth.instance.currentUser!.uid,
     );
+    
   }
 }

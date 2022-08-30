@@ -8,6 +8,7 @@ class ShimmerList {
   static final deviceCard = ListView(
     shrinkWrap: true,
     primary: false,
+    physics: const NeverScrollableScrollPhysics(),
     padding: const EdgeInsets.all(8),
     children: const [
       Padding(
@@ -23,6 +24,7 @@ class ShimmerList {
   static final requestItem = ListView(
     shrinkWrap: true,
     primary: false,
+    physics: const NeverScrollableScrollPhysics(),
     padding: const EdgeInsets.all(8),
     children: const [
       RequestShimmer(),
@@ -44,6 +46,7 @@ class ShimmerList {
   static final listResult = ListView(
     shrinkWrap: true,
     primary: false,
+    physics: const NeverScrollableScrollPhysics(),
     padding: const EdgeInsets.all(8),
     children: const [
       ListResultShimmer(),

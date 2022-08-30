@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
               ? const AuthWrapper()
               : Provider<OnbroadBloc>(
                   create: (context) => OnbroadBloc(),
-                  dispose: (_, prov) => prov.dispose(),
                   child: const OnbroadPage(),
                 ),
         ),
