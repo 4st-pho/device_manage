@@ -46,6 +46,7 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (context) => Provider<MainPageBloc>(
             create: (context) => MainPageBloc(),
+            dispose: (_, prov) => prov.dispose(),
             child: const MainPage(),
           ),
         );
@@ -94,12 +95,13 @@ class RouteGenerator {
       case Routes.searchResultRoute:
         final args = routeSettings.arguments as SearchBloc;
         return MaterialPageRoute(
-            builder: (context) => Provider<SearchBloc>.value(
-                  value: args,
-                  builder: (context, _) {
-                    return const SearchResultPage();
-                  },
-                ));
+          builder: (context) => Provider<SearchBloc>.value(
+            value: args,
+            builder: (context, _) {
+              return const SearchResultPage();
+            },
+          ),
+        );
       case Routes.editDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
