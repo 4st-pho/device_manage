@@ -5,8 +5,10 @@ Color getStatusColor(RequestStatus requestStatus) {
   switch (requestStatus) {
     case RequestStatus.accept:
       return Colors.green;
-    case RequestStatus.refuse:
+    case RequestStatus.reject:
       return Colors.red;
+    case RequestStatus.disapproved:
+      return Colors.grey.shade800;
     case RequestStatus.pending:
       return Colors.blue;
     default:

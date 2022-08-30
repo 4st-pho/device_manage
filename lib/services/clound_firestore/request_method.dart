@@ -28,7 +28,7 @@ class RequestMethod {
     doc.update({'requestStatus': status.name});
   }
 
-  Stream<List<Request>> streamListRequest(Role role, String uid, String teamId) {
+  Stream<List<Request>> streamListRequest(String uid,Role role,  String teamId) {
     if (role == Role.user) {
       return streamListRequestUser(uid);
     } else if (role == Role.leader) {
@@ -49,7 +49,7 @@ class RequestMethod {
         .where('requestStatus', whereIn: [
           RequestStatus.accept.name,
           RequestStatus.approved.name,
-          RequestStatus.refuse.name
+          RequestStatus.reject.name
         ])
         .orderBy('createdAt', descending: true)
         .snapshots()

@@ -62,12 +62,11 @@ class DetailRequestPage extends StatelessWidget {
           if (currentUser!.role == Role.admin)
             Expanded(
               child: CustomButton(
-                text: AppString.refuse,
+                text: AppString.reject,
                 color: Colors.red,
                 onPressed: () =>
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(
-                            request.id, RequestStatus.refuse),
+                        .updateStatusRequest(request.id, RequestStatus.reject),
               ),
             ),
           if (currentUser.role == Role.admin) const SizedBox(width: 24),
@@ -79,7 +78,9 @@ class DetailRequestPage extends StatelessWidget {
                 onPressed: () =>
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
                         .updateStatusRequest(
-                            request.id, RequestStatus.approved),
+                  request.id,
+                  RequestStatus.approved,
+                ),
               ),
             ),
           if (currentUser.role == Role.admin)
@@ -88,8 +89,7 @@ class DetailRequestPage extends StatelessWidget {
                 text: AppString.accept,
                 onPressed: () =>
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(
-                            request.id, RequestStatus.accept),
+                        .updateStatusRequest(request.id, RequestStatus.accept),
               ),
             ),
         ],

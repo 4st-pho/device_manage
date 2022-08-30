@@ -1,3 +1,4 @@
+import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +18,14 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   void init() async {
     try {
-      await context.read<AppData>().getCurrentUser();
+      final appData = context.read<AppData>();
+      await appData.getCurrentUser();
+      final currentUser = appData.currentUser!;
+      SharedPreferencesMethod.saveUserUserCredential(
+        uid: currentUser.id,
+        role: currentUser.role,
+        teamId: currentUser.teamId,
+      );
     } catch (e) {
       AuthService(firebaseAuth: FirebaseAuth.instance).logOut(context);
       showSnackBar(context: context, content: e.toString(), error: true);

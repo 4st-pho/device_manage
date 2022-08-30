@@ -1,1 +1,0 @@
-- provider cung cap mot gia tri (thuong la data cua mot model) cho bat ky vi tri nao trong widget tree khi ma gia tri do thay doi  
