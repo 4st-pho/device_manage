@@ -29,6 +29,7 @@ class SharedPreferencesMethod {
     await prefs.setStringList(userCredentialKey, [uid, role.name, teamId]);
   }
 
+/// ListString [uid, role, teamId]
   static Future<List<String>> getUserUserCredential() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getStringList(userCredentialKey) ?? [];

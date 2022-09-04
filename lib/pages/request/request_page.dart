@@ -37,7 +37,7 @@ class RequestPage extends StatelessWidget {
             padding: const EdgeInsets.only(right: 4.0),
             child: IconButton(
               onPressed: () =>
-                  Navigator.of(context).pushNamed(Routes.createRequestRoute),
+                  Navigator.pushNamed(context, Routes.createRequestRoute),
               icon: const Icon(Icons.add),
             ),
           ),

@@ -23,6 +23,8 @@ class AppString {
   static const all = 'All';
   static const edit = 'Edit';
   static const recall = 'Recall';
+  static const createSuccess = 'Create success!';
+  static const selectAvailbleDevice = 'Please select availble device!';
   static const content = 'Content';
   static const age = 'Age';
   static const editProduct = 'Edit product';

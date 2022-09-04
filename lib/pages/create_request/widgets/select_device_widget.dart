@@ -7,7 +7,6 @@ import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +46,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
                     onChanged: _createRequestBloc.onCheckBoxNewDevice)
               ],
             ),
-            if (isChooseNewDevice) _buildSelectBox(),
+            if (isChooseNewDevice) _buildSelectAvailbleDevice(),
             if (!isChooseNewDevice) _buildSelectMyDevice()
           ],
         );
@@ -55,80 +54,68 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
-  Column _buildSelectMyDevice() {
-    final currentUser = context.read<AppData>().currentUser!;
+  Widget _buildSelectMyDevice() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(AppString.errorStatus),
         DropdownButtonFormField<ErrorStatus>(
             isExpanded: true,
-            value: _createRequestBloc.request.errorStatus,
+            value: _createRequestBloc.deviceErrorStatus,
+            validator: FormValidate().selectOption,
             decoration: const InputDecoration(
                 filled: true,
                 fillColor: AppColor.lightBlack,
                 border: OutlineInputBorder(),
                 enabledBorder: AppDecoration.outlineInputBorder,
                 focusedBorder: AppDecoration.focusOutlineInputBorder),
-            items: ErrorStatus.values
+            items: _createRequestBloc.listErrorStatus
                 .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
                 .toList(),
             onChanged: _createRequestBloc.changeErrorStatus),
         _buildLabel(AppString.device),
-        FutureBuilder<List<Device>>(
-          future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getListMyDeviveManage(
-                  currentUser.id, currentUser.teamId, currentUser.role),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text(snapshot.error.toString()));
-            } else if (snapshot.hasData) {
-              final listMyDeviceManage = snapshot.data ?? [];
-
-              return DropdownButtonFormField<Device>(
-                value: null,
-                isExpanded: true,
-                isDense: false,
-                validator: FormValidate().selectOption,
-                decoration: AppDecoration.inputDecoration,
-                items: listMyDeviceManage
-                    .map(
-                      (device) => DropdownMenuItem(
-                        value: device,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+        Consumer<List<Device>>(
+          builder: (context, listMyDeviceManage, _) =>
+              DropdownButtonFormField<Device>(
+            value: _createRequestBloc.myDevide,
+            isExpanded: true,
+            isDense: false,
+            validator: FormValidate().selectOption,
+            decoration: AppDecoration.inputDecoration,
+            items: listMyDeviceManage
+                .map(
+                  (device) => DropdownMenuItem(
+                    value: device,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            device.name,
+                            style: AppStyle.whiteText,
+                          ),
+                          Row(
                             children: [
-                              Text(
-                                device.name,
-                                style: AppStyle.whiteText,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(device.healthyStatus.name)),
-                                  Text(DateFormat('dd MMM yyyy')
-                                      .format(device.manufacturingDate))
-                                ],
-                              ),
+                              Expanded(child: Text(device.healthyStatus.name)),
+                              Text(DateFormat('dd MMM yyyy')
+                                  .format(device.manufacturingDate))
                             ],
                           ),
-                        ),
+                        ],
                       ),
-                    )
-                    .toList(),
-                onChanged: _createRequestBloc.changeDeviceId,
-              );
-            }
-            return Container();
-          },
+                    ),
+                  ),
+                )
+                .toList(),
+            onChanged: _createRequestBloc.changeDeviceId,
+          ),
         ),
       ],
     );
   }
 
-  Column _buildSelectBox() {
+  Widget _buildSelectAvailbleDevice() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,12 +139,11 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
                           child: Text(snapshot.error.toString()),
                         );
                       }
-                      final data = snapshot.data;
-                      if (data == null) {
-                        return const Spacer();
-                      }
+                      final device = snapshot.data;
+                      if (device == null) return const Spacer();
                       return Expanded(
-                        child: Text(data.name, overflow: TextOverflow.ellipsis),
+                        child:
+                            Text(device.name, overflow: TextOverflow.ellipsis),
                       );
                     }),
                 const SizedBox(width: 14),
@@ -170,7 +156,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
-  Future<dynamic> _showBottomSheetChooseValue() {
+  Future<void> _showBottomSheetChooseValue() {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -213,7 +199,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
-  Padding _buildLabel(String label) {
+  Widget _buildLabel(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(label, style: AppStyle.whiteText),

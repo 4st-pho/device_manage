@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
@@ -10,7 +11,12 @@ import 'package:manage_devices_app/services/clound_firestore/request_method.dart
 class CreateRequestBloc {
   Device? _avalbleDevice;
   Device? _myDevice;
-  bool _requestNewDevice = false;
+  ErrorStatus? _deviceErrorStatus;
+  bool _isRequestNewDevice = false;
+  List<ErrorStatus> listErrorStatus = [
+    ErrorStatus.software,
+    ErrorStatus.hardware
+  ];
   final request = Request(
     uid: '',
     id: '',
@@ -18,7 +24,7 @@ class CreateRequestBloc {
     title: '',
     content: '',
     requestStatus: RequestStatus.pending,
-    errorStatus: ErrorStatus.none,
+    errorStatus: ErrorStatus.software,
   );
   final StreamController<bool> _isRequestNewDeviceController =
       StreamController<bool>();
@@ -33,10 +39,12 @@ class CreateRequestBloc {
       _myDeviceManageController.stream;
   Device? get myDevide => _myDevice;
   Device? get avalbleDevice => _avalbleDevice;
+  bool get isRequestNewDevice => _isRequestNewDevice;
+  ErrorStatus? get deviceErrorStatus => _deviceErrorStatus;
 
   void onCheckBoxNewDevice(bool? value) {
-    _requestNewDevice = value ?? false;
-    _isRequestNewDeviceController.sink.add(_requestNewDevice);
+    _isRequestNewDevice = value ?? false;
+    _isRequestNewDeviceController.sink.add(_isRequestNewDevice);
   }
 
   void onChooseAvailbleDevice(Device? device) {
@@ -47,8 +55,11 @@ class CreateRequestBloc {
     }
   }
 
-  void changeErrorStatus(ErrorStatus? status) {
-    request.errorStatus = status!;
+  void changeErrorStatus(ErrorStatus? errorStatus) {
+    if (errorStatus != null) {
+      _deviceErrorStatus = errorStatus;
+      request.errorStatus = errorStatus;
+    }
   }
 
   void changeDeviceId(Device? device) {
@@ -58,18 +69,22 @@ class CreateRequestBloc {
     }
   }
 
-  void sendData(String title, String content, Role role) async {
-    if (_requestNewDevice) {
-      request.errorStatus = ErrorStatus.none;
-      if (_avalbleDevice == null) {}
+  Future<void> sendRequest(String title, String content) async {
+    if (isRequestNewDevice) {
+      request.errorStatus = ErrorStatus.noError;
     }
 
+    List<String> userUserCredential =
+        await SharedPreferencesMethod.getUserUserCredential();
+    final Role role = Role.values.byName(userUserCredential[1]);
+    final String uid = userUserCredential[0];
+    request.uid = uid;
     if (role == Role.leader) {
       request.requestStatus = RequestStatus.approved;
     }
-    request.title = title;
-    request.content = content;
-    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+    request.title = title.trim();
+    request.content = content.trim();
+    await RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
         .createRequest(request);
   }
 

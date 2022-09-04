@@ -3,16 +3,15 @@ import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
 
 class CustomButton extends StatelessWidget {
+  final String text;
+  final Color color;
+  final VoidCallback? onPressed;
   const CustomButton(
       {Key? key,
       required this.text,
       required this.onPressed,
       this.color = AppColor.dartBlue})
       : super(key: key);
-
-  final String text;
-  final Color color;
-  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

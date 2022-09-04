@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/role.dart';
+import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/device.dart';
 
 class DeviceMethod {
@@ -142,8 +143,12 @@ class DeviceMethod {
     return snapshot.docs.map((e) => Device.fromMap(e.data())).toList();
   }
 
-  Future<List<Device>> getListMyDeviveManage(
-      String uid, String teamId, Role role) async {
+  Future<List<Device>> getListMyDeviveManage() async {
+    final userCredential =
+        await SharedPreferencesMethod.getUserUserCredential();
+    final String uid = userCredential[0];
+    final Role role = Role.values.byName(userCredential[1]);
+    final String teamId = userCredential[2];
     List<Device> listMyDeviceManage =
         await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
             .getDeviceByOwnerId(uid);
