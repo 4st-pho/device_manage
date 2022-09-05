@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/load_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
+import 'package:manage_devices_app/bloc/pick_multi_image_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -122,7 +124,20 @@ class RouteGenerator {
       case Routes.editDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
-          builder: (context) => EditDevicePage(device: args),
+          builder: (context) => MultiProvider(providers: [
+            Provider<PickMultiImageBloc>(
+              create: (context) => PickMultiImageBloc(),
+              dispose: (_, prov) => prov.dispose(),
+            ),
+            Provider<EditDeviceBloc>(
+              create: (context) => EditDeviceBloc(),
+              dispose: (_, prov) => prov.dispose(),
+            ),
+            Provider<LoadBloc>(
+              create: (context) => LoadBloc(),
+              dispose: (_, prov) => prov.dispose(),
+            ),
+          ], child: EditDevicePage(device: args)),
         );
       case Routes.provideDeviceRoute:
         final args = routeSettings.arguments as Device;

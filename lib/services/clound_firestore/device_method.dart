@@ -71,6 +71,13 @@ class DeviceMethod {
     doc.update(map);
   }
 
+  Future<void> updateDeviceData(
+      String deviceId, Map<String, dynamic> data) async {
+    final doc =
+        firebaseFirestore.collection(AppCollectionPath.device).doc(deviceId);
+    doc.update(data);
+  }
+
   Future<void> deleteDevice(String id) async {
     final doc = firebaseFirestore.collection(AppCollectionPath.device).doc(id);
     await doc.delete();

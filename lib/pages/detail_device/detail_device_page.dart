@@ -1,3 +1,4 @@
+import 'package:manage_devices_app/pages/detail_device/widgets/detail_device_button.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/widgets/owner_info.dart';
@@ -10,7 +11,6 @@ import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/pages/admin/widgets/manage_device.dart';
 import 'package:manage_devices_app/widgets/text_divider.dart';
 
 class DetailDevicePage extends StatelessWidget {
@@ -25,90 +25,102 @@ class DetailDevicePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Container(
-          decoration: BoxDecoration(
-              color: Colors.black.withOpacity(.3),
-              borderRadius: BorderRadius.circular(50)),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.keyboard_backspace_outlined,
+        leading: Row(
+          children: [
+            const SizedBox(
+              width: 4,
             ),
-          ),
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(.3),
+                  borderRadius: BorderRadius.circular(50)),
+              child: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(
+                  Icons.keyboard_backspace_outlined,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      body: StreamBuilder<Device>(
-        stream: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .streamDevice(device.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            final String error = snapshot.error.toString();
-            return Center(
-              child: Text(error),
-            );
-          }
-          if (snapshot.hasData) {
-            final device = snapshot.data!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<Device>(
+              stream:
+                  DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+                      .streamDevice(device.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  final String error = snapshot.error.toString();
+                  return Center(
+                    child: Text(error),
+                  );
+                }
+                if (snapshot.hasData) {
+                  final deviceStream = snapshot.data!;
+                  return SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildImage(context),
+                        _buildImage(context, deviceStream),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildContentItem(
-                                  title: AppString.name, content: device.name),
+                                  title: AppString.name,
+                                  content: deviceStream.name),
                               _buildContentItem(
                                   title: AppString.type,
-                                  content: device.deviceType.name),
+                                  content: deviceStream.deviceType.name),
                               _buildContentItem(
                                   title: AppString.healthyStatus,
-                                  content: device.healthyStatus.name),
+                                  content: deviceStream.healthyStatus.name),
                               _buildContentItem(
-                                  title: AppString.info, content: device.info),
-                              if (device.transferDate != null)
+                                  title: AppString.info,
+                                  content: deviceStream.info),
+                              if (deviceStream.transferDate != null)
                                 _buildContentItem(
                                   title: AppString.transferDate,
                                   content: DateFormat('dd MMM yyyy')
-                                      .format(device.transferDate!),
+                                      .format(deviceStream.transferDate!),
                                 ),
                               _buildContentItem(
                                 title: AppString.manufacturingDate,
                                 content: DateFormat('dd MMM yyyy')
-                                    .format(device.manufacturingDate),
+                                    .format(deviceStream.manufacturingDate),
                               ),
-                              if (device.ownerId != null)
+                              if (deviceStream.ownerId != null)
                                 OwnerInfo(
-                                  ownerId: device.ownerId ?? '',
-                                  ownerType: device.ownerType,
+                                  ownerId: deviceStream.ownerId ?? '',
+                                  ownerType: deviceStream.ownerType,
                                 ),
                             ],
                           ),
                         )
                       ],
                     ),
-                  ),
-                ),
-                if (currentUser!.role == Role.admin)
-                  ManageDevice(device: device),
-              ],
-            );
-          }
-          return Container();
-        },
+                  );
+                }
+                return Container();
+              },
+            ),
+          ),
+          if (currentUser!.role == Role.admin)
+            DetailDeviceButton(device: device),
+        ],
       ),
     );
   }
 
-  Widget _buildImage(BuildContext context) {
+  Widget _buildImage(
+    BuildContext context,
+    Device deviceStream,
+  ) {
     final size = MediaQuery.of(context).size;
     return SizedBox(
       height: 300,
@@ -117,10 +129,10 @@ class DetailDevicePage extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        itemCount: device.imagePaths.length,
+        itemCount: deviceStream.imagePaths.length,
         itemBuilder: (BuildContext context, int index) {
           return Image.network(
-            device.imagePaths[index],
+            deviceStream.imagePaths[index],
             width: size.width,
             fit: BoxFit.cover,
           );
@@ -129,7 +141,7 @@ class DetailDevicePage extends StatelessWidget {
     );
   }
 
-  Column _buildContentItem({required String title, required String content}) {
+  Widget _buildContentItem({required String title, required String content}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

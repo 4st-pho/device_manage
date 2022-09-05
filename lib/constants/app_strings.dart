@@ -27,11 +27,13 @@ class AppString {
   static const createSuccess = 'Create success!';
   static const selectAvailbleDevice = 'Please select availble device!';
   static const deviceWillbeRecall = 'Device will be recall!';
+  static const updateSuccess = 'Update success!';
   static const content = 'Content';
   static const age = 'Age';
-  static const editProduct = 'Edit product';
+  static const editDevice = 'Edit device';
   static const cancel = 'Cancel';
-  static const deviceWillBeRecall = 'Device will be recall!';
+  static const deviceWillBeDelete = 'Device will be delete!';
+  static const requestWillBeReject = 'Request will be reject!';
   static const invalidAge = 'Invalid age!';
   static const requestNewDevices = 'Request new devices';
   static const createRequestForTeam = 'Create request for team';

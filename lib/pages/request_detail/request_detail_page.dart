@@ -115,7 +115,7 @@ class DetailRequestPage extends StatelessWidget {
               onPressed: () => showCustomDialog(
                   context: context,
                   title: AppString.confirm,
-                  content: AppString.deviceWillBeRecall,
+                  content: AppString.requestWillBeReject,
                   onAgree: () {
                     RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
                         .updateStatusRequest(request.id, RequestStatus.reject);
