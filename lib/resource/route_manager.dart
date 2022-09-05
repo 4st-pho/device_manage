@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/load_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
+import 'package:manage_devices_app/bloc/pick_date_bloc.dart';
 import 'package:manage_devices_app/bloc/pick_multi_image_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
@@ -100,7 +102,27 @@ class RouteGenerator {
         );
       case Routes.createDeviceRoute:
         return MaterialPageRoute(
-          builder: (context) => const CreateDevicePage(),
+          builder: (context) => MultiProvider(
+            providers: [
+              Provider<LoadBloc>(
+                create: (context) => LoadBloc(),
+                dispose: (_, prov) => prov.dispose(),
+              ),
+              Provider<CreateDeviceBloc>(
+                create: (context) => CreateDeviceBloc(),
+                dispose: (_, prov) => prov.dispose(),
+              ),
+              Provider<PickDateBloc>(
+                create: (context) => PickDateBloc(),
+                dispose: (_, prov) => prov.dispose(),
+              ),
+              Provider<PickMultiImageBloc>(
+                create: (context) => PickMultiImageBloc(),
+                dispose: (_, prov) => prov.dispose(),
+              ),
+            ],
+            child: const CreateDevicePage(),
+          ),
         );
       case Routes.myDevice:
         return MaterialPageRoute(

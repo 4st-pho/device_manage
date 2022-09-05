@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
-import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/device_type.dart';
 import 'package:manage_devices_app/enums/healthy_status.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
@@ -35,31 +33,22 @@ class CreateDeviceBloc {
   }
 
   Future<void> createDevice({
-    required GlobalKey<FormState> formKey,
     required String name,
     required String info,
     List<File>? files,
     DateTime? date,
   }) async {
-    if (formKey.currentState!.validate()) {
-      String error = '';
-      if (files == null) {
-        error += AppString.imageIsRequired;
-      }
-      if (date == null) {
-        error += '\n${AppString.dateIsRequired}';
-      }
-      if (error.isNotEmpty) {}
-      device.name = name.trim();
-      device.info = info.trim();
-      device.manufacturingDate = date!;
-      final imagesLink =
-          await StorageMethods(firebaseStorage: FirebaseStorage.instance)
-              .uploadAndGetImagesLink(AppCollectionPath.image, files!);
-      device.imagePaths = imagesLink;
+    device.name = name.trim();
+    device.info = info.trim();
+    device.manufacturingDate = date!;
+    final imagesLink =
+        await StorageMethods(firebaseStorage: FirebaseStorage.instance)
+            .uploadAndGetImagesLink(AppCollectionPath.image, files!);
+    device.imagePaths = imagesLink;
 
-      DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .createDevice(device);
-    }
+    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+        .createDevice(device);
   }
+
+  void dispose() {}
 }

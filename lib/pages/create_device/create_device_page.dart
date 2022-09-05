@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:manage_devices_app/bloc/load_bloc.dart';
+import 'package:manage_devices_app/helper/show_snackbar.dart';
+import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +29,8 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
   late final TextEditingController _nameController;
   late final TextEditingController _infoController;
   late final PickDateBloc _pickDateBloc;
-  late final createDeviceBloc = CreateDeviceBloc();
+  late final CreateDeviceBloc _createDeviceBloc;
+  late final LoadBloc _loadBloc;
   late final PickMultiImageBloc _pickMultiImageBloc;
   final _formKey = GlobalKey<FormState>();
   @override
@@ -34,57 +38,96 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
     super.initState();
     _nameController = TextEditingController();
     _infoController = TextEditingController();
-    _pickDateBloc = PickDateBloc();
-    _pickMultiImageBloc = PickMultiImageBloc();
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _infoController.dispose();
-    _pickDateBloc.dispose();
-    _pickMultiImageBloc.dispose();
-    super.dispose();
+    _pickDateBloc = context.read<PickDateBloc>();
+    _pickMultiImageBloc = context.read<PickMultiImageBloc>();
+    _createDeviceBloc = context.read<CreateDeviceBloc>();
+    _loadBloc = context.read<LoadBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(8),
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildNameTextField(),
-              _buildInfoTextField(),
-              _buildLabel('Device type'),
-              _buildDeviceTypeDropDown(),
-              _buildLabel('Healthy status'),
-              _buildHealthyStatusDropDown(),
-              _buildLabel('Manufacturing date'),
-              _buildPickDate(context),
-              _buildLabel('Pick images'),
-              _buildPickImage(),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: 'Create device',
-                onPressed: () {
-                  createDeviceBloc.createDevice(
-                    formKey: _formKey,
-                    name: _nameController.text,
-                    info: _infoController.text,
-                    date: _pickDateBloc.date,
-                    files: _pickMultiImageBloc.images,
-                  );
-                },
+      body: Column(
+        children: [
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(8),
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildNameTextField(),
+                    _buildInfoTextField(),
+                    _buildLabel(AppString.healthyStatus),
+                    _buildHealthyStatusDropDown(),
+                    _buildLabel(AppString.deviceType),
+                    _buildDeviceTypeDropDown(),
+                    _buildLabel(AppString.manufacturingDate),
+                    _buildPickDate(context),
+                    _buildLabel(AppString.pickImage),
+                    _buildPickImage(),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+          StreamBuilder<bool>(
+            stream: _loadBloc.loadStream,
+            initialData: false,
+            builder: (context, snapshot) {
+              final isLoading = snapshot.data ?? false;
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomButton(
+                  text: AppString.createDevice,
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
+                          _loadBloc.setLoadState(true);
+                          String error = '';
+                          if (_pickMultiImageBloc.images == null) {
+                            error += AppString.imageIsRequired;
+                          }
+                          if (_pickDateBloc.date == null) {
+                            error += '\n${AppString.dateIsRequired}';
+                          }
+                          if (error.isNotEmpty) {
+                            showSnackBar(
+                                context: context, content: error, error: true);
+                            _loadBloc.setLoadState(false);
+                            return;
+                          }
+
+                          _createDeviceBloc
+                              .createDevice(
+                            name: _nameController.text,
+                            info: _infoController.text,
+                            date: _pickDateBloc.date,
+                            files: _pickMultiImageBloc.images,
+                          )
+                              .catchError((error) {
+                            showSnackBar(
+                                context: context, content: error.toString());
+                            _loadBloc.setLoadState(false);
+                          }).then((value) {
+                            showSnackBar(
+                                context: context,
+                                content: AppString.createSuccess);
+                            Navigator.of(context).pop();
+                          });
+                        },
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -98,7 +141,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
       items: HealthyStatus.values
           .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
           .toList(),
-      onChanged: createDeviceBloc.onHealthyStatusChange,
+      onChanged: _createDeviceBloc.onHealthyStatusChange,
     );
   }
 
@@ -110,7 +153,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
       items: DeviceType.values
           .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
           .toList(),
-      onChanged: createDeviceBloc.onDeviceTypeChange,
+      onChanged: _createDeviceBloc.onDeviceTypeChange,
     );
   }
 
@@ -140,7 +183,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
     );
   }
 
-  Row _buildPickDate(BuildContext context) {
+  Widget _buildPickDate(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -168,7 +211,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
     );
   }
 
-  Wrap _buildPickImage() {
+  Widget _buildPickImage() {
     return Wrap(
       children: [
         StreamBuilder<List<File>?>(
@@ -191,7 +234,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
     );
   }
 
-  Padding _buildSelectImageIcon() {
+  Widget _buildSelectImageIcon() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
