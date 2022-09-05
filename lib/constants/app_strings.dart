@@ -26,6 +26,7 @@ class AppString {
   static const recall = 'Recall';
   static const createSuccess = 'Create success!';
   static const selectAvailbleDevice = 'Please select availble device!';
+  static const deviceWillbeRecall = 'Device will be recall!';
   static const content = 'Content';
   static const age = 'Age';
   static const editProduct = 'Edit product';

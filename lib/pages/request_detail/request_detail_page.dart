@@ -1,4 +1,5 @@
 import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/helper/show_dialog.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';
 import 'package:manage_devices_app/widgets/owner_info.dart';
@@ -109,14 +110,18 @@ class DetailRequestPage extends StatelessWidget {
       children: [
         Expanded(
           child: CustomButton(
-            text: AppString.reject,
-            color: Colors.red,
-            onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.reject);
-              Navigator.of(context).pop();
-            },
-          ),
+              text: AppString.reject,
+              color: Colors.red,
+              onPressed: () => showCustomDialog(
+                  context: context,
+                  title: AppString.confirm,
+                  content: AppString.deviceWillBeRecall,
+                  onAgree: () {
+                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+                        .updateStatusRequest(request.id, RequestStatus.reject);
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  })),
         ),
         const SizedBox(width: 24),
         Expanded(
