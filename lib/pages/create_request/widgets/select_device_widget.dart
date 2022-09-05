@@ -5,8 +5,10 @@ import 'package:manage_devices_app/constants/app_decoration.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/model/device.dart';
+import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +48,25 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
                     onChanged: _createRequestBloc.onCheckBoxNewDevice)
               ],
             ),
+            if (isChooseNewDevice &&
+                context.read<AppData>().currentUser?.role == Role.leader)
+              StreamBuilder<bool>(
+                stream: _createRequestBloc.isRequestFromTeamStream,
+                initialData: false,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  final bool isRequestFromTeam = snapshot.data ?? false;
+                  return Row(
+                    children: [
+                      const Text(AppString.createRequestForTeam),
+                      Checkbox(
+                        activeColor: Colors.blue,
+                        value: isRequestFromTeam,
+                        onChanged: _createRequestBloc.onCheckRequestFromTeam,
+                      )
+                    ],
+                  );
+                },
+              ),
             if (isChooseNewDevice) _buildSelectAvailbleDevice(),
             if (!isChooseNewDevice) _buildSelectMyDevice()
           ],

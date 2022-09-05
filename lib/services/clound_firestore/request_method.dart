@@ -28,7 +28,8 @@ class RequestMethod {
     doc.update({'requestStatus': status.name});
   }
 
-  Stream<List<Request>> streamListRequest(String uid,Role role,  String teamId) {
+  Stream<List<Request>> streamListRequest(
+      String uid, Role role, String teamId) {
     if (role == Role.user) {
       return streamListRequestUser(uid);
     } else if (role == Role.leader) {
@@ -62,19 +63,20 @@ class RequestMethod {
     List<String> memberIds =
         await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
             .getAllUserIdSameTeam(teamId);
+    memberIds.add(teamId);
     yield* firebaseFirestore
         .collection(AppCollectionPath.request)
-        .where('uid', whereIn: memberIds)
+        .where('ownerId', whereIn: memberIds)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
             (snap) => snap.docs.map((e) => Request.fromMap(e.data())).toList());
   }
 
-  Stream<List<Request>> streamListRequestUser(String uid) {
+  Stream<List<Request>> streamListRequestUser(String ownerId) {
     return firebaseFirestore
         .collection(AppCollectionPath.request)
-        .where('uid', isEqualTo: uid)
+        .where('ownerId', isEqualTo: ownerId)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(

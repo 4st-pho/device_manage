@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,12 +14,13 @@ class CreateRequestBloc {
   Device? _myDevice;
   ErrorStatus? _deviceErrorStatus;
   bool _isRequestNewDevice = false;
+  bool _isRequestFromTeam = false;
   List<ErrorStatus> listErrorStatus = [
     ErrorStatus.software,
     ErrorStatus.hardware
   ];
   final request = Request(
-    uid: '',
+    ownerId: '',
     id: '',
     deviceId: '',
     title: '',
@@ -28,6 +30,8 @@ class CreateRequestBloc {
   );
   final StreamController<bool> _isRequestNewDeviceController =
       StreamController<bool>();
+  final StreamController<bool> _isRequestFromTeamController =
+      StreamController<bool>.broadcast();
   final StreamController<List<Device>> _myDeviceManageController =
       StreamController<List<Device>>.broadcast();
   final StreamController<Device?> _availbleDeviceController =
@@ -35,6 +39,8 @@ class CreateRequestBloc {
   Stream<Device?> get availbleDeviceStream => _availbleDeviceController.stream;
   Stream<bool> get isRequestNewDeviceStream =>
       _isRequestNewDeviceController.stream;
+  Stream<bool> get isRequestFromTeamStream =>
+      _isRequestFromTeamController.stream;
   Stream<List<Device>> get myDeviceManageStream =>
       _myDeviceManageController.stream;
   Device? get myDevide => _myDevice;
@@ -43,8 +49,17 @@ class CreateRequestBloc {
   ErrorStatus? get deviceErrorStatus => _deviceErrorStatus;
 
   void onCheckBoxNewDevice(bool? value) {
-    _isRequestNewDevice = value ?? false;
-    _isRequestNewDeviceController.sink.add(_isRequestNewDevice);
+    if (value != null) {
+      _isRequestNewDevice = value;
+      _isRequestNewDeviceController.sink.add(_isRequestNewDevice);
+    }
+  }
+
+  void onCheckRequestFromTeam(bool? value) {
+    if (value != null) {
+      _isRequestFromTeam = value;
+      _isRequestFromTeamController.sink.add(_isRequestFromTeam);
+    }
   }
 
   void onChooseAvailbleDevice(Device? device) {
@@ -70,15 +85,20 @@ class CreateRequestBloc {
   }
 
   Future<void> sendRequest(String title, String content) async {
-    if (isRequestNewDevice) {
-      request.errorStatus = ErrorStatus.noError;
-    }
-
     List<String> userUserCredential =
         await SharedPreferencesMethod.getUserUserCredential();
     final Role role = Role.values.byName(userUserCredential[1]);
     final String uid = userUserCredential[0];
-    request.uid = uid;
+    final String teamId = userUserCredential[2];
+    request.ownerId = uid;
+    request.ownerType = OwnerType.user;
+    if (_isRequestNewDevice) {
+      request.errorStatus = ErrorStatus.noError;
+    }
+    if (_isRequestFromTeam && _isRequestNewDevice) {
+      request.ownerId = teamId;
+      request.ownerType = OwnerType.team;
+    }
     if (role == Role.leader) {
       request.requestStatus = RequestStatus.approved;
     }
@@ -89,6 +109,7 @@ class CreateRequestBloc {
   }
 
   void dispose() {
+    _isRequestFromTeamController.close();
     _availbleDeviceController.close();
     _myDeviceManageController.close();
     _isRequestNewDeviceController.close();

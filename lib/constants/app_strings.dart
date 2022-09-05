@@ -16,6 +16,7 @@ class AppString {
   static const confirm = 'Confirm';
   static const delete = 'Delete';
   static const getStarted = 'Get Started';
+  static const deviceType = 'Device type';
   static const next = 'Next';
   static const processing = 'Processing';
   static const pickImage = 'Pick image';
@@ -32,10 +33,12 @@ class AppString {
   static const deviceWillBeRecall = 'Device will be recall!';
   static const invalidAge = 'Invalid age!';
   static const requestNewDevices = 'Request new devices';
+  static const createRequestForTeam = 'Create request for team';
   static const enterValue = 'Please enter value!';
   static const searchAvalbleDevices = 'Search avalble devices';
   static const searchTeamDevices = 'Search team devices';
   static const searchUserDevices = 'Search user devices';
+  static const requestNewDevice = 'Request new device';
   static const chooseTeam = 'Choose team';
   static const chooseUser = 'Choose user';
   static const ok = 'Ok';

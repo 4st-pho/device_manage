@@ -78,8 +78,8 @@ class _EditDevicePageState extends State<EditDevicePage> {
                       validator: FormValidate().contentValidate,
                       onChanged: _editDeviceBloc.onInfoChange,
                     ),
-                    _buildDeviceTypeDropDown('Device type'),
-                    _buildHealthStatusDropDown('Health Status'),
+                    _buildDeviceTypeDropDown(AppString.deviceType),
+                    _buildHealthStatusDropDown(AppString.healthyStatus),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Text(AppString.pickImage),
@@ -149,7 +149,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
     );
   }
 
-  Wrap _buildPickImage() {
+  Widget _buildPickImage() {
     return Wrap(
       children: [
         StreamBuilder<List<File>?>(
@@ -172,7 +172,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
     );
   }
 
-  Padding _buildSelectImageIcon() {
+  Widget _buildSelectImageIcon() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(

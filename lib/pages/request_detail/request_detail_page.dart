@@ -1,4 +1,7 @@
+import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:manage_devices_app/widgets/base_info.dart';
+import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +12,8 @@ import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
-import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_divider.dart';
@@ -36,11 +37,18 @@ class DetailRequestPage extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  _buildUserInfo(),
-                  const SizedBox(height: 40),
-                  _buildRequestInfo(),
-                  _buildDeviceInfo(),
-                  const SizedBox(height: 16),
+                  OwnerInfo(
+                    ownerId: request.ownerId,
+                    ownerType: request.ownerType,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: _buildRequestInfo(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: _buildDeviceInfo(),
+                  ),
                 ],
               ),
             ),
@@ -53,47 +61,83 @@ class DetailRequestPage extends StatelessWidget {
     );
   }
 
-  Padding _buildButtom(BuildContext context) {
-    final currentUser = context.read<AppData>().currentUser;
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          if (currentUser!.role == Role.admin)
-            Expanded(
-              child: CustomButton(
-                text: AppString.reject,
-                color: Colors.red,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.reject),
-              ),
-            ),
-          if (currentUser.role == Role.admin) const SizedBox(width: 24),
-          if (currentUser.role == Role.leader &&
-              request.requestStatus == RequestStatus.pending)
-            Expanded(
-              child: CustomButton(
-                text: AppString.approved,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(
-                  request.id,
-                  RequestStatus.approved,
-                ),
-              ),
-            ),
-          if (currentUser.role == Role.admin)
-            Expanded(
-              child: CustomButton(
-                text: AppString.accept,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.accept),
-              ),
-            ),
-        ],
-      ),
+  Widget _buildButtom(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser!;
+    final role = currentUser.role;
+    final requestStatus = request.requestStatus;
+    return role == Role.admin
+        ? Padding(
+            padding: const EdgeInsets.all(12), child: _buildAdminButon(context))
+        : (role == Role.leader && requestStatus == RequestStatus.pending)
+            ? Padding(
+                padding: const EdgeInsets.all(12),
+                child: _buildLeaderButton(context),
+              )
+            : Container();
+  }
+
+  Widget _buildLeaderButton(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomButton(
+            text: AppString.disapproved,
+            onPressed: () {
+              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+                  .updateStatusRequest(request.id, RequestStatus.disapproved);
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          child: CustomButton(
+            text: AppString.approved,
+            onPressed: () {
+              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+                  .updateStatusRequest(request.id, RequestStatus.approved);
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdminButon(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomButton(
+            text: AppString.reject,
+            color: Colors.red,
+            onPressed: () {
+              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+                  .updateStatusRequest(request.id, RequestStatus.reject);
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          child: CustomButton(
+            text: AppString.accept,
+            onPressed: () {
+              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
+                  .updateStatusRequest(request.id, RequestStatus.accept);
+              if (request.errorStatus == ErrorStatus.noError) {
+                DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+                    .provideDevice(
+                  id: request.deviceId,
+                  ownerId: request.ownerId,
+                  ownerType: request.ownerType,
+                );
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -104,11 +148,11 @@ class DetailRequestPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final device = snapshot.data!;
-          return _buildInfo(
+          return BaseInfo(
               imagePath: device.imagePaths[0],
-              text1: device.name,
-              text2: '',
-              text3: '');
+              text1: 'Name: ${device.name}',
+              text2: 'Type: ${device.deviceType.name}',
+              text3: 'Healthy status : ${device.healthyStatus.name}');
         } else if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -130,63 +174,11 @@ class DetailRequestPage extends StatelessWidget {
         const TextDivider(text: AppString.content),
         Text(request.content, style: AppStyle.whiteText),
         const TextDivider(text: AppString.errorStatus),
-        Text(request.errorStatus.name, style: AppStyle.whiteText),
-      ],
-    );
-  }
-
-  FutureBuilder<User> _buildUserInfo() {
-    return FutureBuilder<User>(
-      future: UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getUser(request.uid),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final user = snapshot.data!;
-          return _buildInfo(
-              imagePath: user.avatar,
-              text1: user.name,
-              text2: 'Age: ${user.age}',
-              text3: 'Address: ${user.address}');
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
-        }
-        return ShimmerList.requestInfo;
-      },
-    );
-  }
-
-  Row _buildInfo(
-      {required String imagePath,
-      required String text1,
-      required String text2,
-      required String text3}) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Image.network(
-            imagePath,
-            height: 150,
-            fit: BoxFit.contain,
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                text1.toUpperCase(),
-                style: AppStyle.blueTitle,
-              ),
-              Text(text2, style: AppStyle.whiteText),
-              Text(text3, style: AppStyle.whiteText),
-            ],
-          ),
-        ),
+        Text(
+            request.errorStatus == ErrorStatus.noError
+                ? AppString.requestNewDevice
+                : request.errorStatus.name,
+            style: AppStyle.whiteText),
       ],
     );
   }
