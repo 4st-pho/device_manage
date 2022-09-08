@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/load_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
@@ -66,9 +65,7 @@ class RouteGenerator {
                 dispose: (_, prov) => prov.dispose(),
               ),
               FutureProvider<List<Device>>(
-                create: (context) =>
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .getListMyDeviveManage(),
+                create: (context) => DeviceService().getListMyDeviveManage(),
                 initialData: const [],
               ),
               Provider<LoadBloc>(

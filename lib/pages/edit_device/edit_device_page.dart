@@ -50,7 +50,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppString.editProduct),
+        title: const Text(AppString.editDevice),
         elevation: 0,
       ),
       body: Column(

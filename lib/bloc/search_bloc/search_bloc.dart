@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/search_filter.dart';
@@ -39,9 +38,7 @@ class SearchBloc {
   List<Device> get currentDevices => _currentDevices;
   List<SearchFilter> get searchFilter => _searchFilter;
   Future<void> getAndSetAlldevice() async {
-    allDevice =
-        await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getAllDevice();
+    allDevice = await DeviceService().getAllDevice();
   }
 
   SearchBloc() {

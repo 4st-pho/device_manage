@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_icon.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
-import 'package:manage_devices_app/helper/show_snackbar.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:manage_devices_app/pages/login/widgets/email_text_form_field.dart';
 import 'package:manage_devices_app/pages/login/widgets/password_text_form_field.dart';
 import 'package:manage_devices_app/services/clound_firestore/auth_service.dart';
@@ -61,7 +61,7 @@ class _LoginGogolePageState extends State<LoginPage> {
                     password: _passwordController.text,
                   )
                       .catchError((e) {
-                    showSnackBar(context: context, content: e.toString());
+                    showCustomSnackBar(context: context, content: e.toString());
                   });
                 },
               ),

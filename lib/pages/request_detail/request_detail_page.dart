@@ -64,9 +64,8 @@ class DetailRequestPage extends StatelessWidget {
               child: CustomButton(
                 text: AppString.reject,
                 color: Colors.red,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.reject),
+                onPressed: () => RequestService()
+                    .updateRequestStatus(request.id, RequestStatus.reject),
               ),
             ),
           if (currentUser.role == Role.admin) const SizedBox(width: 24),
@@ -75,9 +74,7 @@ class DetailRequestPage extends StatelessWidget {
             Expanded(
               child: CustomButton(
                 text: AppString.approved,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(
+                onPressed: () => RequestService().updateRequestStatus(
                   request.id,
                   RequestStatus.approved,
                 ),
@@ -87,9 +84,8 @@ class DetailRequestPage extends StatelessWidget {
             Expanded(
               child: CustomButton(
                 text: AppString.accept,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.accept),
+                onPressed: () => RequestService()
+                    .updateRequestStatus(request.id, RequestStatus.accept),
               ),
             ),
         ],
@@ -99,8 +95,7 @@ class DetailRequestPage extends StatelessWidget {
 
   FutureBuilder<Device> _buildDeviceInfo() {
     return FutureBuilder<Device>(
-      future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getDevice(request.deviceId),
+      future: DeviceService().getDevice(request.deviceId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final device = snapshot.data!;
@@ -138,7 +133,7 @@ class DetailRequestPage extends StatelessWidget {
   FutureBuilder<User> _buildUserInfo() {
     return FutureBuilder<User>(
       future: UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getUser(request.uid),
+          .getUser(request.ownerId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final user = snapshot.data!;
