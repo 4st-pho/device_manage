@@ -76,16 +76,13 @@ class ManageDeviceBloc {
   }
 
   Future<void> recallDevice(BuildContext context, String id) async {
-    await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .recallDevice(id);
+    await DeviceService().recallDevice(id);
     init();
   }
 
   Future<void> searchUserDevice() async {
     if (keywork.isEmpty) {
-      devices =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getAllUserDevice();
+      devices = await DeviceService().getAllUserDevice();
       return;
     }
     filterUser = allUser
@@ -93,18 +90,14 @@ class ManageDeviceBloc {
         .toList();
     userIds = filterUser.map((e) => e.id).toList();
     for (var e in userIds) {
-      listDevice =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getOwnerDevices(e);
+      listDevice = await DeviceService().getOwnerDevices(e);
       devices = [...devices, ...listDevice];
     }
   }
 
   Future<void> searchTeamDevice() async {
     if (keywork.isEmpty) {
-      devices =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getAllTeamDevice();
+      devices = await DeviceService().getAllTeamDevice();
       return;
     }
     filterTeam = allTeam
@@ -112,22 +105,17 @@ class ManageDeviceBloc {
         .toList();
     teamiIds = filterTeam.map((e) => e.id).toList();
     for (var e in teamiIds) {
-      final device =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getOwnerDevices(e);
+      final device = await DeviceService().getOwnerDevices(e);
       devices = [...devices, ...device];
     }
   }
 
   Future<void> searchDevice() async {
     if (keywork.trim().isEmpty) {
-      devices =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getAvailableDevice();
+      devices = await DeviceService().getAvailableDevice();
       return;
     }
-    devices = await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .getAllDevice();
+    devices = await DeviceService().getAllDevice();
     devices = devices.where((e) => e.ownerId == null).toList();
     devices = devices
         .where((team) => team.name.trim().toLowerCase().contains(keywork))

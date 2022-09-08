@@ -16,18 +16,14 @@ class SearchResultBloc {
     init();
   }
   Future<void> init() async {
-    await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .getDeviceByName(keywork)
-        .then((value) {
+    await DeviceService().getDeviceByName(keywork).then((value) {
       devices = [...devices, ...value];
     });
     userIds = await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
         .getUserIdByName(keywork);
     // ignore: avoid_function_literals_in_foreach_calls
     userIds.forEach((e) async {
-      await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getOwnerDevices(e)
-          .then((value) {
+      await DeviceService().getOwnerDevices(e).then((value) {
         devices = [...devices, ...value];
       });
     });
@@ -35,9 +31,7 @@ class SearchResultBloc {
         .getTeamIdByName(keywork);
     // ignore: avoid_function_literals_in_foreach_calls
     teamiIds.forEach((e) async {
-      await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getOwnerDevices(e)
-          .then((value) {
+      await DeviceService().getOwnerDevices(e).then((value) {
         devices = [...devices, ...value];
       });
     });

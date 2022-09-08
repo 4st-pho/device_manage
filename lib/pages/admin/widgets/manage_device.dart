@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/model/device.dart';
@@ -33,8 +32,7 @@ class ManageDevice extends StatelessWidget {
                   text: AppString.recall,
                   onPressed: () {
                     Navigator.of(context).pop();
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .recallDevice(device.id);
+                    DeviceService().recallDevice(device.id);
                   }),
             ),
           if (!isOwner)
@@ -44,8 +42,7 @@ class ManageDevice extends StatelessWidget {
                 text: AppString.delete,
                 onPressed: () {
                   Navigator.of(context).pop();
-                  DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                      .deleteDevice( device.id);
+                  DeviceService().deleteDevice(device.id);
                 },
               ),
             ),

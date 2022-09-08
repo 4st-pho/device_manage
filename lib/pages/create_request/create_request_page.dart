@@ -1,5 +1,4 @@
-import 'package:manage_devices_app/bloc/load_bloc.dart';
-import 'package:manage_devices_app/helper/show_snackbar.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:manage_devices_app/pages/create_request/widgets/select_device_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +19,34 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late final CreateRequestBloc _createRequestBloc;
-  late final LoadBloc _loadBloc;
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> onHandled() async {
+    bool isvalidData = _formKey.currentState!.validate() &&
+        _createRequestBloc.validateAvailbleDevice();
+    if (isvalidData) {
+      _createRequestBloc.sendRequest().then((value) {
+        showCustomSnackBar(context: context, content: AppString.createSuccess);
+        Navigator.of(context).pop();
+      }).catchError(
+        (error) {
+          showCustomSnackBar(
+              context: context, content: error.toString(), error: true);
+        },
+      );
+    } else {
+      showCustomSnackBar(
+        context: context,
+        content: AppString.pleaseEnterFullData,
+        error: true,
+      );
+    }
+  }
+
   @override
   void initState() {
     _titleController = TextEditingController();
     _contentController = TextEditingController();
-    _loadBloc = LoadBloc();
     _createRequestBloc = context.read<CreateRequestBloc>();
     super.initState();
   }
@@ -65,12 +85,14 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                         controller: _titleController,
                         type: TextInputType.multiline,
                         validator: FormValidate().titleValidate,
+                        onChanged: _createRequestBloc.onTitleChange,
                       ),
                       CustomTextFormField(
                         laber: AppString.content,
                         controller: _contentController,
                         type: TextInputType.multiline,
                         validator: FormValidate().contentValidate,
+                        onChanged: _createRequestBloc.onContentChange,
                       ),
                       const SelectDeviceWidget(),
                       const SizedBox(height: 40),
@@ -88,43 +110,13 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: StreamBuilder<bool>(
-        stream: _loadBloc.loadStream,
+        stream: _createRequestBloc.loadStream,
         initialData: false,
         builder: (context, snapshot) {
           final isLoading = snapshot.data ?? false;
           return CustomButton(
             text: AppString.send,
-            onPressed: isLoading
-                ? null
-                : () async {
-                    if (_formKey.currentState!.validate()) {
-                      _loadBloc.setLoadState(true);
-                      if (_createRequestBloc.isRequestNewDevice &&
-                          _createRequestBloc.avalbleDevice == null) {
-                        showSnackBar(
-                          context: context,
-                          content: AppString.selectAvailbleDevice,
-                          error: true,
-                        );
-                        _loadBloc.setLoadState(false);
-                        return;
-                      }
-                      _createRequestBloc
-                          .sendRequest(
-                              _titleController.text, _contentController.text)
-                          .then((value) {
-                        showSnackBar(
-                            context: context, content: AppString.createSuccess);
-                        Navigator.of(context).pop();
-                      }).catchError((error) {
-                        _loadBloc.setLoadState(false);
-                        showSnackBar(
-                            context: context,
-                            content: error.toString(),
-                            error: true);
-                      });
-                    }
-                  },
+            onPressed: isLoading ? null : () => onHandled(),
           );
         },
       ),

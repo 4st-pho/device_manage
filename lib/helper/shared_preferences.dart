@@ -1,37 +1,34 @@
-import 'package:manage_devices_app/enums/role.dart';
+import 'dart:convert';
+
+import 'package:manage_devices_app/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesMethod {
   static const String skipOnbroadingKey = "skipOnbroadingKey";
   static const String userCredentialKey = "userCredentialKey";
 
-  static void setBool({required String key, required bool value}) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(key, value);
-  }
-
-  static Future<bool> getBool({required String key}) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(key) ?? false;
-  }
-
+  /// Save skip onbroad and  make sure user can see it only one time
   static void saveSkipOnbroading() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(skipOnbroadingKey, true);
   }
 
+  /// check is skip obroad
   static Future<bool> getSkipOnbroading() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(skipOnbroadingKey) ?? false;
   }
-    static void saveUserUserCredential({required String uid, required Role role, required String teamId}) async {
+
+  /// save user data to use for method need it
+  static void saveUserCredential(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(userCredentialKey, [uid, role.name, teamId]);
+    await prefs.setString(userCredentialKey, jsonEncode(user.toMap()));
   }
 
-/// ListString [uid, role, teamId]
-  static Future<List<String>> getUserUserCredential() async {
+  /// get current user from local
+  static Future<User> getCurrentUserFromLocal() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList(userCredentialKey) ?? [];
+    final userData = prefs.getString(userCredentialKey);
+    return User.fromMap(jsonDecode(userData!));
   }
 }
