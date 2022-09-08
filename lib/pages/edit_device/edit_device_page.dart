@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:manage_devices_app/bloc/load_bloc.dart';
-import 'package:manage_devices_app/helper/show_snackbar.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
@@ -121,10 +121,10 @@ class _EditDevicePageState extends State<EditDevicePage> {
                                   .done(
                                       _pickMultiImageBloc.images, widget.device)
                                   .catchError((error) {
-                                showSnackBar(context: context, content: error);
+                                showCustomSnackBar(context: context, content: error);
                                 _loadBloc.setLoadState(false);
                               }).then((value) {
-                                showSnackBar(
+                                showCustomSnackBar(
                                     context: context,
                                     content: AppString.updateSuccess);
                                 Navigator.of(context).pop();

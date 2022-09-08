@@ -88,6 +88,7 @@ class AppString {
   static const disapproved = 'Disapproved';
   static const allrequest = 'All request';
   static const manufacturingDate = 'Manufacturing date';
+  static const pleaseEnterFullData = 'Please enter full data!';
   static const noRouteFound = 'NO ROUTE FOUND';
   static const transferDate = 'TRANSFERDATE';
   static const requestDetail = 'Request detail';

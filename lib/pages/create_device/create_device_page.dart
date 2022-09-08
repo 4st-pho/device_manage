@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:manage_devices_app/bloc/load_bloc.dart';
-import 'package:manage_devices_app/helper/show_snackbar.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
@@ -99,7 +99,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
                             error += '\n${AppString.dateIsRequired}';
                           }
                           if (error.isNotEmpty) {
-                            showSnackBar(
+                            showCustomSnackBar(
                                 context: context, content: error, error: true);
                             _loadBloc.setLoadState(false);
                             return;
@@ -113,11 +113,11 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
                             files: _pickMultiImageBloc.images,
                           )
                               .catchError((error) {
-                            showSnackBar(
+                            showCustomSnackBar(
                                 context: context, content: error.toString());
                             _loadBloc.setLoadState(false);
                           }).then((value) {
-                            showSnackBar(
+                            showCustomSnackBar(
                                 context: context,
                                 content: AppString.createSuccess);
                             Navigator.of(context).pop();

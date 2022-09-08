@@ -30,13 +30,9 @@ class _MainPageState extends State<MainPage> {
     _mainPageBloc = context.read<MainPageBloc>();
   }
 
-  @override
-  void dispose() {
-    _mainPageBloc.dispose();
-    super.dispose();
-  }
 
   List<Widget> pages(BuildContext context) {
+    //
     final currentUser = context.read<AppData>().currentUser;
     return [
       currentUser!.role == Role.admin
@@ -65,7 +61,7 @@ class _MainPageState extends State<MainPage> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       body: StreamBuilder<int>(
-        stream: _mainPageBloc.stream,
+        stream: _mainPageBloc.pageIndexStream,
         initialData: 0,
         builder: (context, snapshot) {
           return pages(context)[snapshot.data!];

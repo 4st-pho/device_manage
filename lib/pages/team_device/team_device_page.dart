@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
@@ -10,8 +9,8 @@ import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/device_card.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class TeamDevicePage extends StatelessWidget {
+  const TeamDevicePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +29,8 @@ class HomePage extends StatelessWidget {
     return SliverToBoxAdapter(
       child: FutureBuilder<List<Device>>(
         initialData: const [],
-        future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getOwnerDevices(ctx.read<AppData>().currentUser!.teamId),
+        future: DeviceService()
+            .getOwnerDevices(ctx.read<AppData>().currentUser!.id),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final userDevices = snapshot.data as List<Device>;

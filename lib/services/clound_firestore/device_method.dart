@@ -5,11 +5,8 @@ import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/device.dart';
 
-class DeviceMethod {
-  final FirebaseFirestore firebaseFirestore;
-  DeviceMethod({
-    required this.firebaseFirestore,
-  });
+class DeviceService {
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future<List<Device>> getDeviceByOwnerId(String id) async {
     final doc = firebaseFirestore
@@ -152,18 +149,13 @@ class DeviceMethod {
 
   Future<List<Device>> getListMyDeviveManage() async {
     final userCredential =
-        await SharedPreferencesMethod.getUserUserCredential();
-    final String uid = userCredential[0];
-    final Role role = Role.values.byName(userCredential[1]);
-    final String teamId = userCredential[2];
+        await SharedPreferencesMethod.getCurrentUserFromLocal();
     List<Device> listMyDeviceManage =
-        await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getDeviceByOwnerId(uid);
+        await getDeviceByOwnerId(userCredential.id);
     List<Device> listMyTeamDevice = [];
-    if (role == Role.leader) {
+    if (userCredential.role == Role.leader) {
       listMyTeamDevice =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getDeviceByOwnerId(teamId);
+          await getDeviceByOwnerId(userCredential.teamId);
     }
     listMyDeviceManage.addAll(listMyTeamDevice);
     return listMyDeviceManage;

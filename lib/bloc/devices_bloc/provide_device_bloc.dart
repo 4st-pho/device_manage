@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 
@@ -21,11 +20,11 @@ class ProviceDeviceBloc {
     }
   }
 
-  void submit( dynamic owner) {
+  void submit(dynamic owner) {
     if (owner == null) {
       return;
     }
-    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance).provideDevice(
+    DeviceService().provideDevice(
       id: deviceId,
       ownerId: owner.id,
       ownerType: isChooseUser ? OwnerType.user : OwnerType.team,

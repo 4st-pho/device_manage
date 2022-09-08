@@ -1,10 +1,9 @@
 import 'package:manage_devices_app/enums/error_status.dart';
-import 'package:manage_devices_app/helper/show_dialog.dart';
+import 'package:manage_devices_app/helper/show_custom_dialog.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';
 import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
@@ -84,8 +83,8 @@ class DetailRequestPage extends StatelessWidget {
           child: CustomButton(
             text: AppString.disapproved,
             onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.disapproved);
+              RequestService()
+                  .updateRequestStatus(request.id, RequestStatus.disapproved);
               Navigator.of(context).pop();
             },
           ),
@@ -95,8 +94,8 @@ class DetailRequestPage extends StatelessWidget {
           child: CustomButton(
             text: AppString.approved,
             onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.approved);
+              RequestService()
+                  .updateRequestStatus(request.id, RequestStatus.approved);
               Navigator.of(context).pop();
             },
           ),
@@ -117,8 +116,8 @@ class DetailRequestPage extends StatelessWidget {
                   title: AppString.confirm,
                   content: AppString.requestWillBeReject,
                   onAgree: () {
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.reject);
+                    RequestService()
+                        .updateRequestStatus(request.id, RequestStatus.reject);
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   })),
@@ -128,11 +127,10 @@ class DetailRequestPage extends StatelessWidget {
           child: CustomButton(
             text: AppString.accept,
             onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.accept);
+              RequestService()
+                  .updateRequestStatus(request.id, RequestStatus.accept);
               if (request.errorStatus == ErrorStatus.noError) {
-                DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                    .provideDevice(
+                DeviceService().provideDevice(
                   id: request.deviceId,
                   ownerId: request.ownerId,
                   ownerType: request.ownerType,
@@ -148,8 +146,7 @@ class DetailRequestPage extends StatelessWidget {
 
   FutureBuilder<Device> _buildDeviceInfo() {
     return FutureBuilder<Device>(
-      future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getDevice(request.deviceId),
+      future: DeviceService().getDevice(request.deviceId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final device = snapshot.data!;

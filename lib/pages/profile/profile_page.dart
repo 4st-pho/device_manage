@@ -18,8 +18,8 @@ class ProfilePage extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(8),
           children: [
-            if (currentUser!.role != Role.admin) _buildUserWidget(context),
-            if (currentUser.role == Role.admin) _buildAdminWidget(context)
+            if (currentUser!.role == Role.admin) _buildAdminWidget(context)
+            else  _buildUserWidget(context),
           ],
         ),
       ),

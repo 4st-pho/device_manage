@@ -1,0 +1,6 @@
+- thống kê lại quá trình của app
+- % ui , % code theo tuần
+- dự định của các tuần 
+- tổng quan mục tiêu đến khi hoàn thành app: làm được  những gì, những cái cần phải làm,
+- thời gian qua làm được những gì, nhuững phần tiếp tục làm, chia theo tuần, có tiến độ những gì đã làm, còn lại những gì
+- thời gian qua học được những gì, muốn học thêm gì, d

@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
-import 'package:manage_devices_app/helper/show_dialog.dart';
+import 'package:manage_devices_app/helper/show_custom_dialog.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
@@ -39,8 +38,7 @@ class DetailDeviceButton extends StatelessWidget {
                   title: AppString.confirm,
                   content: AppString.deviceWillbeRecall,
                   onAgree: () {
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .recallDevice(device.id);
+                    DeviceService().recallDevice(device.id);
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
@@ -58,8 +56,7 @@ class DetailDeviceButton extends StatelessWidget {
                   title: AppString.confirm,
                   content: AppString.deviceWillBeDelete,
                   onAgree: () {
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .deleteDevice(device.id);
+                    DeviceService().deleteDevice(device.id);
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
