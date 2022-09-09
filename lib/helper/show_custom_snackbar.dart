@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../constants/app_style.dart';
-
-void showSnackBar({
+import 'package:manage_devices_app/constants/app_style.dart';
+void showCustomSnackBar({
   required BuildContext context,
   required String content,
   String title = '',

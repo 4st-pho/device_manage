@@ -64,9 +64,8 @@ class DetailRequestPage extends StatelessWidget {
               child: CustomButton(
                 text: AppString.reject,
                 color: Colors.red,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.reject),
+                onPressed: () => RequestService()
+                    .updateRequestStatus(request.id, RequestStatus.reject),
               ),
             ),
           if (currentUser.role == Role.admin) const SizedBox(width: 24),
@@ -75,9 +74,7 @@ class DetailRequestPage extends StatelessWidget {
             Expanded(
               child: CustomButton(
                 text: AppString.approved,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(
+                onPressed: () => RequestService().updateRequestStatus(
                   request.id,
                   RequestStatus.approved,
                 ),
@@ -87,9 +84,8 @@ class DetailRequestPage extends StatelessWidget {
             Expanded(
               child: CustomButton(
                 text: AppString.accept,
-                onPressed: () =>
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.accept),
+                onPressed: () => RequestService()
+                    .updateRequestStatus(request.id, RequestStatus.accept),
               ),
             ),
         ],
@@ -97,18 +93,17 @@ class DetailRequestPage extends StatelessWidget {
     );
   }
 
-  FutureBuilder<Device> _buildDeviceInfo() {
+  Widget _buildDeviceInfo() {
     return FutureBuilder<Device>(
-      future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getDevice(request.deviceId),
+      future: DeviceService().getDevice(request.deviceId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final device = snapshot.data!;
           return _buildInfo(
               imagePath: device.imagePaths[0],
-              text1: device.name,
-              text2: '',
-              text3: '');
+              title: device.name,
+              subtitle: '',
+              info: '');
         } else if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -138,15 +133,15 @@ class DetailRequestPage extends StatelessWidget {
   FutureBuilder<User> _buildUserInfo() {
     return FutureBuilder<User>(
       future: UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getUser(request.uid),
+          .getUser(request.ownerId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final user = snapshot.data!;
           return _buildInfo(
               imagePath: user.avatar,
-              text1: user.name,
-              text2: 'Age: ${user.age}',
-              text3: 'Address: ${user.address}');
+              title: user.name,
+              subtitle: 'Age: ${user.age}',
+              info: 'Address: ${user.address}');
         } else if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -159,9 +154,9 @@ class DetailRequestPage extends StatelessWidget {
 
   Row _buildInfo(
       {required String imagePath,
-      required String text1,
-      required String text2,
-      required String text3}) {
+      required String title,
+      required String subtitle,
+      required String info}) {
     return Row(
       children: [
         Expanded(
@@ -179,11 +174,11 @@ class DetailRequestPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                text1.toUpperCase(),
+                title.toUpperCase(),
                 style: AppStyle.blueTitle,
               ),
-              Text(text2, style: AppStyle.whiteText),
-              Text(text3, style: AppStyle.whiteText),
+              Text(subtitle, style: AppStyle.whiteText),
+              Text(info, style: AppStyle.whiteText),
             ],
           ),
         ),

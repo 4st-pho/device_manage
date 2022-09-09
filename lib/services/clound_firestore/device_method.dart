@@ -2,13 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/role.dart';
+import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/device.dart';
 
-class DeviceMethod {
-  final FirebaseFirestore firebaseFirestore;
-  DeviceMethod({
-    required this.firebaseFirestore,
-  });
+class DeviceService {
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future<List<Device>> getDeviceByOwnerId(String id) async {
     final doc = firebaseFirestore
@@ -68,6 +66,13 @@ class DeviceMethod {
     final doc =
         firebaseFirestore.collection(AppCollectionPath.device).doc(map['id']);
     doc.update(map);
+  }
+
+  Future<void> updateDeviceData(
+      String deviceId, Map<String, dynamic> data) async {
+    final doc =
+        firebaseFirestore.collection(AppCollectionPath.device).doc(deviceId);
+    doc.update(data);
   }
 
   Future<void> deleteDevice(String id) async {
@@ -142,16 +147,15 @@ class DeviceMethod {
     return snapshot.docs.map((e) => Device.fromMap(e.data())).toList();
   }
 
-  Future<List<Device>> getListMyDeviveManage(
-      String uid, String teamId, Role role) async {
+  Future<List<Device>> getListMyDeviveManage() async {
+    final userCredential =
+        await SharedPreferencesMethod.getCurrentUserFromLocal();
     List<Device> listMyDeviceManage =
-        await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getDeviceByOwnerId(uid);
+        await getDeviceByOwnerId(userCredential.id);
     List<Device> listMyTeamDevice = [];
-    if (role == Role.leader) {
+    if (userCredential.role == Role.leader) {
       listMyTeamDevice =
-          await DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-              .getDeviceByOwnerId(teamId);
+          await getDeviceByOwnerId(userCredential.teamId);
     }
     listMyDeviceManage.addAll(listMyTeamDevice);
     return listMyDeviceManage;

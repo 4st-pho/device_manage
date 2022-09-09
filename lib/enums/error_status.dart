@@ -1,1 +1,1 @@
-enum ErrorStatus { none, software, hardware }
+enum ErrorStatus {noError, software, hardware }

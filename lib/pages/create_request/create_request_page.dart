@@ -1,5 +1,5 @@
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:manage_devices_app/pages/create_request/widgets/select_device_widget.dart';
-import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
@@ -20,6 +20,29 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   late TextEditingController _contentController;
   late final CreateRequestBloc _createRequestBloc;
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> onHandled() async {
+    bool isvalidData = _formKey.currentState!.validate() &&
+        _createRequestBloc.validateAvailbleDevice();
+    if (isvalidData) {
+      _createRequestBloc.sendRequest().then((value) {
+        showCustomSnackBar(context: context, content: AppString.createSuccess);
+        Navigator.of(context).pop();
+      }).catchError(
+        (error) {
+          showCustomSnackBar(
+              context: context, content: error.toString(), error: true);
+        },
+      );
+    } else {
+      showCustomSnackBar(
+        context: context,
+        content: AppString.pleaseEnterFullData,
+        error: true,
+      );
+    }
+  }
+
   @override
   void initState() {
     _titleController = TextEditingController();
@@ -62,12 +85,14 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                         controller: _titleController,
                         type: TextInputType.multiline,
                         validator: FormValidate().titleValidate,
+                        onChanged: _createRequestBloc.onTitleChange,
                       ),
                       CustomTextFormField(
                         laber: AppString.content,
                         controller: _contentController,
                         type: TextInputType.multiline,
                         validator: FormValidate().contentValidate,
+                        onChanged: _createRequestBloc.onContentChange,
                       ),
                       const SelectDeviceWidget(),
                       const SizedBox(height: 40),
@@ -81,13 +106,19 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
     );
   }
 
-  Padding _buildButton(BuildContext context) {
+  Widget _buildButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: CustomButton(
-        text: AppString.send,
-        onPressed: () => _createRequestBloc.sendData(_titleController.text,
-            _contentController.text, context.read<AppData>().currentUser!.role),
+      child: StreamBuilder<bool>(
+        stream: _createRequestBloc.loadStream,
+        initialData: false,
+        builder: (context, snapshot) {
+          final isLoading = snapshot.data ?? false;
+          return CustomButton(
+            text: AppString.send,
+            onPressed: isLoading ? null : () => onHandled(),
+          );
+        },
       ),
     );
   }

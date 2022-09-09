@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
@@ -58,7 +57,7 @@ class CreateDeviceBloc {
               .uploadAndGetImagesLink(AppCollectionPath.image, files!);
       device.imagePaths = imagesLink;
 
-      DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+      DeviceService()
           .createDevice(device);
     }
   }

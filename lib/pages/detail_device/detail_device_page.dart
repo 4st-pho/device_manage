@@ -41,8 +41,7 @@ class DetailDevicePage extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<Device>(
-        stream: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .streamDevice(device.id),
+        stream: DeviceService().streamDevice(device.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
@@ -30,7 +29,7 @@ class HomePage extends StatelessWidget {
     return SliverToBoxAdapter(
       child: FutureBuilder<List<Device>>(
         initialData: const [],
-        future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
+        future: DeviceService()
             .getOwnerDevices(ctx.read<AppData>().currentUser!.teamId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
