@@ -6,27 +6,27 @@ import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
 
 class RequestService {
-  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  final deviceCollection =
+      FirebaseFirestore.instance.collection(AppCollectionPath.request);
 
   /// create request
   Future<void> createRequest(Request request) async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.request).doc();
-    request.id = doc.id;
-    await doc.set(request.toMap());
+    final deviceDoc = deviceCollection.doc();
+    request.id = deviceDoc.id;
+    await deviceDoc.set(request.toMap());
   }
 
   /// get request
-  Future<Request> getRequest(String deviceId) async {
-    final doc =
-        firebaseFirestore.collection(AppCollectionPath.device).doc(deviceId);
-    final snapshot = await doc.get();
+  Future<Request> getRequest(String id) async {
+    final deviceDoc = deviceCollection.doc(id);
+    final snapshot = await deviceDoc.get();
     return Request.fromMap(snapshot.data()!);
   }
 
 // update request stataus
   void updateRequestStatus(String id, RequestStatus status) {
-    final doc = firebaseFirestore.collection(AppCollectionPath.request).doc(id);
-    doc.update({'requestStatus': status.name});
+    final deviceDoc = deviceCollection.doc(id);
+    deviceDoc.update({'requestStatus': status.name});
   }
 
   /// stream list request by name
@@ -42,15 +42,13 @@ class RequestService {
 
   /// get all request
   Future<List<Request>> getAllRequest() async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.request);
-    final data = await doc.get();
+    final data = await deviceCollection.get();
     return data.docs.map((e) => Request.fromMap(e.data())).toList();
   }
 
 // get stream list request admin
   Stream<List<Request>> streamListRequestAdmin() {
-    return firebaseFirestore
-        .collection(AppCollectionPath.request)
+    return deviceCollection
         .where('requestStatus', whereIn: [
           RequestStatus.accept.name,
           RequestStatus.approved.name,
@@ -69,8 +67,7 @@ class RequestService {
         await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
             .getAllUserIdSameTeam(teamId);
     memberIds.add(teamId);
-    yield* firebaseFirestore
-        .collection(AppCollectionPath.request)
+    yield* deviceCollection
         .where('ownerId', whereIn: memberIds)
         .orderBy('createdAt', descending: true)
         .snapshots()
@@ -80,8 +77,7 @@ class RequestService {
 
   /// stream list request user
   Stream<List<Request>> streamListRequestUser(String ownerId) {
-    return firebaseFirestore
-        .collection(AppCollectionPath.request)
+    return deviceCollection
         .where('ownerId', isEqualTo: ownerId)
         .orderBy('createdAt', descending: true)
         .snapshots()

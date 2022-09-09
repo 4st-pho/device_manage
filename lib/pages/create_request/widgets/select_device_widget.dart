@@ -40,34 +40,8 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Text(AppString.requestNewDevices),
-                Checkbox(
-                  activeColor: Colors.blue,
-                  value: isChooseNewDevice,
-                  onChanged: _createRequestBloc.onCheckNewDevice,
-                )
-              ],
-            ),
-            if (isLeaderChooseNewDevice)
-              StreamBuilder<bool>(
-                stream: _createRequestBloc.isRequestFromTeamStream,
-                initialData: false,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  final bool isRequestFromTeam = snapshot.data ?? false;
-                  return Row(
-                    children: [
-                      const Text(AppString.createRequestForTeam),
-                      Checkbox(
-                        activeColor: Colors.blue,
-                        value: isRequestFromTeam,
-                        onChanged: _createRequestBloc.onCheckRequestFromTeam,
-                      )
-                    ],
-                  );
-                },
-              ),
+            _buildCheckBoxNewDevice(isChooseNewDevice),
+            if (isLeaderChooseNewDevice) _buildCheckBoxCreateRequestForTeam(),
             if (isChooseNewDevice)
               _buildSelectAvailbleDevice()
             else
@@ -78,62 +52,103 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
+  StreamBuilder<bool> _buildCheckBoxCreateRequestForTeam() {
+    return StreamBuilder<bool>(
+      stream: _createRequestBloc.isRequestFromTeamStream,
+      initialData: false,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final bool isRequestFromTeam = snapshot.data ?? false;
+        return Row(
+          children: [
+            const Text(AppString.createRequestForTeam),
+            Checkbox(
+              activeColor: Colors.blue,
+              value: isRequestFromTeam,
+              onChanged: _createRequestBloc.onCheckRequestFromTeam,
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Row _buildCheckBoxNewDevice(bool isChooseNewDevice) {
+    return Row(
+      children: [
+        const Text(AppString.requestNewDevices),
+        Checkbox(
+          activeColor: Colors.blue,
+          value: isChooseNewDevice,
+          onChanged: _createRequestBloc.onCheckNewDevice,
+        )
+      ],
+    );
+  }
+
   Widget _buildSelectMyDevice() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(AppString.errorStatus),
-        DropdownButtonFormField<ErrorStatus>(
-            isExpanded: true,
-            value: _createRequestBloc.deviceErrorStatus,
-            validator: FormValidate().selectOption,
-            decoration: const InputDecoration(
-                filled: true,
-                fillColor: AppColor.lightBlack,
-                border: OutlineInputBorder(),
-                enabledBorder: AppDecoration.outlineInputBorder,
-                focusedBorder: AppDecoration.focusOutlineInputBorder),
-            items: [ErrorStatus.software, ErrorStatus.hardware]
-                .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
-                .toList(),
-            onChanged: _createRequestBloc.onChangeErrorStatus),
+        _buildDropdownButtonErrorStatus(),
         _buildLabel(AppString.device),
-        StreamBuilder<List<Device>>(
-          stream: _createRequestBloc.myDevicesStream,
-          builder: (context, snapshot) {
-            final myDevices = snapshot.data ?? [];
-            return DropdownButtonFormField<Device>(
-              value: _createRequestBloc.myDevide,
-              isExpanded: true,
-              isDense: false,
-              validator: FormValidate().selectOption,
-              decoration: AppDecoration.inputDecoration,
-              items: myDevices.map((device) {
-                final String healthStatus = device.healthyStatus.name;
-                return DropdownMenuItem(
-                  value: device,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(device.name, style: AppStyle.whiteText),
-                        Row(children: [
-                          Expanded(child: Text(healthStatus)),
-                          Text(DateFormat('dd MMM yyyy')
-                              .format(device.manufacturingDate))
-                        ]),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: _createRequestBloc.onChooseMyDevice,
-            );
-          },
-        ),
+        _buildDropdownButtonSelectMyDeviceManage(),
       ],
     );
+  }
+
+  Widget _buildDropdownButtonSelectMyDeviceManage() {
+    return StreamBuilder<List<Device>>(
+      stream: _createRequestBloc.myDevicesStream,
+      builder: (context, snapshot) {
+        final myDevices = snapshot.data ?? [];
+        return DropdownButtonFormField<Device>(
+          value: _createRequestBloc.myDevide,
+          isExpanded: true,
+          isDense: false,
+          validator: FormValidate().selectOption,
+          decoration: AppDecoration.inputDecoration,
+          items: myDevices.map((device) {
+            final String healthStatus = device.healthyStatus.name;
+            return DropdownMenuItem(
+              value: device,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(device.name, style: AppStyle.whiteText),
+                    Row(children: [
+                      Expanded(child: Text(healthStatus)),
+                      Text(DateFormat('dd MMM yyyy')
+                          .format(device.manufacturingDate))
+                    ]),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: _createRequestBloc.onChooseMyDevice,
+        );
+      },
+    );
+  }
+
+  Widget _buildDropdownButtonErrorStatus() {
+    return DropdownButtonFormField<ErrorStatus>(
+        isExpanded: true,
+        value: _createRequestBloc.deviceErrorStatus,
+        validator: FormValidate().selectOption,
+        decoration: const InputDecoration(
+            filled: true,
+            fillColor: AppColor.lightBlack,
+            border: OutlineInputBorder(),
+            enabledBorder: AppDecoration.outlineInputBorder,
+            focusedBorder: AppDecoration.focusOutlineInputBorder),
+        items: [ErrorStatus.software, ErrorStatus.hardware]
+            .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
+            .toList(),
+        onChanged: _createRequestBloc.onChangeErrorStatus);
   }
 
   Widget _buildSelectAvailbleDevice() {
@@ -156,17 +171,14 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
                     stream: _createRequestBloc.availbleDeviceStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
-                        return Center(
-                          child: Text(snapshot.error.toString()),
-                        );
+                        final String error = snapshot.error.toString();
+                        return Center(child: Text(error));
                       }
                       final deviceName = snapshot.data;
                       if (deviceName == null) return const Spacer();
                       return Expanded(
-                        child: Text(
-                          deviceName,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child:
+                            Text(deviceName, overflow: TextOverflow.ellipsis),
                       );
                     }),
                 const SizedBox(width: 14),
@@ -200,36 +212,39 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
                 itemCount: availableDevices.length,
                 itemBuilder: (ctx, index) {
                   final device = availableDevices[index];
-                  final healthStatus = device.healthyStatus.name;
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _createRequestBloc
-                          .onChooseAvailbleDevice(availableDevices[index]);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: AppDecoration.boxDecoration,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(device.name, style: AppStyle.whiteText),
-                          Row(children: [
-                            Expanded(child: Text(healthStatus)),
-                            Text(DateFormat('dd MMM yyyy')
-                                .format(device.manufacturingDate))
-                          ]),
-                        ],
-                      ),
-                    ),
-                  );
+
+                  return _buildSelectAvailbleItem(device);
                 },
               );
             },
           ),
         );
       },
+    );
+  }
+
+  InkWell _buildSelectAvailbleItem(Device device) {
+    final healthStatus = device.healthyStatus.name;
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pop();
+        _createRequestBloc.onChooseAvailbleDevice(device);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: AppDecoration.boxDecoration,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(device.name, style: AppStyle.whiteText),
+            Row(children: [
+              Expanded(child: Text(healthStatus)),
+              Text(DateFormat('dd MMM yyyy').format(device.manufacturingDate))
+            ]),
+          ],
+        ),
+      ),
     );
   }
 
