@@ -64,14 +64,6 @@ class RouteGenerator {
                 create: (context) => CreateRequestBloc(),
                 dispose: (_, prov) => prov.dispose(),
               ),
-              FutureProvider<List<Device>>(
-                create: (context) => DeviceService().getListMyDeviveManage(),
-                initialData: const [],
-              ),
-              Provider<LoadBloc>(
-                create: (context) => LoadBloc(),
-                dispose: (_, prov) => prov.dispose(),
-              )
             ],
             child: const CreateRequestPage(),
           ),
