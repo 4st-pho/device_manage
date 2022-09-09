@@ -4,7 +4,6 @@ import 'package:manage_devices_app/services/clound_firestore/device_method.dart'
 import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
@@ -48,9 +47,7 @@ class DetailDevicePage extends StatelessWidget {
         children: [
           Expanded(
             child: StreamBuilder<Device>(
-              stream:
-                  DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                      .streamDevice(device.id),
+              stream: DeviceService().streamDevice(device.id),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   final String error = snapshot.error.toString();

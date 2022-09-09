@@ -14,17 +14,17 @@ class Request {
   RequestStatus requestStatus;
   DateTime createdAt;
   OwnerType ownerType;
-  Request(
-      {required this.id,
-      required this.ownerId,
-      required this.deviceId,
-      required this.title,
-      required this.content,
-      required this.errorStatus,
-      required this.requestStatus,
-      this.ownerType = OwnerType.none,
-      DateTime? createdAt})
-      : createdAt = createdAt ?? DateTime.now();
+  Request({
+    this.id = '',
+    this.ownerId = '',
+    this.deviceId = '',
+    this.title = '',
+    this.content = '',
+    this.errorStatus = ErrorStatus.software,
+    this.requestStatus = RequestStatus.pending,
+    this.ownerType = OwnerType.none,
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

@@ -48,6 +48,7 @@ dependencies:
   firebase_auth: ^3.3.20
   image_picker: ^0.8.5+3
   local_auth: ^2.1.2
+  rxdart: ^0.27.5
 
 dev_dependencies:
   flutter_test:

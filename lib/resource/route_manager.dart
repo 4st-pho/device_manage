@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
-import 'package:manage_devices_app/bloc/load_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
-import 'package:manage_devices_app/bloc/pick_multi_image_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -22,7 +19,6 @@ import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
 import 'package:manage_devices_app/pages/provide_device/provide_device_page.dart';
 import 'package:manage_devices_app/pages/request_detail/request_detail_page.dart';
 import 'package:manage_devices_app/pages/search_result/search_result_page.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
 import 'package:manage_devices_app/services/splash/splash_page.dart';
 import 'package:provider/provider.dart';
 
@@ -67,16 +63,6 @@ class RouteGenerator {
                 create: (context) => CreateRequestBloc(),
                 dispose: (_, prov) => prov.dispose(),
               ),
-              FutureProvider<List<Device>>(
-                create: (context) =>
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .getListMyDeviveManage(),
-                initialData: const [],
-              ),
-              Provider<LoadBloc>(
-                create: (context) => LoadBloc(),
-                dispose: (_, prov) => prov.dispose(),
-              )
             ],
             child: const CreateRequestPage(),
           ),
@@ -125,16 +111,8 @@ class RouteGenerator {
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
           builder: (context) => MultiProvider(providers: [
-            Provider<PickMultiImageBloc>(
-              create: (context) => PickMultiImageBloc(),
-              dispose: (_, prov) => prov.dispose(),
-            ),
             Provider<EditDeviceBloc>(
               create: (context) => EditDeviceBloc(),
-              dispose: (_, prov) => prov.dispose(),
-            ),
-            Provider<LoadBloc>(
-              create: (context) => LoadBloc(),
               dispose: (_, prov) => prov.dispose(),
             ),
           ], child: EditDevicePage(device: args)),

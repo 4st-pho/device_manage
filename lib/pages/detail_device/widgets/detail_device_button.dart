@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/helper/show_dialog.dart';
@@ -19,7 +18,6 @@ class DetailDeviceButton extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            flex: 5,
             child: CustomButton(
               text: AppString.edit,
               onPressed: () => Navigator.of(context)
@@ -29,44 +27,48 @@ class DetailDeviceButton extends StatelessWidget {
           const SizedBox(width: 16),
           if (isOwner)
             Expanded(
-              flex: 5,
-              child: CustomButton(
-                text: AppString.recall,
-                color: Colors.orange,
-                onPressed: () => showCustomDialog(
-                  color: Colors.orange,
-                  context: context,
-                  title: AppString.confirm,
-                  content: AppString.deviceWillbeRecall,
-                  onAgree: () {
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .recallDevice(device.id);
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          if (!isOwner)
+              child: _buildRecallDeviceButton(context),
+            )
+          else
             Expanded(
-              flex: 5,
-              child: CustomButton(
-                text: AppString.delete,
-                color: Colors.red,
-                onPressed: () => showCustomDialog(
-                  context: context,
-                  title: AppString.confirm,
-                  content: AppString.deviceWillBeDelete,
-                  onAgree: () {
-                    DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .deleteDevice(device.id);
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
+              child: _buildDeleteDeviceButton(context),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDeleteDeviceButton(BuildContext context) {
+    return CustomButton(
+      text: AppString.delete,
+      color: Colors.red,
+      onPressed: () => showCustomDialog(
+        context: context,
+        title: AppString.confirm,
+        content: AppString.deviceWillBeDelete,
+        onAgree: () {
+          DeviceService().deleteDevice(device.id);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
+  Widget _buildRecallDeviceButton(BuildContext context) {
+    return CustomButton(
+      text: AppString.recall,
+      color: Colors.orange,
+      onPressed: () => showCustomDialog(
+        color: Colors.orange,
+        context: context,
+        title: AppString.confirm,
+        content: AppString.deviceWillbeRecall,
+        onAgree: () {
+          DeviceService().recallDevice(device.id);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        },
       ),
     );
   }

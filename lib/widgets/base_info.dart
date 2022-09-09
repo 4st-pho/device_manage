@@ -3,15 +3,15 @@ import 'package:manage_devices_app/constants/app_style.dart';
 
 class BaseInfo extends StatelessWidget {
   final String imagePath;
-  final String text1;
-  final String text2;
-  final String text3;
+  final String title;
+  final String subtitle;
+  final String info;
   const BaseInfo(
       {Key? key,
       required this.imagePath,
-      required this.text1,
-      this.text2 = '',
-      this.text3 = ''})
+      required this.title,
+      this.subtitle = '',
+      this.info = ''})
       : super(key: key);
 
   @override
@@ -33,11 +33,11 @@ class BaseInfo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                text1.toUpperCase(),
+                title.toUpperCase(),
                 style: AppStyle.blueText,
               ),
-              if (text2.isNotEmpty) Text(text2, style: AppStyle.whiteText),
-              if (text3.isNotEmpty) Text(text3, style: AppStyle.whiteText),
+              if (subtitle.isNotEmpty) Text(subtitle, style: AppStyle.whiteText),
+              if (info.isNotEmpty) Text(info, style: AppStyle.whiteText),
             ],
           ),
         ),

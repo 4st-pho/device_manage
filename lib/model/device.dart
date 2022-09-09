@@ -13,23 +13,24 @@ class Device {
   OwnerType ownerType;
   HealthyStatus healthyStatus;
   String? ownerId;
-  
+
   DateTime? transferDate;
   DateTime manufacturingDate;
   DateTime createdAt;
   Device(
-      {required this.id,
-      required this.name,
-      required this.imagePaths,
-      required this.info,
-      required this.deviceType,
-      required this.ownerType,
-      required this.healthyStatus,
-      required this.ownerId,
-      required this.transferDate,
-      required this.manufacturingDate,
+      {this.id = '',
+      this.name = '',
+      this.imagePaths = const [''],
+      this.info = '',
+      this.deviceType = DeviceType.laptop,
+      this.ownerType = OwnerType.none,
+      this.healthyStatus = HealthyStatus.good,
+      this.ownerId,
+      this.transferDate,
+      DateTime? manufacturingDate,
       DateTime? createdAt})
-      : createdAt = createdAt ?? DateTime.now();
+      : createdAt = createdAt ?? DateTime.now(),
+        manufacturingDate = manufacturingDate ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

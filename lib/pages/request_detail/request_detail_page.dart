@@ -4,7 +4,6 @@ import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';
 import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
@@ -25,10 +24,7 @@ class DetailRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppString.requestDetail),
-        centerTitle: true,
-      ),
+      appBar: _buildAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -56,108 +52,124 @@ class DetailRequestPage extends StatelessWidget {
           ),
           if (request.requestStatus == RequestStatus.pending ||
               request.requestStatus == RequestStatus.approved)
-            _buildButtom(context)
+            _buildButton(context)
         ],
       ),
     );
   }
 
-  Widget _buildButtom(BuildContext context) {
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: const Text(AppString.requestDetail),
+      centerTitle: true,
+    );
+  }
+
+  Widget _buildButton(BuildContext context) {
     final currentUser = context.read<AppData>().currentUser!;
     final role = currentUser.role;
     final requestStatus = request.requestStatus;
-    return role == Role.admin
-        ? Padding(
-            padding: const EdgeInsets.all(12), child: _buildAdminButon(context))
-        : (role == Role.leader && requestStatus == RequestStatus.pending)
-            ? Padding(
-                padding: const EdgeInsets.all(12),
-                child: _buildLeaderButton(context),
-              )
-            : Container();
+    if (role == Role.admin) {
+      return Padding(
+          padding: const EdgeInsets.all(12), child: _buildAdminButon(context));
+    } else {
+      return role == Role.leader && requestStatus == RequestStatus.pending
+          ? Padding(
+              padding: const EdgeInsets.all(12),
+              child: _buildLeaderButton(context),
+            )
+          : Container();
+    }
   }
 
   Widget _buildLeaderButton(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: CustomButton(
-            text: AppString.disapproved,
-            onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.disapproved);
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
+        Expanded(child: _buildDisapprovedButton(context)),
         const SizedBox(width: 24),
-        Expanded(
-          child: CustomButton(
-            text: AppString.approved,
-            onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.approved);
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
+        Expanded(child: _buildApprovedButton(context)),
       ],
+    );
+  }
+
+  Widget _buildApprovedButton(BuildContext context) {
+    return CustomButton(
+      text: AppString.approved,
+      onPressed: () {
+        RequestService()
+            .updateRequestStatus(request.id, RequestStatus.approved);
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget _buildDisapprovedButton(BuildContext context) {
+    return CustomButton(
+      text: AppString.disapproved,
+      onPressed: () {
+        RequestService()
+            .updateRequestStatus(request.id, RequestStatus.disapproved);
+        Navigator.of(context).pop();
+      },
     );
   }
 
   Widget _buildAdminButon(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: CustomButton(
-              text: AppString.reject,
-              color: Colors.red,
-              onPressed: () => showCustomDialog(
-                  context: context,
-                  title: AppString.confirm,
-                  content: AppString.requestWillBeReject,
-                  onAgree: () {
-                    RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                        .updateStatusRequest(request.id, RequestStatus.reject);
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  })),
-        ),
+        Expanded(child: _buildRejectButton(context)),
         const SizedBox(width: 24),
-        Expanded(
-          child: CustomButton(
-            text: AppString.accept,
-            onPressed: () {
-              RequestMethod(firebaseFirestore: FirebaseFirestore.instance)
-                  .updateStatusRequest(request.id, RequestStatus.accept);
-              if (request.errorStatus == ErrorStatus.noError) {
-                DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-                    .provideDevice(
-                  id: request.deviceId,
-                  ownerId: request.ownerId,
-                  ownerType: request.ownerType,
-                );
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ),
+        Expanded(child: _buildAcceptButton(context)),
       ],
     );
   }
 
-  FutureBuilder<Device> _buildDeviceInfo() {
+  Widget _buildAcceptButton(BuildContext context) {
+    return CustomButton(
+      text: AppString.accept,
+      onPressed: () {
+        RequestService().updateRequestStatus(request.id, RequestStatus.accept);
+        if (request.errorStatus == ErrorStatus.noError) {
+          DeviceService().provideDevice(
+            id: request.deviceId,
+            ownerId: request.ownerId,
+            ownerType: request.ownerType,
+          );
+          Navigator.of(context).pop();
+        }
+      },
+    );
+  }
+
+  Widget _buildRejectButton(BuildContext context) {
+    return CustomButton(
+      text: AppString.reject,
+      color: Colors.red,
+      onPressed: () => showCustomDialog(
+        context: context,
+        title: AppString.confirm,
+        content: AppString.deviceWillbeRecall,
+        onAgree: () {
+          RequestService()
+              .updateRequestStatus(request.id, RequestStatus.reject);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
+  Widget _buildDeviceInfo() {
     return FutureBuilder<Device>(
-      future: DeviceMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getDevice(request.deviceId),
+      future: DeviceService().getDevice(request.deviceId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final device = snapshot.data!;
           return BaseInfo(
               imagePath: device.imagePaths[0],
-              text1: 'Name: ${device.name}',
-              text2: 'Type: ${device.deviceType.name}',
-              text3: 'Healthy status : ${device.healthyStatus.name}');
+              title: 'Name: ${device.name}',
+              subtitle: 'Type: ${device.deviceType.name}',
+              info: 'Healthy status : ${device.healthyStatus.name}');
         } else if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -180,10 +192,11 @@ class DetailRequestPage extends StatelessWidget {
         Text(request.content, style: AppStyle.whiteText),
         const TextDivider(text: AppString.errorStatus),
         Text(
-            request.errorStatus == ErrorStatus.noError
-                ? AppString.requestNewDevice
-                : request.errorStatus.name,
-            style: AppStyle.whiteText),
+          request.errorStatus == ErrorStatus.noError
+              ? AppString.requestNewDevice
+              : request.errorStatus.name,
+          style: AppStyle.whiteText,
+        ),
       ],
     );
   }

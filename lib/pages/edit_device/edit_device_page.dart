@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'package:manage_devices_app/bloc/load_bloc.dart';
-import 'package:manage_devices_app/helper/show_snackbar.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
-import 'package:manage_devices_app/bloc/pick_multi_image_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_decoration.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -27,9 +25,7 @@ class EditDevicePage extends StatefulWidget {
 class _EditDevicePageState extends State<EditDevicePage> {
   late final TextEditingController _nameController;
   late final TextEditingController _infoController;
-  late final PickMultiImageBloc _pickMultiImageBloc;
   late final EditDeviceBloc _editDeviceBloc;
-  late final LoadBloc _loadBloc;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -37,9 +33,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
     super.initState();
     _nameController = TextEditingController(text: widget.device.name);
     _infoController = TextEditingController(text: widget.device.info);
-    _pickMultiImageBloc = context.read<PickMultiImageBloc>();
     _editDeviceBloc = context.read<EditDeviceBloc>();
-    _loadBloc = context.read<LoadBloc>();
   }
 
   @override
@@ -104,33 +98,35 @@ class _EditDevicePageState extends State<EditDevicePage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: StreamBuilder<bool>(
-                stream: _loadBloc.loadStream,
-                initialData: false,
-                builder: (context, snapshot) {
-                  final isLoading = snapshot.data ?? false;
-                  return CustomButton(
-                      text: AppString.done,
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
-                              _loadBloc.setLoadState(true);
-                              _editDeviceBloc
-                                  .done(
-                                      _pickMultiImageBloc.images, widget.device)
-                                  .catchError((error) {
-                                showSnackBar(context: context, content: error);
-                                _loadBloc.setLoadState(false);
-                              }).then((value) {
-                                showSnackBar(
+              stream: _editDeviceBloc.loadStream,
+              initialData: false,
+              builder: (context, snapshot) {
+                final isLoading = snapshot.data ?? false;
+                return CustomButton(
+                  text: AppString.done,
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          if (_formKey.currentState!.validate()) {
+                            _editDeviceBloc.done(widget.device).then((_) {
+                              showCustomSnackBar(
+                                context: context,
+                                content: AppString.updateSuccess,
+                              );
+                              Navigator.of(context).pop();
+                            }).catchError(
+                              (error) {
+                                showCustomSnackBar(
                                     context: context,
-                                    content: AppString.updateSuccess);
-                                Navigator.of(context).pop();
-                              });
-                            });
-                }),
+                                    content: error.toString(),
+                                    error: true);
+                              },
+                            );
+                          }
+                        },
+                );
+              },
+            ),
           )
         ],
       ),
@@ -193,7 +189,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
     return Wrap(
       children: [
         StreamBuilder<List<File>?>(
-          stream: _pickMultiImageBloc.listImageStream,
+          stream: _editDeviceBloc.listImageStream,
           initialData: null,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data != null) {
@@ -217,7 +213,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         onTap: () async {
-          await _pickMultiImageBloc.pickImages();
+          await _editDeviceBloc.pickImages();
         },
         child: Container(
           width: 100,

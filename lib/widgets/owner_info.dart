@@ -29,9 +29,9 @@ class OwnerInfo extends StatelessWidget {
           final user = snapshot.data!;
           return BaseInfo(
               imagePath: user.avatar,
-              text1: user.name,
-              text2: 'Age: ${user.age}',
-              text3: 'Address: ${user.address}');
+              title: user.name,
+              subtitle: 'Age: ${user.age}',
+              info: 'Address: ${user.address}');
         } else if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
@@ -50,7 +50,7 @@ class OwnerInfo extends StatelessWidget {
         if (snapshot.hasData) {
           final team = snapshot.data!;
           return BaseInfo(
-              imagePath: team.imagePath, text1: 'Team: ${team.name}');
+              imagePath: team.imagePath, title: 'Team: ${team.name}');
         } else if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
