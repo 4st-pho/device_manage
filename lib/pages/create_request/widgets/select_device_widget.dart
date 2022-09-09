@@ -40,34 +40,8 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Text(AppString.requestNewDevices),
-                Checkbox(
-                  activeColor: Colors.blue,
-                  value: isChooseNewDevice,
-                  onChanged: _createRequestBloc.onCheckNewDevice,
-                )
-              ],
-            ),
-            if (isLeaderChooseNewDevice)
-              StreamBuilder<bool>(
-                stream: _createRequestBloc.isRequestFromTeamStream,
-                initialData: false,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  final bool isRequestFromTeam = snapshot.data ?? false;
-                  return Row(
-                    children: [
-                      const Text(AppString.createRequestForTeam),
-                      Checkbox(
-                        activeColor: Colors.blue,
-                        value: isRequestFromTeam,
-                        onChanged: _createRequestBloc.onCheckRequestFromTeam,
-                      )
-                    ],
-                  );
-                },
-              ),
+            _buildCheckBoxNewDevice(isChooseNewDevice),
+            if (isLeaderChooseNewDevice) _buildCheckBoxCreateRequestForTeam(),
             if (isChooseNewDevice)
               _buildSelectAvailbleDevice()
             else
@@ -75,6 +49,39 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
           ],
         );
       },
+    );
+  }
+
+  StreamBuilder<bool> _buildCheckBoxCreateRequestForTeam() {
+    return StreamBuilder<bool>(
+      stream: _createRequestBloc.isRequestFromTeamStream,
+      initialData: false,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final bool isRequestFromTeam = snapshot.data ?? false;
+        return Row(
+          children: [
+            const Text(AppString.createRequestForTeam),
+            Checkbox(
+              activeColor: Colors.blue,
+              value: isRequestFromTeam,
+              onChanged: _createRequestBloc.onCheckRequestFromTeam,
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Row _buildCheckBoxNewDevice(bool isChooseNewDevice) {
+    return Row(
+      children: [
+        const Text(AppString.requestNewDevices),
+        Checkbox(
+          activeColor: Colors.blue,
+          value: isChooseNewDevice,
+          onChanged: _createRequestBloc.onCheckNewDevice,
+        )
+      ],
     );
   }
 
