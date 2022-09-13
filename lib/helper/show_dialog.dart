@@ -7,7 +7,7 @@ void showCustomDialog(
     {required BuildContext context,
     required String title,
     required String content,
-    Color color = Colors.red,
+    Color color = Colors.black87,
     required VoidCallback onAgree}) {
   showDialog(
     context: context,

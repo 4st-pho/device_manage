@@ -46,7 +46,8 @@ class DetailDevicePage extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
-            final device = snapshot.data!;
+            final device = snapshot.data;
+            if (device == null) return const SizedBox.shrink();
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -83,7 +84,7 @@ class DetailDevicePage extends StatelessWidget {
                                 content: DateFormat('dd MMM yyyy')
                                     .format(device.manufacturingDate),
                               ),
-                              if (device.ownerId != null)
+                              if ((device.ownerId ?? '').isNotEmpty)
                                 OwnerInfo(
                                   ownerId: device.ownerId ?? '',
                                   ownerType: device.ownerType,

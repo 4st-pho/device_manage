@@ -20,7 +20,7 @@ import 'package:manage_devices_app/pages/main_page/main_page.dart';
 import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
 import 'package:manage_devices_app/pages/provide_device/provide_device_page.dart';
 import 'package:manage_devices_app/pages/request/request_page.dart';
-import 'package:manage_devices_app/pages/request_detail/request_detail_page.dart';
+import 'package:manage_devices_app/pages/request_detail/detail_request_page.dart';
 import 'package:manage_devices_app/pages/search_result/search_result_page.dart';
 import 'package:manage_devices_app/services/splash/splash_page.dart';
 import 'package:provider/provider.dart';

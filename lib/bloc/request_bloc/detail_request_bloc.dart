@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:manage_devices_app/enums/error_status.dart';
-import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
@@ -10,17 +9,22 @@ import 'package:manage_devices_app/services/clound_firestore/request_method.dart
 import 'package:rxdart/rxdart.dart';
 
 class DetailRequestBloc {
-  late final  StreamSubscription<Request> _updateRealtimeRequestStatus;
+  /// init _updateRealtimeRequestStatus for cancel listen stream when dispose
+  late final StreamSubscription<Request> _updateRealtimeRequestStatus;
+
   void setRealtimeRequestStatus(String requestID) {
-    _updateRealtimeRequestStatus = RequestService().streamRequest(requestID).listen((event) {
+    _updateRealtimeRequestStatus =
+        RequestService().streamRequest(requestID).listen((event) {
       _requestStatusController.add(event.requestStatus);
     });
   }
 
+  ///  update when properties  requestStatus of request change
   final _requestStatusController = StreamController<RequestStatus>();
   Stream<RequestStatus> get requestStatusStream =>
       _requestStatusController.stream;
 
+  /// set loading when click button handle data
   final _loadController = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get loadStream => _loadController.stream;
 
@@ -47,35 +51,30 @@ class DetailRequestBloc {
       setLoadState(false);
       throw error;
     });
+    setLoadState(false);
   }
 
-  Future<void> acceptRequest({
-    required String requestId,
-    required RequestStatus requestStatus,
-    required String deviceId,
-    required ErrorStatus errorStatus,
-    required String ownerId,
-    required OwnerType ownerType,
-  }) async {
+  Future<void> acceptRequest(Request request) async {
     setLoadState(true);
     await RequestService()
-        .updateRequestStatus(requestId, requestStatus)
+        .updateRequestStatus(request.id, RequestStatus.accept)
         .catchError((error) {
       setLoadState(false);
       throw error;
     });
-    if (errorStatus == ErrorStatus.noError) {
+    if (request.errorStatus == ErrorStatus.noError) {
       await DeviceService()
           .provideDevice(
-        id: deviceId,
-        ownerId: ownerId,
-        ownerType: ownerType,
+        id: request.deviceId,
+        ownerId: request.ownerId,
+        ownerType: request.ownerType,
       )
           .catchError((error) {
         setLoadState(false);
         throw error;
       });
     }
+    setLoadState(false);
   }
 
   void dispose() {
