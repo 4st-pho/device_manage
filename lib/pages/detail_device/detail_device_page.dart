@@ -1,19 +1,15 @@
 import 'package:manage_devices_app/provider/app_data.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
+import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/model/team.dart';
-import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/pages/admin/widgets/manage_device.dart';
-import 'package:manage_devices_app/services/clound_firestore/owner_method.dart';
-import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/text_divider.dart';
 
 class DetailDevicePage extends StatelessWidget {
@@ -44,12 +40,14 @@ class DetailDevicePage extends StatelessWidget {
         stream: DeviceService().streamDevice(device.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            final String error = snapshot.error.toString();
             return Center(
-              child: Text(snapshot.error.toString()),
+              child: Text(error),
             );
           }
           if (snapshot.hasData) {
-            final data = snapshot.data!;
+            final device = snapshot.data;
+            if (device == null) return const SizedBox.shrink();
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,28 +64,31 @@ class DetailDevicePage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildContentItem(
-                                  title: AppString.name, content: data.name),
+                                  title: AppString.name, content: device.name),
                               _buildContentItem(
                                   title: AppString.type,
-                                  content: data.deviceType.name),
+                                  content: device.deviceType.name),
                               _buildContentItem(
                                   title: AppString.healthyStatus,
-                                  content: data.healthyStatus.name),
+                                  content: device.healthyStatus.name),
                               _buildContentItem(
-                                  title: AppString.info, content: data.info),
-                              if (data.transferDate != null)
+                                  title: AppString.info, content: device.info),
+                              if (device.transferDate != null)
                                 _buildContentItem(
                                   title: AppString.transferDate,
                                   content: DateFormat('dd MMM yyyy')
-                                      .format(data.transferDate!),
+                                      .format(device.transferDate!),
                                 ),
                               _buildContentItem(
                                 title: AppString.manufacturingDate,
                                 content: DateFormat('dd MMM yyyy')
-                                    .format(data.manufacturingDate),
+                                    .format(device.manufacturingDate),
                               ),
-                              if (data.ownerId != null)
-                                _buildUserInfo(data.ownerId as String),
+                              if ((device.ownerId ?? '').isNotEmpty)
+                                OwnerInfo(
+                                  ownerId: device.ownerId ?? '',
+                                  ownerType: device.ownerType,
+                                ),
                             ],
                           ),
                         )
@@ -95,7 +96,8 @@ class DetailDevicePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (currentUser!.role == Role.admin) ManageDevice(device: data),
+                if (currentUser!.role == Role.admin)
+                  ManageDevice(device: device),
               ],
             );
           }
@@ -133,68 +135,6 @@ class DetailDevicePage extends StatelessWidget {
         const SizedBox(height: 16),
         TextDivider(text: title),
         Text(content, style: AppStyle.whiteText),
-      ],
-    );
-  }
-
-  FutureBuilder<Map<String, dynamic>> _buildUserInfo(String id) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: OwnerMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getOwnerInfo(id),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
-        } else if (snapshot.hasData) {
-          final data = snapshot.data!;
-          if (data['type'] == 'user') {
-            final user = data['data'] as User;
-            return _buildInfo(
-                imagePath: user.avatar,
-                text1: user.name,
-                text2: 'Age: ${user.age}',
-                text3: 'Address: ${user.address}');
-          } else {
-            final team = data['data'] as Team;
-            return _buildInfo(imagePath: team.imagePath, text1: team.name);
-          }
-        }
-        return ShimmerList.requestInfo;
-      },
-    );
-  }
-
-  Row _buildInfo(
-      {required String imagePath,
-      required String text1,
-      String text2 = '',
-      String text3 = ''}) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Image.network(
-            imagePath,
-            height: 150,
-            fit: BoxFit.contain,
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                text1.toUpperCase(),
-                style: AppStyle.blueTitle,
-              ),
-              Text(text2, style: AppStyle.whiteText),
-              Text(text3, style: AppStyle.whiteText),
-            ],
-          ),
-        ),
       ],
     );
   }

@@ -49,7 +49,7 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
     );
   }
 
-  Expanded _buildTabBar() {
+  Widget _buildTabBar() {
     return Expanded(
       child: DefaultTabController(
         length: 3,
@@ -83,86 +83,87 @@ class _DeviceManagePageState extends State<DeviceManagePage> {
 
   StreamBuilder<List<Device>> _buildTabBarContent({bool showProvide = false}) {
     return StreamBuilder<List<Device>>(
-        stream: _deviceManageBloc.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
+      stream: _deviceManageBloc.stream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else if (snapshot.hasData) {
+          final data = snapshot.data!;
+          if (data.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Image.asset(AppImage.empty),
+              ),
             );
-          } else if (snapshot.hasData) {
-            final data = snapshot.data!;
-            if (data.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: Image.asset(AppImage.empty),
-                ),
-              );
-            }
+          }
 
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: data.length,
-              itemBuilder: (BuildContext context, int index) {
-                final device = data[index];
-                return InkWell(
-                  onTap: () => Navigator.of(context)
-                      .pushNamed(
-                        Routes.detailDeviceRoute,
-                        arguments: device,
-                      )
-                      .then((_) => _deviceManageBloc.init()),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            title: Text(
-                              device.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: Text(device.healthyStatus.name),
-                            trailing: Text(device.deviceType.name),
-                            leading: SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: Image.network(
-                                device.imagePaths[0],
-                                fit: BoxFit.cover,
-                              ),
+          return ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: data.length,
+            itemBuilder: (BuildContext context, int index) {
+              final device = data[index];
+              return InkWell(
+                onTap: () => Navigator.of(context)
+                    .pushNamed(
+                      Routes.detailDeviceRoute,
+                      arguments: device,
+                    )
+                    .then((_) => _deviceManageBloc.init()),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          title: Text(
+                            device.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(device.healthyStatus.name),
+                          trailing: Text(device.deviceType.name),
+                          leading: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Image.network(
+                              device.imagePaths[0],
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        if (showProvide)
-                          Container(
-                            padding: const EdgeInsets.only(right: 8),
-                            width: 100,
-                            height: 40,
-                            child: CustomButton(
-                              text: AppString.provide,
-                              color: Colors.green,
-                              onPressed: () => Navigator.of(context)
-                                  .pushNamed(
-                                    Routes.provideDeviceRoute,
-                                    arguments: device,
-                                  )
-                                  .then((_) => _deviceManageBloc.init()),
-                            ),
-                          )
-                      ],
-                    ),
+                      ),
+                      if (showProvide)
+                        Container(
+                          padding: const EdgeInsets.only(right: 8),
+                          width: 100,
+                          height: 40,
+                          child: CustomButton(
+                            text: AppString.provide,
+                            color: Colors.green,
+                            onPressed: () => Navigator.of(context)
+                                .pushNamed(
+                                  Routes.provideDeviceRoute,
+                                  arguments: device,
+                                )
+                                .then((_) => _deviceManageBloc.init()),
+                          ),
+                        )
+                    ],
                   ),
-                );
-              },
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+                ),
+              );
+            },
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
   }
 
   SearchTextField _buildSearchTextField(BuildContext context) {

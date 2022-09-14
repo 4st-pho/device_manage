@@ -7,8 +7,8 @@ import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/request_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CreateRequestBloc {
