@@ -1,5 +1,5 @@
 import 'package:manage_devices_app/provider/app_data.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
 

@@ -2,7 +2,7 @@ import 'package:manage_devices_app/bloc/request_bloc/detail_request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
-import 'package:manage_devices_app/helper/show_dialog.dart';
+import 'package:manage_devices_app/helper/show_custom_dialog.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:manage_devices_app/enums/owner_type.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 
 class ProviceDeviceBloc {
   String deviceId;

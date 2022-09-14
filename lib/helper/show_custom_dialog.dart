@@ -12,27 +12,24 @@ void showCustomDialog(
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      
       title: Text(title),
       content: Text(content),
       backgroundColor: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       actions: <Widget>[
         OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            primary: Colors.white
-          ),
-          onPressed: () {
-            Navigator.of(ctx).pop();
-          },
-          child:const  Text(AppString.cancel)
-        ),
+            style: OutlinedButton.styleFrom(primary: Colors.white),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: const Text(AppString.cancel)),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: AppColor.dartBlue
-          ),
+          style: ElevatedButton.styleFrom(primary: AppColor.dartBlue),
           onPressed: onAgree,
-          child: const Text(AppString.ok, style: AppStyle.whiteText,),
+          child: const Text(
+            AppString.ok,
+            style: AppStyle.whiteText,
+          ),
         ),
       ],
     ),
