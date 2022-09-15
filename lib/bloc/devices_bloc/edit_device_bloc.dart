@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/model/device.dart';
@@ -22,7 +21,7 @@ class EditDeviceBloc {
   /// get data from behaviorSubject
   bool get isLoading => _loadController.value;
   List<File>? get deviceImageFiles => _pickDeviceImageController.value;
-  
+
   Future<void> pickDeviceImages() async {
     final List<XFile>? files = await _picker.pickMultiImage();
     if (files != null) {
@@ -40,21 +39,19 @@ class EditDeviceBloc {
   }
 
   Future<void> updateDevice(Device device) async {
-    setLoadState(true);
-    if (deviceImageFiles != null) {
-      final imagesLink = await StorageMethods(
-              firebaseStorage: FirebaseStorage.instance)
-          .uploadAndGetImagesLink(AppCollectionPath.image, deviceImageFiles!)
-          .catchError((error) {
-        setLoadState(false);
-        throw error;
-      });
-      device.imagePaths = imagesLink;
-    }
-    await DeviceService().updateDevice(device.toMap()).catchError((error) {
+    try {
+      setLoadState(true);
+      if (deviceImageFiles != null) {
+        final imagesLink = await StorageService()
+            .uploadAndGetImagesLink(AppCollectionPath.image, deviceImageFiles!);
+        device.imagePaths = imagesLink;
+      }
+      await DeviceService().updateDevice(device.toMap());
+    } catch (e) {
+      rethrow;
+    } finally {
       setLoadState(false);
-      throw error;
-    });
+    }
   }
 
   void dispose() {

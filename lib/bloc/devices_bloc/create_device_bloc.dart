@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -53,7 +52,7 @@ class CreateDeviceBloc {
       device.info = info.trim();
       device.manufacturingDate = date!;
       final imagesLink =
-          await StorageMethods(firebaseStorage: FirebaseStorage.instance)
+          await StorageService()
               .uploadAndGetImagesLink(AppCollectionPath.image, files!);
       device.imagePaths = imagesLink;
 
