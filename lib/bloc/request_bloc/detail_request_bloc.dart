@@ -73,21 +73,6 @@ class DetailRequestBloc {
     }
   }
 
-  // Future<void> acceptRequest(Request request) {
-  //   setLoadState(true);
-  //   return RequestService()
-  //       .updateRequestStatus(request.id, RequestStatus.accept)
-  //       .then((_) {
-  //     if (request.errorStatus == ErrorStatus.noError) {
-  //       return DeviceService().provideDevice(
-  //         id: request.deviceId,
-  //         ownerId: request.ownerId,
-  //         ownerType: request.ownerType,
-  //       );
-  //     }
-  //   });
-  // }
-
   void dispose() {
     _requestStatusController.close();
     _updateRealtimeRequestStatus.cancel();
