@@ -30,7 +30,7 @@ class DetailRequestBloc {
 
   bool get isLoading => _loadController.value;
 
-  void toggleState() {
+void toggleState() {
     _loadController.add(!isLoading);
   }
 
