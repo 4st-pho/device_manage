@@ -172,7 +172,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
     return Wrap(
       children: [
         StreamBuilder<List<File>?>(
-          stream: _pickMultiImageBloc.listImageStream,
+          stream: _pickMultiImageBloc.stream,
           initialData: null,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data != null) {

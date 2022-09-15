@@ -6,18 +6,18 @@ class PickMultiImageBloc {
   List<File>? images;
   final ImagePicker _picker = ImagePicker();
 
-  final StreamController<List<File>?> _pickImageController =
+  final StreamController<List<File>?> _controller =
       StreamController<List<File>?>();
-  Stream<List<File>?> get listImageStream => _pickImageController.stream;
+  Stream<List<File>?> get stream => _controller.stream;
   Future<void> pickImages() async {
     final List<XFile>? data = await _picker.pickMultiImage();
     if (data != null) {
       images = data.map((e) => File(e.path)).toList();
-      _pickImageController.sink.add(images);
+      _controller.sink.add(images);
     }
   }
 
   void dispose() {
-    _pickImageController.close();
+    _controller.close();
   }
 }

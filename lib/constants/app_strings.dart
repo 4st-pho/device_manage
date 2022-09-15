@@ -9,6 +9,7 @@ class AppString {
   static const skipOnbroading = 'skipOnbroading';
   static const dashboard = 'Dashboard';
   static const title = 'Title';
+  static const yes = 'Yes';
   static const errorStatus = 'Error status';
   static const sender = 'Sender';
   static const device = 'Device';
@@ -27,6 +28,7 @@ class AppString {
   static const createSuccess = 'Create success!';
   static const selectAvailbleDevice = 'Please select availble device!';
   static const deviceWillbeRecall = 'Device will be recall!';
+  static const theProcessWillContinue = 'The process will continue';
   static const updateSuccess = 'Update success!';
   static const content = 'Content';
   static const age = 'Age';
