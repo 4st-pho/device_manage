@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage_devices_app/model/request.dart';
-import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/request_service.dart';
 
 class DashbroadBloc {
   late final List<Request> allRequest;
