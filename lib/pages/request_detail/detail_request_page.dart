@@ -2,7 +2,7 @@ import 'package:manage_devices_app/bloc/request_bloc/detail_request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/enums/error_status.dart';
 import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
-import 'package:manage_devices_app/helper/show_dialog.dart';
+import 'package:manage_devices_app/helper/show_custom_dialog.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';
@@ -35,7 +35,6 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
       context: context,
       title: AppString.confirm,
       content: AppString.theProcessWillContinue,
-      color: Colors.black87,
       onAgree: () {
         _detailRequestBloc
             .updateRequestStatus(widget.request.id, requestStatus)
@@ -60,14 +59,7 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
       content: AppString.theProcessWillContinue,
       onAgree: () {
         _detailRequestBloc
-            .acceptRequest(
-              requestId: widget.request.id,
-              requestStatus: RequestStatus.accept,
-              deviceId: widget.request.deviceId,
-              errorStatus: widget.request.errorStatus,
-              ownerId: widget.request.id,
-              ownerType: widget.request.ownerType,
-            )
+            .acceptRequest(widget.request)
             .then((_) => Navigator.popUntil(
                 context, ModalRoute.withName(Routes.mainRoute)))
             .catchError(
@@ -88,6 +80,7 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
       context: context,
       title: AppString.confirm,
       content: AppString.deviceWillbeRecall,
+      color: Colors.red,
       onAgree: () {
         _detailRequestBloc
             .updateRequestStatus(widget.request.id, RequestStatus.reject)

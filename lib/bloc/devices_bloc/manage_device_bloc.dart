@@ -6,7 +6,7 @@ import 'package:manage_devices_app/helper/debounce.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
 
