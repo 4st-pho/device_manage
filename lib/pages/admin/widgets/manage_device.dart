@@ -11,7 +11,7 @@ class ManageDevice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isOwner = device.ownerId != null;
+    final isOwner = device.ownerId.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(

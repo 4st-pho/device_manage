@@ -116,7 +116,7 @@ class ManageDeviceBloc {
       return;
     }
     devices = await DeviceService().getAllDevice();
-    devices = devices.where((e) => e.ownerId == null).toList();
+    devices = devices.where((e) => e.ownerId.isEmpty).toList();
     devices = devices
         .where((team) => team.name.trim().toLowerCase().contains(keywork))
         .toList();

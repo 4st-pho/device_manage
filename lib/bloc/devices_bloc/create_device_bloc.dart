@@ -18,10 +18,8 @@ class CreateDeviceBloc {
     info: '',
     deviceType: DeviceType.headphone,
     healthyStatus: HealthyStatus.good,
-    ownerId: null,
+    ownerId: '',
     ownerType: OwnerType.none,
-    transferDate: null,
-    manufacturingDate: DateTime.now(),
   );
 
   void onDeviceTypeChange(DeviceType? deviceType) {
@@ -51,13 +49,11 @@ class CreateDeviceBloc {
       device.name = name.trim();
       device.info = info.trim();
       device.manufacturingDate = date!;
-      final imagesLink =
-          await StorageService()
-              .uploadAndGetImagesLink(AppCollectionPath.image, files!);
+      final imagesLink = await StorageService()
+          .uploadAndGetImagesLink(AppCollectionPath.image, files!);
       device.imagePaths = imagesLink;
 
-      DeviceService()
-          .createDevice(device);
+      DeviceService().createDevice(device);
     }
   }
 }

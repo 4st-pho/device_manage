@@ -53,7 +53,7 @@ class DeviceService {
 
   Future<void> recallDevice(String id) async {
     final deviceDoc = deviceCollection.doc(id);
-    deviceDoc.update({'ownerId': null, 'ownerType': OwnerType.none.name});
+    deviceDoc.update({'ownerId': '', 'ownerType': OwnerType.none.name});
   }
 
   Future<void> updateDevice(Map<String, dynamic> map) async {
