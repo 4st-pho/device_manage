@@ -11,20 +11,23 @@ import 'package:rxdart/rxdart.dart';
 class EditDeviceBloc {
   final ImagePicker _picker = ImagePicker();
 
+  /// set loading when click button submid data
   final _loadController = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get loadStream => _loadController.stream;
 
-  final _pickImageController = BehaviorSubject<List<File>?>.seeded(null);
-  Stream<List<File>?> get listImageStream => _pickImageController.stream;
+  /// pick device image
+  final _pickDeviceImageController = BehaviorSubject<List<File>?>.seeded(null);
+  Stream<List<File>?> get listImageStream => _pickDeviceImageController.stream;
 
+  /// get data from behaviorSubject
   bool get isLoading => _loadController.value;
-  List<File>? get imageFiles => _pickImageController.value;
-
-  Future<void> pickImages() async {
+  List<File>? get deviceImageFiles => _pickDeviceImageController.value;
+  
+  Future<void> pickDeviceImages() async {
     final List<XFile>? files = await _picker.pickMultiImage();
     if (files != null) {
       final tempImageFiles = files.map((e) => File(e.path)).toList();
-      _pickImageController.sink.add(tempImageFiles);
+      _pickDeviceImageController.sink.add(tempImageFiles);
     }
   }
 
@@ -36,13 +39,13 @@ class EditDeviceBloc {
     _loadController.add(loadState);
   }
 
-  Future<void> done(Device device) async {
+  Future<void> updateDevice(Device device) async {
     setLoadState(true);
-    if (imageFiles != null) {
-      final imagesLink =
-          await StorageMethods(firebaseStorage: FirebaseStorage.instance)
-              .uploadAndGetImagesLink(AppCollectionPath.image, imageFiles!)
-              .catchError((error) {
+    if (deviceImageFiles != null) {
+      final imagesLink = await StorageMethods(
+              firebaseStorage: FirebaseStorage.instance)
+          .uploadAndGetImagesLink(AppCollectionPath.image, deviceImageFiles!)
+          .catchError((error) {
         setLoadState(false);
         throw error;
       });
@@ -56,6 +59,6 @@ class EditDeviceBloc {
 
   void dispose() {
     _loadController.close();
-    _pickImageController.close();
+    _pickDeviceImageController.close();
   }
 }
