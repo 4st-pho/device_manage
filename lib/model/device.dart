@@ -20,7 +20,7 @@ class Device {
   Device(
       {this.id = '',
       this.name = '',
-      this.imagePaths = const [''],
+      this.imagePaths = const [],
       this.info = '',
       this.deviceType = DeviceType.laptop,
       this.ownerType = OwnerType.none,

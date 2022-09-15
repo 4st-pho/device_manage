@@ -30,7 +30,7 @@ class DetailRequestBloc {
 
   bool get isLoading => _loadController.value;
 
-void toggleState() {
+  void toggleState() {
     _loadController.add(!isLoading);
   }
 
@@ -44,38 +44,49 @@ void toggleState() {
 
   Future<void> updateRequestStatus(
       String id, RequestStatus requestStatus) async {
-    setLoadState(true);
-    await RequestService()
-        .updateRequestStatus(id, requestStatus)
-        .catchError((error) {
+    try {
+      setLoadState(true);
+      RequestService().updateRequestStatus(id, requestStatus);
+    } catch (e) {
+      rethrow;
+    } finally {
       setLoadState(false);
-      throw error;
-    });
-    setLoadState(false);
+    }
   }
 
   Future<void> acceptRequest(Request request) async {
-    setLoadState(true);
-    await RequestService()
-        .updateRequestStatus(request.id, RequestStatus.accept)
-        .catchError((error) {
+    try {
+      setLoadState(true);
+      await RequestService()
+          .updateRequestStatus(request.id, RequestStatus.accept);
+      if (request.errorStatus == ErrorStatus.noError) {
+        await DeviceService().provideDevice(
+          id: request.deviceId,
+          ownerId: request.ownerId,
+          ownerType: request.ownerType,
+        );
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
       setLoadState(false);
-      throw error;
-    });
-    if (request.errorStatus == ErrorStatus.noError) {
-      await DeviceService()
-          .provideDevice(
-        id: request.deviceId,
-        ownerId: request.ownerId,
-        ownerType: request.ownerType,
-      )
-          .catchError((error) {
-        setLoadState(false);
-        throw error;
-      });
     }
-    setLoadState(false);
   }
+
+  // Future<void> acceptRequest(Request request) {
+  //   setLoadState(true);
+  //   return RequestService()
+  //       .updateRequestStatus(request.id, RequestStatus.accept)
+  //       .then((_) {
+  //     if (request.errorStatus == ErrorStatus.noError) {
+  //       return DeviceService().provideDevice(
+  //         id: request.deviceId,
+  //         ownerId: request.ownerId,
+  //         ownerType: request.ownerType,
+  //       );
+  //     }
+  //   });
+  // }
 
   void dispose() {
     _requestStatusController.close();

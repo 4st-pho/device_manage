@@ -227,59 +227,53 @@ class _EditDevicePageState extends State<EditDevicePage> {
   }
 
   Widget _buildSelectImageIcon() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: InkWell(
-        onTap: () async {
-          await _editDeviceBloc.pickDeviceImages();
-        },
-        child: Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            color: AppColor.backgroudNavigation,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Center(
-            child: Icon(Icons.image),
-          ),
+    return InkWell(
+      onTap: () async {
+        await _editDeviceBloc.pickDeviceImages();
+      },
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: AppColor.backgroudNavigation,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Center(
+          child: Icon(Icons.image),
         ),
       ),
     );
   }
 
   Widget _buildImageFile(File file) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: AppColor.backgroudNavigation,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.file(file, fit: BoxFit.cover),
-        ),
+    return Container(
+      margin: const EdgeInsets.all(8),
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: AppColor.backgroudNavigation,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.file(file, fit: BoxFit.cover),
       ),
     );
   }
 
   Widget _buildNetworkImage(String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: AppColor.backgroudNavigation,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(imagePath, fit: BoxFit.cover),
-        ),
+    return Container(
+      margin: const EdgeInsets.all(8),
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: AppColor.backgroudNavigation,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(imagePath, fit: BoxFit.cover),
       ),
     );
   }
