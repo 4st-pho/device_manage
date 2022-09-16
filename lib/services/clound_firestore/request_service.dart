@@ -24,9 +24,9 @@ class RequestService {
   }
 
 // update request stataus
-  void updateRequestStatus(String id, RequestStatus status) {
+  Future<void> updateRequestStatus(String id, RequestStatus status) async {
     final requestDoc = requestCollection.doc(id);
-    requestDoc.update({'requestStatus': status.name});
+    await requestDoc.update({'requestStatus': status.name});
   }
 
   /// stream list request by name
@@ -44,6 +44,13 @@ class RequestService {
   Future<List<Request>> getAllRequest() async {
     final data = await requestCollection.get();
     return data.docs.map((e) => Request.fromMap(e.data())).toList();
+  }
+
+  Stream<Request> streamRequest(String id) {
+    return requestCollection
+        .doc(id)
+        .snapshots()
+        .map((e) => Request.fromMap(e.data()!));
   }
 
 // get stream list request admin

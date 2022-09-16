@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
+import 'package:manage_devices_app/bloc/request_bloc/detail_request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/main.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
+import 'package:manage_devices_app/pages/admin/dashboard_page.dart';
 import 'package:manage_devices_app/pages/create_device/create_device_page.dart';
 import 'package:manage_devices_app/pages/create_request/create_request_page.dart';
 import 'package:manage_devices_app/pages/create_user/create_user_page.dart';
@@ -17,7 +21,8 @@ import 'package:manage_devices_app/pages/login/login_page.dart';
 import 'package:manage_devices_app/pages/main_page/main_page.dart';
 import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
 import 'package:manage_devices_app/pages/provide_device/provide_device_page.dart';
-import 'package:manage_devices_app/pages/request_detail/request_detail_page.dart';
+import 'package:manage_devices_app/pages/request/request_page.dart';
+import 'package:manage_devices_app/pages/request_detail/detail_request_page.dart';
 import 'package:manage_devices_app/pages/search_result/search_result_page.dart';
 import 'package:manage_devices_app/services/splash/splash_page.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +31,7 @@ class Routes {
   static const String splashRoute = "/";
   static const String loginRoute = "/loginRoute";
   static const String myDevice = "/myDevice";
+  static const String requestRoute = "/requestRoute";
   static const String searchResultRoute = "/searchResultRoute";
   static const String authWrapper = "/authWrapper";
   static const String detailRequestRoute = "/detailRequestRoute";
@@ -38,6 +44,7 @@ class Routes {
   static const String manageDeviceRoute = "/manageDeviceRoute ";
   static const String editDeviceRoute = "/editDeviceRoute ";
   static const String provideDeviceRoute = "/provideDeviceRoute ";
+  static const String dashboardPage = "/dashboardPage ";
 }
 
 class RouteGenerator {
@@ -45,15 +52,16 @@ class RouteGenerator {
     switch (routeSettings.name) {
       case Routes.mainRoute:
         return MaterialPageRoute(
-          builder: (context) => Provider<MainPageBloc>(
-            create: (context) => MainPageBloc(),
-            dispose: (_, prov) => prov.dispose(),
-            child: const MainPage(),
-          ),
-        );
+            builder: (context) => Provider<MainPageBloc>(
+                  create: (context) => MainPageBloc(),
+                  dispose: (_, prov) => prov.dispose(),
+                  child: const MainPage(),
+                ),
+            settings: routeSettings);
       case Routes.loginRoute:
         return MaterialPageRoute(
           builder: (context) => const LoginPage(),
+          settings: routeSettings,
         );
       case Routes.createRequestRoute:
         return MaterialPageRoute(
@@ -66,36 +74,52 @@ class RouteGenerator {
             ],
             child: const CreateRequestPage(),
           ),
+          settings: routeSettings,
         );
       case Routes.manageDeviceRoute:
         return MaterialPageRoute(
           builder: (context) => const DeviceManagePage(),
+          settings: routeSettings,
         );
       case Routes.createUserRoute:
         return MaterialPageRoute(
           builder: (context) => const CreateUserPage(),
+          settings: routeSettings,
         );
       case Routes.detailRequestRoute:
         final args = routeSettings.arguments as Request;
         return MaterialPageRoute(
-          builder: (context) => DetailRequestPage(request: args),
+          builder: (context) => Provider<DetailRequestBloc>(
+            create: (context) => DetailRequestBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: DetailRequestPage(request: args),
+          ),
+          settings: routeSettings,
         );
       case Routes.authWrapper:
         return MaterialPageRoute(
           builder: (context) => const AuthWrapper(),
+          settings: routeSettings,
         );
       case Routes.createDeviceRoute:
         return MaterialPageRoute(
-          builder: (context) => const CreateDevicePage(),
+          builder: (context) => Provider<CreateDeviceBloc>(
+            create: (context) => CreateDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: const CreateDevicePage(),
+          ),
+          settings: routeSettings,
         );
       case Routes.myDevice:
         return MaterialPageRoute(
           builder: (context) => const MyDevicePage(),
+          settings: routeSettings,
         );
       case Routes.detailDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
           builder: (context) => DetailDevicePage(device: args),
+          settings: routeSettings,
         );
       case Routes.searchResultRoute:
         final args = routeSettings.arguments as SearchBloc;
@@ -106,6 +130,7 @@ class RouteGenerator {
               return const SearchResultPage();
             },
           ),
+          settings: routeSettings,
         );
       case Routes.editDeviceRoute:
         final args = routeSettings.arguments as Device;
@@ -116,16 +141,34 @@ class RouteGenerator {
               dispose: (_, prov) => prov.dispose(),
             ),
           ], child: EditDevicePage(device: args)),
+          settings: routeSettings,
         );
       case Routes.provideDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
           builder: (context) => ProvideDevicePage(device: args),
+          settings: routeSettings,
         );
       case Routes.initRoute:
         return MaterialPageRoute(
           builder: (context) => const SplashPage(),
+          settings: routeSettings,
         );
+      case Routes.requestRoute:
+        return MaterialPageRoute(
+          builder: (context) => const RequestPage(),
+          settings: routeSettings,
+        );
+      case Routes.dashboardPage:
+        return MaterialPageRoute(
+          builder: (context) => Provider<DashbroadBloc>(
+            create: (context) => DashbroadBloc(),
+            child: const DashboardPage(),
+            dispose: (context, prov) => prov.dispose(),
+          ),
+          settings: routeSettings,
+        );
+
       default:
         return unDefinedRoute();
     }

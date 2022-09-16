@@ -8,7 +8,7 @@ import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';

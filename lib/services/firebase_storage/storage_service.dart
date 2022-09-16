@@ -3,11 +3,8 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 
-class StorageMethods {
-  final FirebaseStorage firebaseStorage;
-  StorageMethods({
-    required this.firebaseStorage,
-  });
+class StorageService {
+  final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
   Future<String> uploadAndGetImageLink(
     String childName,

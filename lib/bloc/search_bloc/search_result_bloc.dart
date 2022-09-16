@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
 import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
 
@@ -49,7 +49,7 @@ class SearchResultBloc {
   }
 
   void updateByAvailableDevice() {
-    listDevice = devices.where((e) => e.ownerId == null).toList();
+    listDevice = devices.where((e) => e.ownerId.isEmpty).toList();
     sinkDevices(listDevice);
   }
 
