@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
@@ -102,7 +103,11 @@ class RouteGenerator {
         );
       case Routes.createDeviceRoute:
         return MaterialPageRoute(
-          builder: (context) => const CreateDevicePage(),
+          builder: (context) => Provider<CreateDeviceBloc>(
+            create: (context) => CreateDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: const CreateDevicePage(),
+          ),
           settings: routeSettings,
         );
       case Routes.myDevice:

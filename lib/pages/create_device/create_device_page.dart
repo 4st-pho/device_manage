@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
+import 'package:provider/provider.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
-import 'package:manage_devices_app/bloc/pick_date_bloc.dart';
-import 'package:manage_devices_app/bloc/pick_multi_image_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_decoration.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -25,25 +25,32 @@ class CreateDevicePage extends StatefulWidget {
 class _CreateDevicePageState extends State<CreateDevicePage> {
   late final TextEditingController _nameController;
   late final TextEditingController _infoController;
-  late final PickDateBloc _pickDateBloc;
-  late final createDeviceBloc = CreateDeviceBloc();
-  late final PickMultiImageBloc _pickMultiImageBloc;
+  late final CreateDeviceBloc _createDeviceBloc;
   final _formKey = GlobalKey<FormState>();
+  void createDevice() {
+    if (_formKey.currentState!.validate()) {
+      _createDeviceBloc.createDevice().then((_) {
+        showCustomSnackBar(context: context, content: AppString.createSuccess);
+        Navigator.of(context).pop();
+      }).catchError((error) {
+        showCustomSnackBar(
+            context: context, content: error.toString(), error: true);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
     _infoController = TextEditingController();
-    _pickDateBloc = PickDateBloc();
-    _pickMultiImageBloc = PickMultiImageBloc();
+    _createDeviceBloc = context.read<CreateDeviceBloc>();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _infoController.dispose();
-    _pickDateBloc.dispose();
-    _pickMultiImageBloc.dispose();
     super.dispose();
   }
 
@@ -51,84 +58,109 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(8),
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildNameTextField(),
-              _buildInfoTextField(),
-              _buildLabel('Device type'),
-              _buildDeviceTypeDropDown(),
-              _buildLabel('Healthy status'),
-              _buildHealthyStatusDropDown(),
-              _buildLabel('Manufacturing date'),
-              _buildPickDate(context),
-              _buildLabel('Pick images'),
-              _buildPickImage(),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: 'Create device',
-                onPressed: () {
-                  createDeviceBloc.createDevice(
-                    formKey: _formKey,
-                    name: _nameController.text,
-                    info: _infoController.text,
-                    date: _pickDateBloc.date,
-                    files: _pickMultiImageBloc.images,
-                  );
-                },
-              ),
-            ],
-          ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: _buildFormContent()),
+          _buildCreateDeviceButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormContent() {
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(8),
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildNameTextField(),
+            _buildInfoTextField(),
+            _buildDeviceTypeDropDown(),
+            _buildHealthyStatusDropDown(),
+            _buildPickDate(),
+            _buildPickImage(),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
   }
 
-  DropdownButtonFormField<HealthyStatus> _buildHealthyStatusDropDown() {
-    return DropdownButtonFormField<HealthyStatus>(
-      value: HealthyStatus.good,
-      isExpanded: true,
-      validator: FormValidate().selectOption,
-      decoration: AppDecoration.inputDecoration,
-      items: HealthyStatus.values
-          .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
-          .toList(),
-      onChanged: createDeviceBloc.onHealthyStatusChange,
+  Widget _buildCreateDeviceButton() {
+    return StreamBuilder<bool>(
+      initialData: false,
+      stream: _createDeviceBloc.loadStream,
+      builder: (context, snapshot) {
+        final isLoading = snapshot.data ?? false;
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CustomButton(
+            text: AppString.createDevice,
+            onPressed: isLoading ? null : () => createDevice(),
+          ),
+        );
+      },
     );
   }
 
-  DropdownButtonFormField<DeviceType> _buildDeviceTypeDropDown() {
-    return DropdownButtonFormField<DeviceType>(
-      isExpanded: true,
-      validator: FormValidate().selectOption,
-      decoration: AppDecoration.inputDecoration,
-      items: DeviceType.values
-          .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
-          .toList(),
-      onChanged: createDeviceBloc.onDeviceTypeChange,
+  Widget _buildHealthyStatusDropDown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.healthyStatus),
+        DropdownButtonFormField<HealthyStatus>(
+          value: HealthyStatus.good,
+          isExpanded: true,
+          validator: FormValidate().selectOption,
+          decoration: AppDecoration.inputDecoration,
+          items: HealthyStatus.values
+              .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
+              .toList(),
+          onChanged: _createDeviceBloc.onHealthyStatusChange,
+        ),
+      ],
     );
   }
 
-  CustomTextFormField _buildInfoTextField() {
+  Widget _buildDeviceTypeDropDown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.deviceType),
+        DropdownButtonFormField<DeviceType>(
+          isExpanded: true,
+          validator: FormValidate().selectOption,
+          decoration: AppDecoration.inputDecoration,
+          items: DeviceType.values
+              .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
+              .toList(),
+          onChanged: _createDeviceBloc.onDeviceTypeChange,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoTextField() {
     return CustomTextFormField(
       laber: AppString.info,
       controller: _infoController,
       type: TextInputType.multiline,
       validator: FormValidate().contentValidate,
+      onChanged: _createDeviceBloc.onInfoChange,
     );
   }
 
-  CustomTextFormField _buildNameTextField() {
+  Widget _buildNameTextField() {
     return CustomTextFormField(
       laber: AppString.name,
       controller: _nameController,
       type: TextInputType.text,
       validator: FormValidate().titleValidate,
+      onChanged: _createDeviceBloc.onNameChange,
     );
   }
 
@@ -140,63 +172,75 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
     );
   }
 
-  Row _buildPickDate(BuildContext context) {
-    return Row(
+  Widget _buildPickDate() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          child: StreamBuilder<DateTime?>(
-            stream: _pickDateBloc.stream,
-            initialData: null,
-            builder: (context, snapshot) {
-              return snapshot.data == null
-                  ? const Text(AppString.chooseDate)
-                  : Text(DateFormat('dd MMM yyyy').format(snapshot.data!));
-            },
-          ),
-        ),
-        Expanded(
-          child: CustomButton(
-            text: AppString.chooseDate,
-            onPressed: () async {
-              final DateTime? date = await showDatePickerCustom(context,
-                  initDate: _pickDateBloc.date);
-              _pickDateBloc.pickTime(date);
-            },
-          ),
+        _buildLabel(AppString.manufacturingDate),
+        Row(
+          children: [
+            Expanded(
+              child: StreamBuilder<DateTime?>(
+                stream: _createDeviceBloc.datePickerStream,
+                initialData: null,
+                builder: (context, snapshot) {
+                  return snapshot.data == null
+                      ? const Text(AppString.chooseDate)
+                      : Text(DateFormat('dd MMM yyyy').format(snapshot.data!));
+                },
+              ),
+            ),
+            Expanded(
+              child: CustomButton(
+                text: AppString.chooseDate,
+                onPressed: () async {
+                  final DateTime? date = await showDatePickerCustom(context,
+                      initDate: _createDeviceBloc.datePicked);
+                  _createDeviceBloc.pickDate(date);
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Wrap _buildPickImage() {
-    return Wrap(
+  Widget _buildPickImage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StreamBuilder<List<File>?>(
-          stream: _pickMultiImageBloc.stream,
-          initialData: null,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.data != null) {
-              final List<File> data = snapshot.data;
-              return Wrap(
-                children: [
-                  _buildSelectImageIcon(),
-                  ...data.map((e) => _buildImage(e)).toList()
-                ],
-              );
-            }
-            return _buildSelectImageIcon();
-          },
+        _buildLabel(AppString.pickImage),
+        Wrap(
+          children: [
+            StreamBuilder<List<File>?>(
+              stream: _createDeviceBloc.listImageStream,
+              initialData: null,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data != null) {
+                  final List<File> data = snapshot.data;
+                  return Wrap(
+                    children: [
+                      _buildSelectImageIcon(),
+                      ...data.map((e) => _buildImage(e)).toList()
+                    ],
+                  );
+                }
+                return _buildSelectImageIcon();
+              },
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Padding _buildSelectImageIcon() {
+  Widget _buildSelectImageIcon() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         onTap: () async {
-          await _pickMultiImageBloc.pickImages();
+          await _createDeviceBloc.pickDeviceImages();
         },
         child: Container(
           width: 100,
