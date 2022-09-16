@@ -43,7 +43,7 @@ class Request {
   factory Request.fromMap(Map<String, dynamic> map) {
     return Request(
       id: map['id'] as String,
-      ownerId: map['ownerId'] as String,
+      ownerId: (map['ownerId']??'') as String,
       deviceId: map['deviceId'] as String,
       title: map['title'] as String,
       content: map['content'] as String,

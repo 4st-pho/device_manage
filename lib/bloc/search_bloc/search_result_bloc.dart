@@ -49,7 +49,7 @@ class SearchResultBloc {
   }
 
   void updateByAvailableDevice() {
-    listDevice = devices.where((e) => e.ownerId == null).toList();
+    listDevice = devices.where((e) => e.ownerId.isEmpty).toList();
     sinkDevices(listDevice);
   }
 

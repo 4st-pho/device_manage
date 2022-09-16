@@ -84,9 +84,9 @@ class DetailDevicePage extends StatelessWidget {
                                 content: DateFormat('dd MMM yyyy')
                                     .format(device.manufacturingDate),
                               ),
-                              if ((device.ownerId ?? '').isNotEmpty)
+                              if (device.ownerId .isNotEmpty)
                                 OwnerInfo(
-                                  ownerId: device.ownerId ?? '',
+                                  ownerId: device.ownerId ,
                                   ownerType: device.ownerType,
                                 ),
                             ],
