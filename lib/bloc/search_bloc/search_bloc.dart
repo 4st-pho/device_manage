@@ -64,10 +64,8 @@ class SearchBloc {
       })
     ]);
   }
-  Future<List<User>> getAllUser() =>
-      UserService().getAllUser();
-  Future<List<Team>> getAllTeam() =>
-      TeamService().getAllTeam();
+  Future<List<User>> getAllUser() => UserService().getAllUser();
+  Future<List<Team>> getAllTeam() => TeamService().getAllTeam();
 
   void updateSearchResult() {
     if (searchFilterz == null) {
