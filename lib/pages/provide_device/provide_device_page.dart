@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/select_bottom_sheet_salue_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/select_value.dart';
 
@@ -23,10 +22,10 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
   @override
   void initState() {
     _chooseUserBloc = SelectBottomSheetValueBloc(
-      UserMethod(firebaseFirestore: FirebaseFirestore.instance).getAllUser(),
+      UserService().getAllUser(),
     );
     _chooseTeamBloc = SelectBottomSheetValueBloc(
-      TeamMethod(firebaseFirestore: FirebaseFirestore.instance).getAllTeam(),
+      TeamService().getAllTeam(),
     );
     _proviceDeviceBloc = ProviceDeviceBloc(widget.device.id);
     super.initState();
@@ -83,7 +82,7 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
                       .toList(),
                   onChanged: _proviceDeviceBloc.onChanged),
             ),
-           isShowUser
+            isShowUser
                 ? SelectBottomSheetValue(
                     selectBottomSheetValueBloc: _chooseUserBloc,
                     lable: AppString.chooseUser,
@@ -104,10 +103,9 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
       child: CustomButton(
         text: AppString.done,
         onPressed: () {
-          _proviceDeviceBloc.submit(
-              _proviceDeviceBloc.isChooseUser
-                  ? _chooseUserBloc.value
-                  : _chooseTeamBloc.value);
+          _proviceDeviceBloc.submit(_proviceDeviceBloc.isChooseUser
+              ? _chooseUserBloc.value
+              : _chooseTeamBloc.value);
         },
       ),
     );
