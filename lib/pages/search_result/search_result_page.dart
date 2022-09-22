@@ -17,7 +17,7 @@ class SearchResultPage extends StatelessWidget {
       body: Column(
         children: [
           // _buildSelectChoiceChip(),
-          _buildContent(searchBloc.currentDevices),
+          _buildContent(searchBloc.seachDevicesResult),
         ],
       ),
     );
@@ -36,7 +36,7 @@ class SearchResultPage extends StatelessWidget {
     );
   }
 
-  Expanded _buildContent(List<Device> data) {
+  Widget _buildContent(List<Device> data) {
     return Expanded(
         child: ListView.builder(
       physics: const BouncingScrollPhysics(),
