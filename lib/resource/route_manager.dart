@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/detail_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/manage_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
@@ -47,6 +48,7 @@ class Routes {
   static const String editDeviceRoute = "/editDeviceRoute ";
   static const String provideDeviceRoute = "/provideDeviceRoute ";
   static const String dashboardPage = "/dashboardPage ";
+  static const String showErrorRoute = "/showErrorRoute ";
 }
 
 class RouteGenerator {
@@ -124,7 +126,11 @@ class RouteGenerator {
       case Routes.detailDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
-          builder: (context) => DetailDevicePage(device: args),
+          builder: (context) => Provider<DetailDeviceBloc>(
+            create: (context) => DetailDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: DetailDevicePage(device: args),
+          ),
           settings: routeSettings,
         );
       case Routes.searchResultRoute:
@@ -178,7 +184,6 @@ class RouteGenerator {
           ),
           settings: routeSettings,
         );
-
       default:
         return unDefinedRoute();
     }

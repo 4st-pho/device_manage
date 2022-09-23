@@ -23,10 +23,21 @@ class RequestService {
     return Request.fromMap(snapshot.data()!);
   }
 
-// update request stataus
+  /// update request stataus
   Future<void> updateRequestStatus(String id, RequestStatus status) async {
     final requestDoc = requestCollection.doc(id);
     await requestDoc.update({'requestStatus': status.name});
+  }
+
+  /// delete requests for device
+  Future<void> deleteRequestsForDevice(String deviceId) async {
+    final requestDoc = await requestCollection
+        .where('deviceId', isEqualTo: deviceId.trim())
+        .get();
+    requestDoc.docs.map((e) {
+      e.data()['id'];
+      requestCollection.doc(e.data()['id']).delete();
+    });
   }
 
   /// stream list request by name

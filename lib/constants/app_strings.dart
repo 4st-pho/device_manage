@@ -16,6 +16,7 @@ class AppString {
   static const done = 'Done';
   static const confirm = 'Confirm';
   static const delete = 'Delete';
+  static const deleteSuccess = 'Delete success';
   static const getStarted = 'Get Started';
   static const deviceType = 'Device type';
   static const next = 'Next';
@@ -83,7 +84,10 @@ class AppString {
   static const nameU = 'NAME';
   static const namel = 'name';
   static const name = 'Name';
-  static const type = 'TYPE';
+  static const typeU = 'TYPE';
+  static const type = 'Type';
+  static const someThingWentWrong = 'Something went wrong!';
+  static const deleteDeviceError = 'Some unexpected errors have occurred. The device may have been deleted!';
   static const info = 'Info';
   static const infoU = 'INFO';
   static const accept = 'Accept';
