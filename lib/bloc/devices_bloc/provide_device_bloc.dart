@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
@@ -69,10 +70,10 @@ class ProvideDeviceBloc {
       setLoadState(true);
       String ownerId = '';
       if (ownerType == OwnerType.user && userData == null) {
-        throw 'User not be empty!';
+        throw AppString.userNotEmpty;
       }
       if (ownerType == OwnerType.team && teamData == null) {
-        throw 'Team not be empty!';
+        throw AppString.teamNotEmpty;
       }
       if (ownerType == OwnerType.user) {
         ownerId = userData!.id;

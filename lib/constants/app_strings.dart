@@ -91,6 +91,8 @@ class AppString {
   static const reject = 'Reject';
   static const approved = 'Approved';
   static const disapproved = 'Disapproved';
+  static const userNotEmpty = 'User not be empty!';
+  static const teamNotEmpty = 'Team not be empty!';
   static const allrequest = 'All request';
   static const manufacturingDate = 'Manufacturing date';
   static const pleaseEnterFullData = 'Please enter full data!';
