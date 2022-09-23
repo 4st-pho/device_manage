@@ -1,6 +1,6 @@
 import 'package:manage_devices_app/bloc/request_bloc/detail_request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
-import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:manage_devices_app/helper/show_custom_dialog.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
@@ -280,11 +280,11 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
         Text('Status: ${widget.request.requestStatus.name}'),
         _buildRequestInfoItem(AppString.title, widget.request.title),
         _buildRequestInfoItem(AppString.content, widget.request.content),
-        if (widget.request.errorStatus == ErrorStatus.noError)
+        if (widget.request.errorType == ErrorType.noError)
           _buildRequestInfoItem(AppString.requestNewDevice, AppString.yes)
         else
           _buildRequestInfoItem(
-              AppString.errorStatus, widget.request.errorStatus.name),
+              AppString.errortype, widget.request.errorType.name),
       ],
     );
   }

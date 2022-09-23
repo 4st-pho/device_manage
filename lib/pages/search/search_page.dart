@@ -21,6 +21,26 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late final TextEditingController _searchController;
   late SearchBloc _searchBloc;
+
+  /// run when click one iteam in list suggest
+  void submited(String deviceName) {
+    _searchController.text = deviceName;
+    context.read<SearchBloc>().submitted(query: deviceName);
+    Navigator.of(context).pushNamed(
+      Routes.searchResultRoute,
+      arguments: context.read<SearchBloc>(),
+    );
+  }
+
+  /// run when click  search button in keyboard
+  void keyboardSubmited() {
+    context.read<SearchBloc>().submitted();
+    Navigator.of(context).pushNamed(
+      Routes.searchResultRoute,
+      arguments: _searchBloc,
+    );
+  }
+
   @override
   void initState() {
     _searchController = TextEditingController();
@@ -51,27 +71,21 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  SearchTextField _buildSearch() {
+  Widget _buildSearch() {
     return SearchTextField(
       hintText: AppString.searchDevice,
       controller: _searchController,
-      onChanged: _searchBloc.onTextChange,
+      onChanged: _searchBloc.onSearch,
       iconData: Icons.filter_alt_rounded,
       onSuffixPresses: () => _showBottomSheet(),
-      onSubmitted: (_) {
-        context.read<SearchBloc>().onSubmitted(_searchController);
-        Navigator.of(context).pushNamed(
-          Routes.searchResultRoute,
-          arguments: _searchBloc,
-        );
-      },
+      onSubmitted: (_) => keyboardSubmited(),
     );
   }
 
   Widget _buildContent() {
     return Expanded(
       child: StreamBuilder<List<Device>>(
-        stream: context.read<SearchBloc>().currentDevicesStream,
+        stream: context.read<SearchBloc>().searchDevicesResultStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             final error = snapshot.error.toString();
@@ -80,38 +94,38 @@ class _SearchPageState extends State<SearchPage> {
             );
           } else if (snapshot.hasData) {
             final listDevice = snapshot.data ?? [];
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: listDevice.length,
-              itemBuilder: (context, index) {
-                final String deviceName = listDevice[index].name;
-                return InkWell(
-                  onTap: () {
-                    context
-                        .read<SearchBloc>()
-                        .onSubmitted(_searchController, query: deviceName);
-                    Navigator.of(context).pushNamed(
-                      Routes.searchResultRoute,
-                      arguments: context.read<SearchBloc>(),
-                    );
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(deviceName),
-                      ),
-                      const Divider(),
-                    ],
-                  ),
-                );
-              },
-            );
+            return _buildSuggestDevice(listDevice);
           } else {
             return ShimmerList.listResult;
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildSuggestDevice(List<Device> listDevice) {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: listDevice.length,
+      itemBuilder: (context, index) {
+        final String deviceName = listDevice[index].name;
+        return _buildSuggestDeviceItem(deviceName);
+      },
+    );
+  }
+
+  Widget _buildSuggestDeviceItem(String deviceName) {
+    return InkWell(
+      onTap: () => submited(deviceName),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(deviceName),
+          ),
+          const Divider(),
+        ],
       ),
     );
   }
@@ -131,51 +145,69 @@ class _SearchPageState extends State<SearchPage> {
               topRight: Radius.circular(16),
             ),
           ),
-          child: StreamBuilder<List<SearchFilter>>(
-            stream: _searchBloc.filterStream,
-            initialData: _searchBloc.searchFilter,
-            builder: (context, snapshot) {
-              final searchFilter = snapshot.data ?? [];
-              return ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  SwitchListTile.adaptive(
-                    value: searchFilter.contains(SearchFilter.avalbleDevice),
-                    onChanged: _searchBloc.avalbleDeviceFilter,
-                    title: const Text(AppString.searchAvalbleDevices),
-                  ),
-                  SwitchListTile.adaptive(
-                    value: searchFilter.contains(SearchFilter.team),
-                    onChanged: _searchBloc.teamFilter,
-                    title: const Text(AppString.searchTeamDevices),
-                  ),
-                  if (searchFilter.contains(SearchFilter.team))
-                    Provider.value(
-                      value: _searchBloc,
-                      builder: (context, _) {
-                        return const SelectTeamBox(lable: AppString.chooseTeam);
-                      },
-                    ),
-                  SwitchListTile.adaptive(
-                    value: searchFilter.contains(SearchFilter.user),
-                    onChanged: _searchBloc.userFilter,
-                    title: const Text(AppString.searchUserDevices),
-                  ),
-                  if (searchFilter.contains(SearchFilter.user))
-                    Provider.value(
-                      value: _searchBloc,
-                      builder: (context, _) {
-                        return const SelectUserBox(
-                          lable: AppString.chooseUser,
-                        );
-                      },
-                    ),
-                ],
-              );
-            },
-          ),
+          child: _buildBottomSheetContent(),
         );
       },
+    );
+  }
+
+  Widget _buildBottomSheetContent() {
+    return StreamBuilder<SearchFilter?>(
+      stream: _searchBloc.filterSwitchAdapterStream,
+      builder: (context, snapshot) {
+        final searchFilter = snapshot.data;
+        return ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            /// _buildSwitchListTile for select available device
+            _buildSwitchListTile(
+              searchFilter: searchFilter,
+              valueFilter: SearchFilter.avalbleDevice,
+              onChanged: _searchBloc.avalbleDeviceFilter,
+              title: AppString.searchAvalbleDevices,
+            ),
+
+            /// _buildSwitchListTile for select team device
+            _buildSwitchListTile(
+              searchFilter: searchFilter,
+              valueFilter: SearchFilter.teamDevice,
+              onChanged: _searchBloc.teamFilter,
+              title: AppString.searchAvalbleDevices,
+            ),
+
+            if (searchFilter == SearchFilter.teamDevice)
+              Provider.value(
+                value: _searchBloc,
+                child: const SelectTeamBox(),
+              ),
+
+            /// _buildSwitchListTile for select user device
+            _buildSwitchListTile(
+              searchFilter: searchFilter,
+              valueFilter: SearchFilter.userDevice,
+              onChanged: _searchBloc.userFilter,
+              title: AppString.searchUserDevices,
+            ),
+            if (searchFilter == SearchFilter.userDevice)
+              Provider.value(
+                value: _searchBloc,
+                child: const SelectUserBox(),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSwitchListTile(
+      {required SearchFilter? searchFilter,
+      required SearchFilter valueFilter,
+      required void Function(bool) onChanged,
+      required String title}) {
+    return SwitchListTile.adaptive(
+      value: searchFilter == valueFilter,
+      onChanged: onChanged,
+      title: Text(title),
     );
   }
 }

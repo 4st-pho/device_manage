@@ -3,7 +3,7 @@ import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_decoration.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
-import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/model/device.dart';
@@ -89,8 +89,8 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel(AppString.errorStatus),
-        _buildDropdownButtonErrorStatus(),
+        _buildLabel(AppString.errortype),
+        _buildDropdownButtonErrorType(),
         _buildLabel(AppString.device),
         _buildDropdownButtonSelectMyDeviceManage(),
       ],
@@ -134,10 +134,10 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
-  Widget _buildDropdownButtonErrorStatus() {
-    return DropdownButtonFormField<ErrorStatus>(
+  Widget _buildDropdownButtonErrorType() {
+    return DropdownButtonFormField<ErrorType>(
         isExpanded: true,
-        value: _createRequestBloc.deviceErrorStatus,
+        value: _createRequestBloc.deviceErrorType,
         validator: FormValidate().selectOption,
         decoration: const InputDecoration(
             filled: true,
@@ -145,10 +145,10 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
             border: OutlineInputBorder(),
             enabledBorder: AppDecoration.outlineInputBorder,
             focusedBorder: AppDecoration.focusOutlineInputBorder),
-        items: [ErrorStatus.software, ErrorStatus.hardware]
+        items: [ErrorType.software, ErrorType.hardware]
             .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
             .toList(),
-        onChanged: _createRequestBloc.onChangeErrorStatus);
+        onChanged: _createRequestBloc.onChangeErrorType);
   }
 
   Widget _buildSelectAvailbleDevice() {

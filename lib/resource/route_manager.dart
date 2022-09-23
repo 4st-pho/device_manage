@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/detail_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/manage_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/detail_request_bloc.dart';
@@ -15,10 +18,10 @@ import 'package:manage_devices_app/pages/create_device/create_device_page.dart';
 import 'package:manage_devices_app/pages/create_request/create_request_page.dart';
 import 'package:manage_devices_app/pages/create_user/create_user_page.dart';
 import 'package:manage_devices_app/pages/detail_device/detail_device_page.dart';
-import 'package:manage_devices_app/pages/device_manage/device_manage_page.dart';
 import 'package:manage_devices_app/pages/edit_device/edit_device_page.dart';
 import 'package:manage_devices_app/pages/login/login_page.dart';
 import 'package:manage_devices_app/pages/main_page/main_page.dart';
+import 'package:manage_devices_app/pages/manage_device/manage_device_page.dart';
 import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
 import 'package:manage_devices_app/pages/provide_device/provide_device_page.dart';
 import 'package:manage_devices_app/pages/request/request_page.dart';
@@ -45,6 +48,7 @@ class Routes {
   static const String editDeviceRoute = "/editDeviceRoute ";
   static const String provideDeviceRoute = "/provideDeviceRoute ";
   static const String dashboardPage = "/dashboardPage ";
+  static const String showErrorRoute = "/showErrorRoute ";
 }
 
 class RouteGenerator {
@@ -78,7 +82,11 @@ class RouteGenerator {
         );
       case Routes.manageDeviceRoute:
         return MaterialPageRoute(
-          builder: (context) => const DeviceManagePage(),
+          builder: (context) => Provider<ManageDeviceBloc>(
+            create: (context) => ManageDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: const ManageDevicePage(),
+          ),
           settings: routeSettings,
         );
       case Routes.createUserRoute:
@@ -118,7 +126,11 @@ class RouteGenerator {
       case Routes.detailDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
-          builder: (context) => DetailDevicePage(device: args),
+          builder: (context) => Provider<DetailDeviceBloc>(
+            create: (context) => DetailDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: DetailDevicePage(device: args),
+          ),
           settings: routeSettings,
         );
       case Routes.searchResultRoute:
@@ -146,7 +158,11 @@ class RouteGenerator {
       case Routes.provideDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
-          builder: (context) => ProvideDevicePage(device: args),
+          builder: (context) => Provider<ProvideDeviceBloc>(
+            create: (context) => ProvideDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: ProvideDevicePage(device: args),
+          ),
           settings: routeSettings,
         );
       case Routes.initRoute:
@@ -168,7 +184,6 @@ class RouteGenerator {
           ),
           settings: routeSettings,
         );
-
       default:
         return unDefinedRoute();
     }

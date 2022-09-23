@@ -1,35 +1,22 @@
-import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:manage_devices_app/constants/app_color.dart';
+import 'package:manage_devices_app/constants/app_strings.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
+import 'package:manage_devices_app/pages/admin/widgets/bar_chart_request.dart';
+import 'package:manage_devices_app/pages/admin/widgets/pie_chart_request.dart';
+import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(8),
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: const [BarChartWeek()],
-          ),
-        ),
-      ),
-    );
-  }
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class BarChartWeek extends StatefulWidget {
-  const BarChartWeek({Key? key}) : super(key: key);
-
-  @override
-  State<BarChartWeek> createState() => _BarChartWeekState();
-}
-
-class _BarChartWeekState extends State<BarChartWeek> {
+class _DashboardPageState extends State<DashboardPage> {
   late final DashbroadBloc _dashbroadBloc;
   @override
   void initState() {
@@ -39,97 +26,155 @@ class _BarChartWeekState extends State<BarChartWeek> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.7,
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        color: const Color(0xff2c4260),
-        child: StreamBuilder<List<BarChartGroupData>>(
-          stream: _dashbroadBloc.listBarChartGroupDataStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              final String error = snapshot.error.toString();
-              return Center(
-                child: Text(error),
-              );
-            } else if (snapshot.hasData) {
-              return BarChart(
-                BarChartData(
-                  barTouchData: barTouchData,
-                  titlesData: titlesData,
-                  borderData: borderData,
-                  barGroups: _dashbroadBloc.barGroups,
-                  gridData: FlGridData(show: false),
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: _dashbroadBloc.quantityRequestInAWeek,
-                ),
-              );
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(8),
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            _buildBarChartWeek(),
+            _buildPieChartWeek(),
+            _buildbBarChart12Month(),
+            _buildPieChart12Month(),
+            _buildPieChartAllRequest(),
+            const SizedBox(height: 80),
+          ],
         ),
       ),
     );
   }
 
-  BarTouchData get barTouchData => BarTouchData(
-        enabled: false,
-        touchTooltipData: BarTouchTooltipData(
-          tooltipBgColor: Colors.transparent,
-          tooltipPadding: const EdgeInsets.all(0),
-          tooltipMargin: 8,
-          getTooltipItem: (
-            BarChartGroupData group,
-            int groupIndex,
-            BarChartRodData rod,
-            int rodIndex,
-          ) {
-            return BarTooltipItem(
-              rod.toY.round().toString(),
-              const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            );
+  Widget _buildPieChartAllRequest() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.allRequest),
+        StreamBuilder<bool>(
+          stream: _dashbroadBloc.isLoadedDataStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              final error = snapshot.error.toString();
+              return Center(
+                child: Text(error),
+              );
+            } else if (snapshot.hasData) {
+              return PieChartRequest(
+                preChartPercent:
+                    _dashbroadBloc.listPercentRequestTypeOfAllRequest(),
+                requestChart: _dashbroadBloc.requestChart,
+              );
+            }
+            return ShimmerList.chartShimmer;
           },
         ),
-      );
-
-  Widget getTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff7589a2),
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
-    String text;
-    text = _dashbroadBloc.getDayFromDouble(value);
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4.0,
-      child: Text(text, style: style),
+      ],
     );
   }
 
-  FlTitlesData get titlesData => FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: getTitles,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      );
+  Widget _buildPieChart12Month() {
+    return StreamBuilder<bool>(
+      stream: _dashbroadBloc.isLoadedDataStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          final error = snapshot.error.toString();
+          return Center(
+            child: Text(error),
+          );
+        } else if (snapshot.hasData) {
+          return PieChartRequest(
+            preChartPercent: _dashbroadBloc.listPercentRequestTypeIn12Month(),
+            requestChart: _dashbroadBloc.requestChart,
+          );
+        }
+        return ShimmerList.chartShimmer;
+      },
+    );
+  }
 
-  FlBorderData get borderData => FlBorderData(show: false);
+  Widget _buildbBarChart12Month() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.monthRequest),
+        StreamBuilder<List<BarChartGroupData>>(
+          stream: _dashbroadBloc.monthChartDataStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              final error = snapshot.error.toString();
+              return Center(
+                child: Text(error),
+              );
+            } else if (snapshot.hasData) {
+              final barChartGroupData = snapshot.data;
+              return BarChartRequest(
+                barGroups: barChartGroupData!,
+                convertDateFromInt: _dashbroadBloc.getMonthFromDouble,
+                maxY: _dashbroadBloc.quantityRequestIn12Month,
+              );
+            }
+            return ShimmerList.chartShimmer;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPieChartWeek() {
+    return StreamBuilder<bool>(
+      stream: _dashbroadBloc.isLoadedDataStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          final error = snapshot.error.toString();
+          return Center(child: Text(error));
+        } else if (snapshot.hasData) {
+          return PieChartRequest(
+            preChartPercent: _dashbroadBloc.listPercentRequestTypeInWeek(),
+            requestChart: _dashbroadBloc.requestChart,
+          );
+        }
+        return ShimmerList.chartShimmer;
+      },
+    );
+  }
+
+  Widget _buildBarChartWeek() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.dayRequest),
+        StreamBuilder<List<BarChartGroupData>>(
+          stream: _dashbroadBloc.weekChartDataStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              final error = snapshot.error.toString();
+              return Center(
+                child: Text(error),
+              );
+            } else if (snapshot.hasData) {
+              final barChartGroupData = snapshot.data;
+              return BarChartRequest(
+                barGroups: barChartGroupData!,
+                convertDateFromInt: _dashbroadBloc.getDayFromDouble,
+                maxY: _dashbroadBloc.quantityRequestInAWeek,
+              );
+            }
+            return ShimmerList.chartShimmer;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLabel(String label) {
+    return Container(
+      margin: const EdgeInsets.only(left: 12, top: 12, right: 12, bottom: 30),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 4, color: AppColor.dartBlue),
+        ),
+      ),
+      child: Text(label, style: AppStyle.blueTitle),
+    );
+  }
 }

@@ -7,6 +7,7 @@ void showCustomDialog(
     {required BuildContext context,
     required String title,
     required String content,
+    bool isShowOnlyCancelbutton = false,
     Color color = Colors.black87,
     required VoidCallback onAgree}) {
   showDialog(
@@ -23,14 +24,15 @@ void showCustomDialog(
               Navigator.of(ctx).pop();
             },
             child: const Text(AppString.cancel)),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(primary: AppColor.dartBlue),
-          onPressed: onAgree,
-          child: const Text(
-            AppString.ok,
-            style: AppStyle.whiteText,
+        if (!isShowOnlyCancelbutton)
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(primary: AppColor.dartBlue),
+            onPressed: onAgree,
+            child: const Text(
+              AppString.ok,
+              style: AppStyle.whiteText,
+            ),
           ),
-        ),
       ],
     ),
   );
