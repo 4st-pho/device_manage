@@ -1,1 +1,1 @@
-enum SearchFilter { avalbleDevice, team, user }
+enum SearchFilter { avalbleDevice, teamDevice, userDevice }

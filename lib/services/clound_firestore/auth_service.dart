@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:manage_devices_app/model/user.dart' as model;
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 
 class AuthService {
   final FirebaseAuth firebaseAuth;
@@ -37,8 +36,7 @@ class AuthService {
         .then((value) {
       user.id = value.user!.uid;
     });
-    await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .createUser(user);
+    await UserService().createUser(user);
   }
 
   // sign in

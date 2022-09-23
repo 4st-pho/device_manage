@@ -5,7 +5,7 @@ import 'package:manage_devices_app/enums/tab_request.dart';
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/clound_firestore/request_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/request_service.dart';
 
 class RequestBloc {
   TabRequest _currentTab = TabRequest.processing;

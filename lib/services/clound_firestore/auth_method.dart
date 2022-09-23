@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
-import 'package:manage_devices_app/services/firebase_storage/storage_method.dart';
+import 'package:manage_devices_app/services/firebase_storage/storage_service.dart';
 
 class AuthMethod {
   final FirebaseFirestore firebaseFirestore;
@@ -18,7 +17,7 @@ class AuthMethod {
       required String avataLink}) async {
     String avatar = file == null
         ? avataLink
-        : await StorageMethods(firebaseStorage: FirebaseStorage.instance)
+        : await StorageService()
             .uploadAndGetImageLink(AppCollectionPath.user, file);
     final docUser = firebaseFirestore
         .collection(AppCollectionPath.user)

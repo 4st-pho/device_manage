@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 
 class SearchResultBloc {
   late final String keywork;
@@ -19,16 +18,14 @@ class SearchResultBloc {
     await DeviceService().getDeviceByName(keywork).then((value) {
       devices = [...devices, ...value];
     });
-    userIds = await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .getUserIdByName(keywork);
+    userIds = await UserService().getUserIdByName(keywork);
     // ignore: avoid_function_literals_in_foreach_calls
     userIds.forEach((e) async {
       await DeviceService().getOwnerDevices(e).then((value) {
         devices = [...devices, ...value];
       });
     });
-    teamiIds = await TeamMethod(firebaseFirestore: FirebaseFirestore.instance)
-        .getTeamIdByName(keywork);
+    teamiIds = await TeamService().getTeamIdByName(keywork);
     // ignore: avoid_function_literals_in_foreach_calls
     teamiIds.forEach((e) async {
       await DeviceService().getOwnerDevices(e).then((value) {
@@ -49,7 +46,7 @@ class SearchResultBloc {
   }
 
   void updateByAvailableDevice() {
-    listDevice = devices.where((e) => e.ownerId == null).toList();
+    listDevice = devices.where((e) => e.ownerId.isEmpty).toList();
     sinkDevices(listDevice);
   }
 

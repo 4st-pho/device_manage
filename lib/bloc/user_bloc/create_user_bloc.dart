@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/model/team.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
 
 class CreateUserBloc {
   CreateUserBloc() {
-    TeamMethod(firebaseFirestore: FirebaseFirestore.instance)
+    TeamService()
         .getAllTeam()
         .then((listTeam) => _listTeamController.sink.add(listTeam));
   }
