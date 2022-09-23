@@ -30,6 +30,7 @@ class AppString {
   static const deviceWillbeRecall = 'Device will be recall!';
   static const theProcessWillContinue = 'The process will continue';
   static const updateSuccess = 'Update success!';
+  static const provideDeviceSuccess = 'Provide device success!';
   static const content = 'Content';
   static const age = 'Age';
   static const editDevice = 'Edit device';
@@ -49,6 +50,7 @@ class AppString {
   static const ok = 'Ok';
   static const send = 'Send';
   static const provide = 'Provide';
+  static const provideDevice = 'Provide device';
   static const chooseDate = 'Choose date';
   static const search = 'Search';
   static const user = 'User';
@@ -89,6 +91,8 @@ class AppString {
   static const reject = 'Reject';
   static const approved = 'Approved';
   static const disapproved = 'Disapproved';
+  static const userNotEmpty = 'User not be empty!';
+  static const teamNotEmpty = 'Team not be empty!';
   static const allrequest = 'All request';
   static const manufacturingDate = 'Manufacturing date';
   static const pleaseEnterFullData = 'Please enter full data!';

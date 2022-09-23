@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:manage_devices_app/bloc/select_bottom_sheet_salue_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
+import 'package:manage_devices_app/enums/owner_type.dart';
+import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
+import 'package:manage_devices_app/pages/provide_device/widget/bottom_sheet_choose_team.dart';
+import 'package:manage_devices_app/pages/provide_device/widget/bottom_sheet_choose_user.dart';
+import 'package:provider/provider.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
-import 'package:manage_devices_app/widgets/select_value.dart';
 
 class ProvideDevicePage extends StatefulWidget {
   final Device device;
@@ -16,33 +17,29 @@ class ProvideDevicePage extends StatefulWidget {
 }
 
 class _ProvideDevicePageState extends State<ProvideDevicePage> {
-  late final SelectBottomSheetValueBloc _chooseUserBloc;
-  late final SelectBottomSheetValueBloc _chooseTeamBloc;
-  late final ProviceDeviceBloc _proviceDeviceBloc;
-  @override
-  void initState() {
-    _chooseUserBloc = SelectBottomSheetValueBloc(
-      UserService().getAllUser(),
-    );
-    _chooseTeamBloc = SelectBottomSheetValueBloc(
-      TeamService().getAllTeam(),
-    );
-    _proviceDeviceBloc = ProviceDeviceBloc(widget.device.id);
-    super.initState();
+  late final ProvideDeviceBloc _proviceDeviceBloc;
+
+  void provideDevice() {
+    _proviceDeviceBloc.provideDevice(widget.device.id).then((_) {
+      showCustomSnackBar(
+          context: context, content: AppString.provideDeviceSuccess);
+      Navigator.of(context).pop();
+    }).catchError((error) {
+      showCustomSnackBar(
+          context: context, content: error.toString(), error: true);
+    });
   }
 
   @override
-  void dispose() {
-    _chooseUserBloc.dispose();
-    _chooseTeamBloc.dispose();
-    _proviceDeviceBloc.dispose();
-    super.dispose();
+  void initState() {
+    _proviceDeviceBloc = context.read<ProvideDeviceBloc>();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppbar(context),
+      appBar: _buildAppbar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,83 +52,88 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
               ),
             ),
           ),
-          _buildButton(context),
+          _buildProvideDeviceButton(),
         ],
       ),
     );
   }
 
-  StreamBuilder<bool> _buildContent() {
-    return StreamBuilder<bool>(
-      stream: _proviceDeviceBloc.stream,
-      initialData: _proviceDeviceBloc.isChooseUser,
+  Widget _buildContent() {
+    return StreamBuilder<OwnerType>(
+      initialData: OwnerType.user,
+      stream: _proviceDeviceBloc.chooseOwnerTypeStream,
       builder: (context, snapshot) {
-        bool isShowUser = snapshot.data!;
+        final ownerType = snapshot.data;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: DropdownButton(
-                  value: _proviceDeviceBloc.value,
-                  items: _proviceDeviceBloc.values
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e),
-                          ))
-                      .toList(),
-                  onChanged: _proviceDeviceBloc.onChanged),
-            ),
-            isShowUser
-                ? SelectBottomSheetValue(
-                    selectBottomSheetValueBloc: _chooseUserBloc,
-                    lable: AppString.chooseUser,
-                  )
-                : SelectBottomSheetValue(
-                    selectBottomSheetValueBloc: _chooseTeamBloc,
-                    lable: AppString.chooseTeam,
-                  ),
+            _buildChooseOwnerTypeDropdownButton(ownerType),
+            if (ownerType == OwnerType.user)
+              const BottomSheetChooseUser()
+            else
+              const BottomSheetChooseTeam()
           ],
         );
       },
     );
   }
 
-  Padding _buildButton(BuildContext context) {
+  Widget _buildChooseOwnerTypeDropdownButton(OwnerType? ownerType) {
     return Padding(
-      padding: const EdgeInsets.all(8),
-      child: CustomButton(
-        text: AppString.done,
-        onPressed: () {
-          _proviceDeviceBloc.submit(_proviceDeviceBloc.isChooseUser
-              ? _chooseUserBloc.value
-              : _chooseTeamBloc.value);
-        },
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: DropdownButton(
+        value: ownerType,
+        items: _proviceDeviceBloc.listOwnerType
+            .map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e.name),
+                ))
+            .toList(),
+        onChanged: _proviceDeviceBloc.onOwnerTypeChange,
       ),
     );
   }
 
-  AppBar _buildAppbar(BuildContext context) {
+  Widget _buildProvideDeviceButton() {
+    return StreamBuilder<bool>(
+      stream: _proviceDeviceBloc.loadStream,
+      initialData: false,
+      builder: (context, snapshot) {
+        final isLoading = snapshot.data ?? false;
+        return Padding(
+          padding: const EdgeInsets.all(8),
+          child: CustomButton(
+            text: AppString.provide,
+            onPressed: isLoading ? null : () => provideDevice(),
+          ),
+        );
+      },
+    );
+  }
+
+  AppBar _buildAppbar() {
     return AppBar(
       leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.keyboard_backspace_rounded)),
-      title: const Text('Provide Device'),
+      title: const Text(AppString.provideDevice),
       centerTitle: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
     );
   }
 
-  ListTile _buildInfo() {
+  Widget _buildInfo() {
+    final String healthDevice = widget.device.healthyStatus.name;
+    final String typeOfDevice = widget.device.deviceType.name;
     return ListTile(
       title: Text(
         widget.device.name,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: Text(widget.device.healthyStatus.name),
-      trailing: Text(widget.device.deviceType.name),
+      subtitle: Text(healthDevice),
+      trailing: Text(typeOfDevice),
       leading: SizedBox(
         height: 50,
         width: 50,

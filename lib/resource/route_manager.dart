@@ -3,6 +3,7 @@ import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/manage_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/detail_request_bloc.dart';
@@ -151,7 +152,11 @@ class RouteGenerator {
       case Routes.provideDeviceRoute:
         final args = routeSettings.arguments as Device;
         return MaterialPageRoute(
-          builder: (context) => ProvideDevicePage(device: args),
+          builder: (context) => Provider<ProvideDeviceBloc>(
+            create: (context) => ProvideDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: ProvideDevicePage(device: args),
+          ),
           settings: routeSettings,
         );
       case Routes.initRoute:
