@@ -3,7 +3,7 @@ import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/model/request.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 
 class RequestService {
   final requestCollection =
@@ -70,9 +70,7 @@ class RequestService {
 
   /// get stream list request leader
   Stream<List<Request>> streamListRequestLeader(String teamId) async* {
-    List<String> memberIds =
-        await UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-            .getAllUserIdSameTeam(teamId);
+    List<String> memberIds = await UserService().getAllUserIdSameTeam(teamId);
     memberIds.add(teamId);
     yield* requestCollection
         .where('ownerId', whereIn: memberIds)

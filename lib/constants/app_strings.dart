@@ -74,6 +74,7 @@ class AppString {
   static const availbleDevice = 'Availble device';
   static const dateStartWork = 'Date start work';
   static const searchUserNameOrTeam = 'Search user name or team';
+  static const searchNameOfUserTeamOrDevice= 'Search name of user, team or device';
   static const imageIsRequired = 'Image is required';
   static const dateIsRequired = 'Date is required';
   static const profile = 'Profile';

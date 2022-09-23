@@ -2,28 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
 import 'package:manage_devices_app/model/team.dart';
 
-class TeamMethod {
-  final FirebaseFirestore firebaseFirestore;
-  TeamMethod({
-    required this.firebaseFirestore,
-  });
+class TeamService {
+  final teamCollection =
+      FirebaseFirestore.instance.collection(AppCollectionPath.team);
   Future<void> createTeam(String name, {String? imagePath}) async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.team).doc();
-    final team = Team(id: doc.id, name: name.trim());
-    team.id = doc.id;
-    await doc.set(team.toMap());
+    final teamDoc = teamCollection.doc();
+    final team = Team(id: teamDoc.id, name: name.trim());
+    team.id = teamDoc.id;
+    await teamDoc.set(team.toMap());
   }
 
   Future<Team> getTeam(String teamId) async {
-    final doc =
-        firebaseFirestore.collection(AppCollectionPath.team).doc(teamId);
-    final snapshot = await doc.get();
+    final teamDoc = teamCollection.doc(teamId);
+    final snapshot = await teamDoc.get();
     return Team.fromMap(snapshot.data()!);
   }
 
   Future<List<Team>> getAllTeam() async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.team);
-    final snapshot = await doc.get();
+    final teamDoc = teamCollection;
+    final snapshot = await teamDoc.get();
     if (snapshot.docs.isEmpty) {
       return [];
     }
@@ -31,10 +28,9 @@ class TeamMethod {
   }
 
   Future<List<String>> getTeamIdByName(String name) async {
-    final doc = firebaseFirestore
-        .collection(AppCollectionPath.device)
+    final teamDoc = teamCollection
         .where('name', isEqualTo: name);
-    final snapshot = await doc.get();
+    final snapshot = await teamDoc.get();
     if (snapshot.docs.isEmpty) {
       return [];
     }
@@ -42,8 +38,8 @@ class TeamMethod {
   }
 
   Future<List<String>> getAllTeamName() async {
-    final doc = firebaseFirestore.collection(AppCollectionPath.team);
-    final snapshot = await doc.get();
+    final teamDoc = teamCollection;
+    final snapshot = await teamDoc.get();
     if (snapshot.docs.isEmpty) {
       return [];
     }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/search_filter.dart';
 import 'package:manage_devices_app/helper/debounce.dart';
@@ -8,8 +7,8 @@ import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SearchBloc {
@@ -65,10 +64,8 @@ class SearchBloc {
       })
     ]);
   }
-  Future<List<User>> getAllUser() =>
-      UserMethod(firebaseFirestore: FirebaseFirestore.instance).getAllUser();
-  Future<List<Team>> getAllTeam() =>
-      TeamMethod(firebaseFirestore: FirebaseFirestore.instance).getAllTeam();
+  Future<List<User>> getAllUser() => UserService().getAllUser();
+  Future<List<Team>> getAllTeam() => TeamService().getAllTeam();
 
   void updateSearchResult() {
     if (searchFilterz == null) {
