@@ -16,6 +16,7 @@ class AppString {
   static const done = 'Done';
   static const confirm = 'Confirm';
   static const delete = 'Delete';
+  static const deleteSuccess = 'Delete success';
   static const getStarted = 'Get Started';
   static const deviceType = 'Device type';
   static const next = 'Next';
@@ -30,6 +31,7 @@ class AppString {
   static const deviceWillbeRecall = 'Device will be recall!';
   static const theProcessWillContinue = 'The process will continue';
   static const updateSuccess = 'Update success!';
+  static const provideDeviceSuccess = 'Provide device success!';
   static const content = 'Content';
   static const age = 'Age';
   static const editDevice = 'Edit device';
@@ -49,6 +51,7 @@ class AppString {
   static const ok = 'Ok';
   static const send = 'Send';
   static const provide = 'Provide';
+  static const provideDevice = 'Provide device';
   static const chooseDate = 'Choose date';
   static const search = 'Search';
   static const user = 'User';
@@ -74,13 +77,17 @@ class AppString {
   static const availbleDevice = 'Availble device';
   static const dateStartWork = 'Date start work';
   static const searchUserNameOrTeam = 'Search user name or team';
+  static const searchNameOfUserTeamOrDevice= 'Search name of user, team or device';
   static const imageIsRequired = 'Image is required';
   static const dateIsRequired = 'Date is required';
   static const profile = 'Profile';
   static const nameU = 'NAME';
   static const namel = 'name';
   static const name = 'Name';
-  static const type = 'TYPE';
+  static const typeU = 'TYPE';
+  static const type = 'Type';
+  static const someThingWentWrong = 'Something went wrong!';
+  static const deleteDeviceError = 'Some unexpected errors have occurred. The device may have been deleted!';
   static const info = 'Info';
   static const infoU = 'INFO';
   static const accept = 'Accept';
@@ -88,6 +95,8 @@ class AppString {
   static const reject = 'Reject';
   static const approved = 'Approved';
   static const disapproved = 'Disapproved';
+  static const userNotEmpty = 'User not be empty!';
+  static const teamNotEmpty = 'Team not be empty!';
   static const allrequest = 'All request';
   static const manufacturingDate = 'Manufacturing date';
   static const pleaseEnterFullData = 'Please enter full data!';

@@ -33,7 +33,7 @@ class SearchTextField extends StatelessWidget {
           cursorColor: Colors.white,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
-          autofocus: true,
+          // autofocus: true,
           decoration: InputDecoration(
             suffixIcon: isShowSuffixIcon
                 ? IconButton(

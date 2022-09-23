@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_method.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_method.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 
@@ -22,8 +21,7 @@ class OwnerInfo extends StatelessWidget {
 
   FutureBuilder<User> _buildUserInfo() {
     return FutureBuilder<User>(
-      future: UserMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getUser(ownerId),
+      future: UserService().getUser(ownerId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final user = snapshot.data!;
@@ -44,8 +42,7 @@ class OwnerInfo extends StatelessWidget {
 
   FutureBuilder<Team> _buildTeamInfo() {
     return FutureBuilder<Team>(
-      future: TeamMethod(firebaseFirestore: FirebaseFirestore.instance)
-          .getTeam(ownerId),
+      future: TeamService().getTeam(ownerId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final team = snapshot.data!;
