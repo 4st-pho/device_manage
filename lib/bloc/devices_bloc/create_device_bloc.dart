@@ -84,7 +84,6 @@ class CreateDeviceBloc {
     } finally {
       setLoadState(false);
     }
-    setLoadState(false);
   }
 
   void dispose() {
