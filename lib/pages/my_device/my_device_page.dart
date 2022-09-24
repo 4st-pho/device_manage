@@ -1,4 +1,5 @@
 import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:manage_devices_app/widgets/empty_list.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
@@ -22,13 +23,14 @@ class MyDevicePage extends StatelessWidget {
     );
   }
 
-  Widget _buildListMyDevice(BuildContext ctx) {
-    final currentUser = ctx.read<AppData>().currentUser;
+  Widget _buildListMyDevice(BuildContext context) {
+    final currentUser = context.read<AppData>().currentUser;
     return FutureBuilder<List<Device>>(
       future: DeviceService().getOwnerDevices(currentUser!.id),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final userOrderDevices = snapshot.data as List<Device>;
+          if (userOrderDevices.isEmpty) return const EmptyList();
           return ListView.builder(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.all(8),

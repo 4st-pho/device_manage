@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/manage_user_device_bloc.dart';
-import 'package:manage_devices_app/constants/app_image.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
+import 'package:manage_devices_app/widgets/empty_list.dart';
 import 'package:provider/provider.dart';
 
 class ManageUserDevicePage extends StatefulWidget {
@@ -34,24 +34,12 @@ class _ManageUserDevicePageState extends State<ManageUserDevicePage> {
           return Center(child: Text(error));
         } else if (snapshot.hasData) {
           final listDevice = snapshot.data ?? [];
-          if (listDevice.isEmpty) return _buildEmptyListImage();
+          if (listDevice.isEmpty) return const EmptyList();
           return _buildListDeviceItem(listDevice);
         } else {
           return const Center(child: CircularProgressIndicator());
         }
       },
-    );
-  }
-
-  Widget _buildEmptyListImage() {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Center(
-        child: Image.asset(
-          AppImage.empty,
-          width: 200,
-        ),
-      ),
     );
   }
 
