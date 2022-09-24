@@ -6,10 +6,7 @@ import 'package:manage_devices_app/model/user.dart' as model;
 import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 
 class AuthService {
-  final FirebaseAuth firebaseAuth;
-  AuthService({
-    required this.firebaseAuth,
-  });
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   Stream<User?> get authState => firebaseAuth.authStateChanges();
 
   //Send email verification

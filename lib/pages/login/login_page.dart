@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/login_bloc.dart';
 import 'package:manage_devices_app/constants/app_icon.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:manage_devices_app/pages/login/widgets/email_text_form_field.dart';
 import 'package:manage_devices_app/pages/login/widgets/password_text_form_field.dart';
-import 'package:manage_devices_app/services/clound_firestore/auth_service.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,10 +18,20 @@ class LoginPage extends StatefulWidget {
 class _LoginGogolePageState extends State<LoginPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final LoginBloc _loginBloc;
+  final _formKey = GlobalKey<FormState>();
+  void login() {
+    _loginBloc
+        .login(_emailController.text, _passwordController.text)
+        .catchError((e) {
+      showCustomSnackBar(context: context, content: e.toString(), error: true);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _loginBloc = context.read<LoginBloc>();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
   }
@@ -32,8 +42,6 @@ class _LoginGogolePageState extends State<LoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
   }
-
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +60,15 @@ class _LoginGogolePageState extends State<LoginPage> {
             _buildForm(),
             Padding(
               padding: const EdgeInsets.only(top: 40, bottom: 60),
-              child: CustomButton(
-                text: AppString.login,
-                onPressed: () async {
-                  await AuthService(firebaseAuth: FirebaseAuth.instance)
-                      .signinWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  )
-                      .catchError((e) {
-                    showCustomSnackBar(context: context, content: e.toString());
-                  });
+              child: StreamBuilder<bool>(
+                stream: _loginBloc.loadStream,
+                initialData: false,
+                builder: (context, snapshot) {
+                  final isLoading = snapshot.requireData;
+                  return CustomButton(
+                    text: AppString.login,
+                    onPressed: isLoading ? null : () => login(),
+                  );
                 },
               ),
             ),
@@ -72,7 +78,7 @@ class _LoginGogolePageState extends State<LoginPage> {
     );
   }
 
-  Form _buildForm() {
+  Widget _buildForm() {
     return Form(
       key: _formKey,
       child: Column(
@@ -81,7 +87,7 @@ class _LoginGogolePageState extends State<LoginPage> {
           const SizedBox(height: 16),
           PasswordTextFormField(
             passwordController: _passwordController,
-            onFieldSubmitted: (_) {},
+            onFieldSubmitted: (_) => login(),
           ),
         ],
       ),
