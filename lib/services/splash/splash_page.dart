@@ -1,7 +1,6 @@
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_icon.dart';
 import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
@@ -23,7 +22,7 @@ class _SplashPageState extends State<SplashPage> {
       final currentUser = appData.currentUser!;
       SharedPreferencesMethod.saveUserCredential(currentUser);
     } catch (e) {
-      AuthService(firebaseAuth: FirebaseAuth.instance).logOut(context);
+      AuthService().logOut();
       showCustomSnackBar(context: context, content: e.toString(), error: true);
     }
     // ignore: use_build_context_synchronously

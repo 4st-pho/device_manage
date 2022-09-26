@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/login_bloc.dart';
 import 'package:manage_devices_app/bloc/onbroad_bloc.dart';
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/pages/login/login_page.dart';
@@ -60,7 +61,11 @@ class AuthWrapper extends StatelessWidget {
           if (snapshot.hasData) {
             return const SplashPage();
           }
-          return const LoginPage();
+          return Provider<LoginBloc>(
+            create: (context) => LoginBloc(),
+            child: const LoginPage(),
+            dispose: (_, prov) => prov.dispose(),
+          );
         },
       ),
     );

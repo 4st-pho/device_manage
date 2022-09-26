@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:manage_devices_app/bloc/switch_true_false_bloc.dart';
+import 'package:manage_devices_app/bloc/login_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
+import 'package:manage_devices_app/helper/form_validate.dart';
+import 'package:provider/provider.dart';
 
 class PasswordTextFormField extends StatefulWidget {
   const PasswordTextFormField({
@@ -20,35 +22,37 @@ class PasswordTextFormField extends StatefulWidget {
 }
 
 class _PasswordTextFormFieldState extends State<PasswordTextFormField> {
-  final _showHidePasswod = SwitchTrueFalseBloc();
+  late final LoginBloc _loginBloc;
   @override
-  void dispose() {
-    super.dispose();
-    _showHidePasswod.dispose();
+  void initState() {
+    super.initState();
+    _loginBloc = context.read<LoginBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-      stream: _showHidePasswod.stream,
+      stream: _loginBloc.showPasswordStream,
       initialData: false,
       builder: (context, snapshot) {
-        final isShow = snapshot.data!;
+        final isShowPassword = snapshot.requireData;
         return TextFormField(
           focusNode: widget.focusNode,
           controller: widget.passwordController,
           keyboardType: TextInputType.visiblePassword,
           textAlignVertical: TextAlignVertical.center,
-          obscureText: !isShow,
+          obscureText: !isShowPassword,
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.lock),
             contentPadding: const EdgeInsets.all(20),
             suffixIcon: InkWell(
-              onTap: _showHidePasswod.toggleState,
+              onTap: _loginBloc.toggleShowPasswordState,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
-                  isShow ? Icons.visibility : Icons.visibility_off_rounded,
+                  isShowPassword
+                      ? Icons.visibility
+                      : Icons.visibility_off_rounded,
                 ),
               ),
             ),
@@ -60,6 +64,7 @@ class _PasswordTextFormFieldState extends State<PasswordTextFormField> {
             ),
           ),
           onFieldSubmitted: widget.onFieldSubmitted,
+          validator: FormValidate().passworkValidate,
         );
       },
     );
