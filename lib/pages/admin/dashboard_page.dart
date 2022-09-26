@@ -2,6 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
+import 'package:manage_devices_app/model/request_chart.dart';
 import 'package:manage_devices_app/pages/admin/widgets/bar_chart_request.dart';
 import 'package:manage_devices_app/pages/admin/widgets/pie_chart_request.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
@@ -17,6 +19,30 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  final List<RequestChart> requestChart = [
+    RequestChart(
+        errorType: ErrorType.noError,
+        alias: AppString.newDevice,
+        color: const Color(0xff0293ee)),
+    RequestChart(
+        errorType: ErrorType.software,
+        alias: AppString.software,
+        color: const Color(0xff845bef)),
+    RequestChart(
+        errorType: ErrorType.hardware,
+        alias: AppString.hardware,
+        color: const Color.fromARGB(255, 242, 131, 34)),
+  ];
+
+  final Map<int, String> weekdayName = {
+    1: "Mon",
+    2: "Tue",
+    3: "Wed",
+    4: "Thu",
+    5: "Fri",
+    6: "Sat",
+    7: "Sun"
+  };
   late final DashbroadBloc _dashbroadBloc;
   @override
   void initState() {
@@ -61,7 +87,7 @@ class _DashboardPageState extends State<DashboardPage> {
               return PieChartRequest(
                 preChartPercent:
                     _dashbroadBloc.listPercentRequestTypeOfAllRequest(),
-                requestChart: _dashbroadBloc.requestChart,
+                requestChart: requestChart,
               );
             }
             return ShimmerList.chartShimmer;
@@ -83,7 +109,7 @@ class _DashboardPageState extends State<DashboardPage> {
         } else if (snapshot.hasData) {
           return PieChartRequest(
             preChartPercent: _dashbroadBloc.listPercentRequestTypeIn12Month(),
-            requestChart: _dashbroadBloc.requestChart,
+            requestChart: requestChart,
           );
         }
         return ShimmerList.chartShimmer;
@@ -108,7 +134,7 @@ class _DashboardPageState extends State<DashboardPage> {
               final barChartGroupData = snapshot.data;
               return BarChartRequest(
                 barGroups: barChartGroupData!,
-                convertDateFromInt: _dashbroadBloc.getMonthFromDouble,
+                convertDateFromInt: (month) => month.toStringAsFixed(0),
                 maxY: _dashbroadBloc.quantityRequestIn12Month,
               );
             }
@@ -129,7 +155,7 @@ class _DashboardPageState extends State<DashboardPage> {
         } else if (snapshot.hasData) {
           return PieChartRequest(
             preChartPercent: _dashbroadBloc.listPercentRequestTypeInWeek(),
-            requestChart: _dashbroadBloc.requestChart,
+            requestChart: requestChart,
           );
         }
         return ShimmerList.chartShimmer;
@@ -154,7 +180,7 @@ class _DashboardPageState extends State<DashboardPage> {
               final barChartGroupData = snapshot.data;
               return BarChartRequest(
                 barGroups: barChartGroupData!,
-                convertDateFromInt: _dashbroadBloc.getDayFromDouble,
+                convertDateFromInt: (day) => weekdayName[day] ?? '',
                 maxY: _dashbroadBloc.quantityRequestInAWeek,
               );
             }
