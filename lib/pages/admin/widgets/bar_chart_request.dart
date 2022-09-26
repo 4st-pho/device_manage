@@ -1,16 +1,37 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class BarChartRequest extends StatelessWidget {
-  final double maxY;
-  final String Function(double value) convertDateFromInt;
+import 'package:manage_devices_app/enums/chart_type.dart';
+
+class BarChartRequest extends StatefulWidget {
+  final double maxChartHeight;
+  final ChartType chartType;
   final List<BarChartGroupData> barGroups;
-  const BarChartRequest(
-      {Key? key,
-      required this.maxY,
-      required this.barGroups,
-      required this.convertDateFromInt})
-      : super(key: key);
+  const BarChartRequest({
+    Key? key,
+    required this.maxChartHeight,
+    required this.chartType,
+    required this.barGroups,
+  }) : super(key: key);
+
+  @override
+  State<BarChartRequest> createState() => _BarChartRequestState();
+}
+
+class _BarChartRequestState extends State<BarChartRequest> {
+  final Map<int, String> weekdayName = {
+    1: "Mon",
+    2: "Tue",
+    3: "Wed",
+    4: "Thu",
+    5: "Fri",
+    6: "Sat",
+    7: "Sun"
+  };
+  String getMonthTitle(double month) => month.toStringAsFixed(0);
+
+  String getWeekTitle(double weekDay) => weekdayName[weekDay] ?? '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +48,10 @@ class BarChartRequest extends StatelessWidget {
               barTouchData: barTouchData,
               titlesData: titlesData,
               borderData: borderData,
-              barGroups: barGroups,
+              barGroups: widget.barGroups,
               gridData: FlGridData(show: false),
               alignment: BarChartAlignment.spaceAround,
-              maxY: maxY,
+              maxY: widget.maxChartHeight,
             ),
           ),
         ),
@@ -68,7 +89,11 @@ class BarChartRequest extends StatelessWidget {
       fontSize: 14,
     );
     String text;
-    text = convertDateFromInt(value);
+    if (widget.chartType == ChartType.chartWeek) {
+      text = getWeekTitle(value);
+    } else {
+      text = getMonthTitle(value);
+    }
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 4.0,

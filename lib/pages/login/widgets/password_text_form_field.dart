@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/login_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
+import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:provider/provider.dart';
 
 class PasswordTextFormField extends StatefulWidget {
@@ -63,6 +64,7 @@ class _PasswordTextFormFieldState extends State<PasswordTextFormField> {
             ),
           ),
           onFieldSubmitted: widget.onFieldSubmitted,
+          validator: FormValidate().passworkValidate,
         );
       },
     );
