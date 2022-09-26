@@ -65,7 +65,7 @@ class _LoginGogolePageState extends State<LoginPage> {
     );
   }
 
-  Padding _buildLoginButton() {
+  Widget _buildLoginButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 40, bottom: 60),
       child: StreamBuilder<bool>(
@@ -82,7 +82,7 @@ class _LoginGogolePageState extends State<LoginPage> {
     );
   }
 
-  Padding _buildLogo(Size size) {
+  Widget _buildLogo(Size size) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 100),
       child: Image.asset(AppIcon.logo, width: size.width / 2),
