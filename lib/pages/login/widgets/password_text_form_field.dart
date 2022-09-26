@@ -64,7 +64,7 @@ class _PasswordTextFormFieldState extends State<PasswordTextFormField> {
             ),
           ),
           onFieldSubmitted: widget.onFieldSubmitted,
-          validator: FormValidate().emailPassworkValidate,
+          validator: FormValidate().passworkValidate,
         );
       },
     );

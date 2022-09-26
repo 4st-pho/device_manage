@@ -25,7 +25,7 @@ class EmailTextFormField extends StatelessWidget {
         ),
       ),
       textInputAction: TextInputAction.next,
-      validator: FormValidate().emailPassworkValidate,
+      validator: FormValidate().emailValidate,
     );
   }
 }
