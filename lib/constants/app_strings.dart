@@ -114,8 +114,10 @@ class AppString {
   static const lessThan50 = 'Do not less than 50 characters';
   static const lessThan20 = 'Do not less than 20 characters';
   static const lessThan10 = 'Do not less than 10 characters';
+  static const lessThan6 = 'Do not less than 6 characters';
   static const enterSomeText = 'Please enter some text!';
   static const exceed100 = 'Do not exceed 100 characters when entering!';
+  static const exceed30 = 'Do not exceed 30 characters when entering!';
   static const exceed1000 = 'Do not exceed 1000 characters when entering!';
 
   static const onbroadTitle1 =

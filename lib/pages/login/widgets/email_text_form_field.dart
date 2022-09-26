@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
+import 'package:manage_devices_app/helper/form_validate.dart';
 
 class EmailTextFormField extends StatelessWidget {
   final TextEditingController textEditingController;
@@ -24,7 +25,7 @@ class EmailTextFormField extends StatelessWidget {
         ),
       ),
       textInputAction: TextInputAction.next,
-
+      validator: FormValidate().emailPassworkValidate,
     );
   }
 }
