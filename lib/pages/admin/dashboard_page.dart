@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
+import 'package:manage_devices_app/enums/chart_type.dart';
 import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/model/request_chart.dart';
 import 'package:manage_devices_app/pages/admin/widgets/bar_chart_request.dart';
@@ -34,15 +35,6 @@ class _DashboardPageState extends State<DashboardPage> {
         color: const Color.fromARGB(255, 242, 131, 34)),
   ];
 
-  final Map<int, String> weekdayName = {
-    1: "Mon",
-    2: "Tue",
-    3: "Wed",
-    4: "Thu",
-    5: "Fri",
-    6: "Sat",
-    7: "Sun"
-  };
   late final DashbroadBloc _dashbroadBloc;
   @override
   void initState() {
@@ -134,8 +126,8 @@ class _DashboardPageState extends State<DashboardPage> {
               final barChartGroupData = snapshot.data;
               return BarChartRequest(
                 barGroups: barChartGroupData!,
-                convertDateFromInt: (month) => month.toStringAsFixed(0),
-                maxY: _dashbroadBloc.quantityRequestIn12Month,
+                chartType: ChartType.chartMonth,
+                maxChartHeight: _dashbroadBloc.quantityRequestIn12Month,
               );
             }
             return ShimmerList.chartShimmer;
@@ -180,8 +172,8 @@ class _DashboardPageState extends State<DashboardPage> {
               final barChartGroupData = snapshot.data;
               return BarChartRequest(
                 barGroups: barChartGroupData!,
-                convertDateFromInt: (day) => weekdayName[day] ?? '',
-                maxY: _dashbroadBloc.quantityRequestInAWeek,
+                chartType: ChartType.chartWeek,
+                maxChartHeight: _dashbroadBloc.quantityRequestInAWeek,
               );
             }
             return ShimmerList.chartShimmer;
