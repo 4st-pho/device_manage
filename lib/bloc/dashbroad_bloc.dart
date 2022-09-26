@@ -35,7 +35,7 @@ class DashbroadBloc {
 
   void setAllRequestInNearestWeek() {
     DateTime currentDay = DateTime.now();
-    DateTime nextDay = DateTime.now().add(const Duration(days: 1));
+    DateTime nextDay = currentDay.add(const Duration(days: 1));
     DateTime seventDaysAgo = currentDay.subtract(const Duration(days: 7));
     _requestInNearestWeek = _allRequest
         .where((request) =>
@@ -45,15 +45,12 @@ class DashbroadBloc {
   }
 
   void setAllRequestInNearest12Month() {
-    DateTime currentDay = DateTime.now();
-
-    /// save temp data to calculator
     DateTime tempDay = DateTime.now();
-    DateTime nextMonth = DateTime(currentDay.year, currentDay.month + 1);
-    DateTime twelveMonthsAgo = DateTime(currentDay.year, currentDay.month - 12);
+    DateTime nextMonth = DateTime(tempDay.year, tempDay.month + 1);
+    DateTime twelveMonthsAgo = DateTime(tempDay.year, tempDay.month - 12);
     _requestInNearest12Month = _allRequest.where((request) {
-      tempDay = DateTime(currentDay.year, currentDay.month);
-      if (tempDay.isAfter(twelveMonthsAgo) && tempDay.isBefore(nextMonth)) {
+      if (request.createdAt.isAfter(twelveMonthsAgo) &&
+          request.createdAt.isBefore(nextMonth)) {
         return true;
       }
       return false;
