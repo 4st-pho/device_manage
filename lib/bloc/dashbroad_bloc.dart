@@ -35,8 +35,10 @@ class DashbroadBloc {
 
   void setAllRequestInNearestWeek() {
     DateTime currentDay = DateTime.now();
-    DateTime nextDay = currentDay.add(const Duration(days: 1));
-    DateTime seventDaysAgo = currentDay.subtract(const Duration(days: 7));
+    DateTime nextDay =
+        DateTime(currentDay.year, currentDay.month, currentDay.day + 1, 0);
+    DateTime seventDaysAgo = DateTime(
+        currentDay.year, currentDay.month, currentDay.day - 7, 23, 23, 23);
     _requestInNearestWeek = _allRequest
         .where((request) =>
             request.createdAt.isAfter(seventDaysAgo) &&
@@ -46,8 +48,9 @@ class DashbroadBloc {
 
   void setAllRequestInNearest12Month() {
     DateTime tempDay = DateTime.now();
-    DateTime nextMonth = DateTime(tempDay.year, tempDay.month + 1);
-    DateTime twelveMonthsAgo = DateTime(tempDay.year, tempDay.month - 12);
+    DateTime nextMonth = DateTime(tempDay.year, tempDay.month + 1, 1);
+    DateTime twelveMonthsAgo =
+        DateTime(tempDay.year, tempDay.month - 11, 0, 23, 23, 23);
     _requestInNearest12Month = _allRequest.where((request) {
       if (request.createdAt.isAfter(twelveMonthsAgo) &&
           request.createdAt.isBefore(nextMonth)) {
@@ -81,18 +84,17 @@ class DashbroadBloc {
 
   List<BarChartGroupData> get barGroupsWeek {
     DateTime date = DateTime.now();
-    final allHeightBar = List.generate(31, (index) => 0.0);
+    final allHeightBar = List.generate(7, (index) => 0.0);
     for (Request request in _requestInNearestWeek) {
-      allHeightBar[request.createdAt.day - 1]++;
+      allHeightBar[request.createdAt.weekday - 1]++;
     }
     return List.generate(7, (index) {
-      DateTime weekDay = date.subtract(Duration(days: 6 - index));
-      final int day = weekDay.weekday;
+      DateTime dayWeek = date.subtract(Duration(days: 6 - index));
       return BarChartGroupData(
-        x: day,
+        x: dayWeek.weekday,
         barRods: [
           BarChartRodData(
-            toY: allHeightBar[weekDay.day - 1],
+            toY: allHeightBar[dayWeek.weekday - 1],
             gradient: const LinearGradient(
               colors: [Colors.lightBlueAccent, Colors.greenAccent],
               begin: Alignment.bottomCenter,
