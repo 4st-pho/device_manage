@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:manage_devices_app/widgets/shimmer/chart_card_shimmer.dart';
 import 'package:manage_devices_app/widgets/shimmer/device_card_shimmer.dart';
 import 'package:manage_devices_app/widgets/shimmer/list_result_shimmer.dart';
 import 'package:manage_devices_app/widgets/shimmer/request_info_shimmer.dart';
@@ -61,6 +62,7 @@ class ShimmerList {
       ListResultShimmer(),
     ],
   );
+  static const chartShimmer = ChartCardShimmer();
 
   static const requestInfo = RequestInfoShimmer();
 }

@@ -10,7 +10,7 @@ class AppString {
   static const dashboard = 'Dashboard';
   static const title = 'Title';
   static const yes = 'Yes';
-  static const errorStatus = 'Error status';
+  static const errortype = 'Error Type';
   static const sender = 'Sender';
   static const device = 'Device';
   static const done = 'Done';
@@ -26,6 +26,9 @@ class AppString {
   static const all = 'All';
   static const edit = 'Edit';
   static const recall = 'Recall';
+  static const software = 'Software';
+  static const hardware = 'Hardware';
+  static const newDevice = 'New device';
   static const createSuccess = 'Create success!';
   static const selectAvailbleDevice = 'Please select availble device!';
   static const deviceWillbeRecall = 'Device will be recall!';
@@ -66,6 +69,9 @@ class AppString {
   static const deleteDevice = 'Delete device';
   static const userDevices = 'User devices';
   static const teamDevices = 'Team devices';
+  static const monthRequest = 'Month request';
+  static const dayRequest = 'Day request';
+  static const allRequest = 'All request';
   static const searchDevice = 'Search device';
   static const role = 'Role';
   static const availableDevices = 'Available devices';

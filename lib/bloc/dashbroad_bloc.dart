@@ -1,99 +1,126 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_service.dart';
 
 class DashbroadBloc {
-  late final List<Request> allRequest;
+  List<Request> _allRequest = [];
+  List<Request> _requestInNearestWeek = [];
+  List<Request> _requestInNearest12Month = [];
   DashbroadBloc() {
-    Future.wait([getAndSetAllRequest()]).then((value) {
-      init();
+    getAndSetAllData().then((_) async {
+      _weekChartDataController.sink.add(barGroupsWeek);
+      _monthChartDataController.sink.add(barGroupsMonth);
+      _isLoadedDataController.sink.add(true);
     });
   }
-  Future<void> getAndSetAllRequest() async {
-    allRequest = await RequestService().getAllRequest();
+
+  /// Show WeekBarChart when BarChartGroupData added into _weekChartDataController
+  final _weekChartDataController = StreamController<List<BarChartGroupData>>();
+  Stream<List<BarChartGroupData>> get weekChartDataStream =>
+      _weekChartDataController.stream;
+
+  /// Show MonthBarChart when BarChartGroupData added into _monthChartDataController
+  final _monthChartDataController = StreamController<List<BarChartGroupData>>();
+  Stream<List<BarChartGroupData>> get monthChartDataStream =>
+      _monthChartDataController.stream;
+
+  /// Show PieChart when data loaded
+  final _isLoadedDataController = StreamController<bool>.broadcast();
+  Stream<bool> get isLoadedDataStream => _isLoadedDataController.stream;
+
+  void setAllRequestInNearestWeek() {
+    DateTime currentDay = DateTime.now();
+    DateTime nextDay =
+        DateTime(currentDay.year, currentDay.month, currentDay.day + 1, 0);
+    DateTime seventDaysAgo = DateTime(
+        currentDay.year, currentDay.month, currentDay.day - 7, 23, 23, 23);
+    _requestInNearestWeek = _allRequest
+        .where((request) =>
+            request.createdAt.isAfter(seventDaysAgo) &&
+            request.createdAt.isBefore(nextDay))
+        .toList();
   }
 
-  void init() {
-    _listBarChartGroupDataController.sink.add(barGroups);
+  void setAllRequestInNearest12Month() {
+    DateTime tempDay = DateTime.now();
+    DateTime nextMonth = DateTime(tempDay.year, tempDay.month + 1, 1);
+    DateTime twelveMonthsAgo =
+        DateTime(tempDay.year, tempDay.month - 11, 0, 23, 23, 23);
+    _requestInNearest12Month = _allRequest.where((request) {
+      if (request.createdAt.isAfter(twelveMonthsAgo) &&
+          request.createdAt.isBefore(nextMonth)) {
+        return true;
+      }
+      return false;
+    }).toList();
   }
 
-  final StreamController<List<BarChartGroupData>>
-      _listBarChartGroupDataController =
-      StreamController<List<BarChartGroupData>>();
-  Stream<List<BarChartGroupData>> get listBarChartGroupDataStream =>
-      _listBarChartGroupDataController.stream;
-
-  String getDayFromDouble(double value) {
-    switch (value.toInt()) {
-      case 0:
-        return 'Mon';
-      case 1:
-        return 'Tue';
-      case 2:
-        return 'Wed';
-      case 3:
-        return 'Thu';
-      case 4:
-        return 'Fri';
-      case 5:
-        return 'Sat';
-      case 6:
-        return 'Sn';
-      default:
-        return '';
-    }
-  }
-
-  int getIntValueFromDate(DateTime weekDay) {
-    switch (DateFormat('EE').format(weekDay)) {
-      case 'Mon':
-        return 0;
-      case 'Tue':
-        return 1;
-      case 'Wed':
-        return 2;
-      case 'Thu':
-        return 3;
-      case 'Fri':
-        return 4;
-      case 'Sat':
-        return 5;
-      case 'Sun':
-        return 6;
-      default:
-        return 0;
-    }
+  Future<void> getAndSetAllData() async {
+    _allRequest = await RequestService().getAllRequest();
+    setAllRequestInNearestWeek();
+    setAllRequestInNearest12Month();
   }
 
   double get quantityRequestInAWeek {
     double result = 0;
-    for (BarChartGroupData item in barGroups) {
+    for (BarChartGroupData item in barGroupsWeek) {
       result += item.barRods[0].toY;
     }
     return result;
   }
 
-  List<BarChartGroupData> get barGroups {
+  double get quantityRequestIn12Month {
+    double result = 0;
+    for (BarChartGroupData item in barGroupsMonth) {
+      result += item.barRods[0].toY;
+    }
+    return result;
+  }
+
+  List<BarChartGroupData> get barGroupsWeek {
+    DateTime date = DateTime.now();
+    final allHeightBar = List.generate(7, (index) => 0.0);
+    for (Request request in _requestInNearestWeek) {
+      allHeightBar[request.createdAt.weekday - 1]++;
+    }
     return List.generate(7, (index) {
-      DateTime weekDay = DateTime.now().subtract(Duration(days: 6 - index));
-      double toY = 0;
-      for (Request request in allRequest) {
-        if (request.createdAt.day == weekDay.day &&
-            request.createdAt.month == weekDay.month &&
-            request.createdAt.year == weekDay.year) {
-          toY++;
-        }
-      }
-      final int x = getIntValueFromDate(weekDay);
+      DateTime dayWeek = date.subtract(Duration(days: 6 - index));
       return BarChartGroupData(
-        x: x,
+        x: dayWeek.weekday,
         barRods: [
           BarChartRodData(
-            toY: toY,
+            toY: allHeightBar[dayWeek.weekday - 1],
+            gradient: const LinearGradient(
+              colors: [Colors.lightBlueAccent, Colors.greenAccent],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+          )
+        ],
+        showingTooltipIndicators: [0],
+      );
+    }).toList();
+  }
+
+  List<BarChartGroupData> get barGroupsMonth {
+    DateTime date = DateTime.now();
+    final allHeightBar = List.generate(12, (index) => 0.0);
+    for (Request request in _requestInNearest12Month) {
+      allHeightBar[request.createdAt.month - 1]++;
+    }
+
+    return List.generate(12, (index) {
+      final monthDate = DateTime(date.year, date.month - (11 - index));
+      return BarChartGroupData(
+        x: monthDate.month,
+        barRods: [
+          BarChartRodData(
+            toY: allHeightBar[monthDate.month - 1],
             gradient: const LinearGradient(
               colors: [
                 Colors.lightBlueAccent,
@@ -109,5 +136,52 @@ class DashbroadBloc {
     }).toList();
   }
 
-  void dispose() {}
+  Map<ErrorType, double> listPercentRequestTypeInWeek() {
+    return listPercentRequestType(_requestInNearestWeek);
+  }
+
+  Map<ErrorType, double> listPercentRequestTypeIn12Month() {
+    return listPercentRequestType(_requestInNearest12Month);
+  }
+
+  Map<ErrorType, double> listPercentRequestTypeOfAllRequest() {
+    return listPercentRequestType(_allRequest);
+  }
+
+  /// order by order in ErrorType
+  /// e.g. ErrorType{software, hardware, noError}
+  ///   return {
+  ///   ErrorType.software: value,
+  ///   ErrorType.hardware: value,
+  ///   ErrorType.noError: value,
+  /// }
+  Map<ErrorType, double> listPercentRequestType(List<Request> listRequest) {
+    Map<ErrorType, double> result = <ErrorType, double>{};
+    for (var errorType in ErrorType.values) {
+      result.addAll({errorType: 0});
+    }
+    if (listRequest.isEmpty) {
+      return result;
+    }
+
+    for (Request request in listRequest) {
+      result.update(request.errorType, (value) => value + 1);
+    }
+    result.forEach((key, value) {
+      result.update(
+          key, (value) => roundDouble((value * 100 / listRequest.length), 2));
+    });
+
+    return result;
+  }
+
+  double roundDouble(double val, int places) {
+    num mod = pow(10.0, places);
+    return ((val * mod).round().toDouble() / mod);
+  }
+
+  void dispose() {
+    _weekChartDataController.close();
+    _monthChartDataController.close();
+  }
 }

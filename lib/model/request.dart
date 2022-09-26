@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 
@@ -10,7 +10,7 @@ class Request {
   String deviceId;
   String title;
   String content;
-  ErrorStatus errorStatus;
+  ErrorType errorType;
   RequestStatus requestStatus;
   DateTime createdAt;
   OwnerType ownerType;
@@ -20,7 +20,7 @@ class Request {
     this.deviceId = '',
     this.title = '',
     this.content = '',
-    this.errorStatus = ErrorStatus.software,
+    this.errorType = ErrorType.software,
     this.requestStatus = RequestStatus.pending,
     this.ownerType = OwnerType.none,
     DateTime? createdAt,
@@ -33,7 +33,7 @@ class Request {
       'deviceId': deviceId,
       'title': title,
       'content': content,
-      'errorStatus': errorStatus.name,
+      'errorType': errorType.name,
       'requestStatus': requestStatus.name,
       'ownerType': ownerType.name,
       'createdAt': createdAt.toIso8601String(),
@@ -47,7 +47,7 @@ class Request {
       deviceId: map['deviceId'] as String,
       title: map['title'] as String,
       content: map['content'] as String,
-      errorStatus: ErrorStatus.values.byName(map['errorStatus']),
+      errorType: ErrorType.values.byName(map['errorType']),
       requestStatus: RequestStatus.values.byName(map['requestStatus']),
       ownerType: OwnerType.values.byName(map['ownerType']),
       createdAt: DateTime.parse(map['createdAt']),
@@ -61,6 +61,6 @@ class Request {
 
   @override
   String toString() {
-    return 'Request(id: $id,  deviceId: $deviceId, title: $title, content: $content, errorStatus: $errorStatus, status: $requestStatus)';
+    return 'Request(id: $id,  deviceId: $deviceId, title: $title, content: $content, errorType: $errorType, status: $requestStatus)';
   }
 }

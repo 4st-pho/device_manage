@@ -4,7 +4,7 @@ import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/shared_preferences.dart';
 import 'package:manage_devices_app/model/device.dart';
-import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/model/request.dart';
 import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
@@ -19,7 +19,7 @@ class CreateRequestBloc {
   Device? _availableDevice;
   String _title = '';
   String _content = '';
-  ErrorStatus _errorStatus = ErrorStatus.software;
+  ErrorType _errortype = ErrorType.software;
 
   /// choose request new device or my request my device manage
   final _isRequestNewDeviceController = BehaviorSubject<bool>.seeded(false);
@@ -53,7 +53,7 @@ class CreateRequestBloc {
       _nameAvailbleDeviceController.stream;
 
   Device? get myDevide => _myDevice;
-  ErrorStatus? get deviceErrorStatus => _errorStatus;
+  ErrorType? get deviceErrorType => _errortype;
 
   bool get isRequestNewDevice =>
       _isRequestNewDeviceController.valueOrNull ?? false;
@@ -96,9 +96,9 @@ class CreateRequestBloc {
     }
   }
 
-  void onChangeErrorStatus(ErrorStatus? errorStatus) {
-    if (errorStatus != null) {
-      _errorStatus = errorStatus;
+  void onChangeErrorType(ErrorType? errorType) {
+    if (errorType != null) {
+      _errortype = errorType;
     }
   }
 
@@ -124,14 +124,14 @@ class CreateRequestBloc {
       ownerId: currentUser.id,
       title: _title,
       content: _content,
-      errorStatus: _errorStatus,
+      errorType: _errortype,
       ownerType: OwnerType.user,
     );
     if (currentUser.role == Role.leader) {
       request.requestStatus = RequestStatus.approved;
     }
     if (isRequestNewDevice) {
-      request.errorStatus = ErrorStatus.noError;
+      request.errorType = ErrorType.noError;
       request.deviceId = _availableDevice!.id;
     } else {
       request.deviceId = _myDevice!.id;

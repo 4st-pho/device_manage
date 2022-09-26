@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:manage_devices_app/enums/error_status.dart';
+import 'package:manage_devices_app/enums/error_type.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
@@ -59,7 +59,7 @@ class DetailRequestBloc {
       setLoadState(true);
       await RequestService()
           .updateRequestStatus(request.id, RequestStatus.accept);
-      if (request.errorStatus == ErrorStatus.noError) {
+      if (request.errorType == ErrorType.noError) {
         await DeviceService().provideDevice(
           id: request.deviceId,
           ownerId: request.ownerId,
