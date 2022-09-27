@@ -83,7 +83,8 @@ class AppString {
   static const availbleDevice = 'Availble device';
   static const dateStartWork = 'Date start work';
   static const searchUserNameOrTeam = 'Search user name or team';
-  static const searchNameOfUserTeamOrDevice= 'Search name of user, team or device';
+  static const searchNameOfUserTeamOrDevice =
+      'Search name of user, team or device';
   static const imageIsRequired = 'Image is required';
   static const dateIsRequired = 'Date is required';
   static const profile = 'Profile';
@@ -93,7 +94,8 @@ class AppString {
   static const typeU = 'TYPE';
   static const type = 'Type';
   static const someThingWentWrong = 'Something went wrong!';
-  static const deleteDeviceError = 'Some unexpected errors have occurred. The device may have been deleted!';
+  static const deleteDeviceError =
+      'Some unexpected errors have occurred. The device may have been deleted!';
   static const info = 'Info';
   static const infoU = 'INFO';
   static const accept = 'Accept';
@@ -114,8 +116,11 @@ class AppString {
   static const lessThan50 = 'Do not less than 50 characters';
   static const lessThan20 = 'Do not less than 20 characters';
   static const lessThan10 = 'Do not less than 10 characters';
+  static const lessThan6 = 'Do not less than 6 characters';
   static const enterSomeText = 'Please enter some text!';
+  static const emailRequired = 'Email required "@" ';
   static const exceed100 = 'Do not exceed 100 characters when entering!';
+  static const exceed30 = 'Do not exceed 30 characters when entering!';
   static const exceed1000 = 'Do not exceed 1000 characters when entering!';
 
   static const onbroadTitle1 =
