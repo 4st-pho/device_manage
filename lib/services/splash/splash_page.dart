@@ -22,8 +22,8 @@ class _SplashPageState extends State<SplashPage> {
       final currentUser = appData.currentUser!;
       SharedPreferencesMethod.saveUserCredential(currentUser);
     } catch (e) {
-      AuthService().logOut(context);
       showCustomSnackBar(context: context, content: e.toString(), error: true);
+      AuthService().logOut();
     }
     // ignore: use_build_context_synchronously
     Navigator.of(context).pushReplacementNamed(Routes.mainRoute);

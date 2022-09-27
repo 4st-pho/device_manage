@@ -5,6 +5,7 @@ class AppString {
   static const dontHaveAnAccount = 'You don\'t have an account?';
   static const haveAnAccount = 'You have an account?';
   static const login = 'Login';
+  static const logOut = 'Logout';
   static const signup = 'Sign up';
   static const skipOnbroading = 'skipOnbroading';
   static const dashboard = 'Dashboard';
@@ -13,6 +14,7 @@ class AppString {
   static const errortype = 'Error Type';
   static const sender = 'Sender';
   static const device = 'Device';
+  static const devicesManagement = 'Devices management';
   static const done = 'Done';
   static const confirm = 'Confirm';
   static const delete = 'Delete';
@@ -37,6 +39,7 @@ class AppString {
   static const provideDeviceSuccess = 'Provide device success!';
   static const content = 'Content';
   static const age = 'Age';
+  static const menu = 'Menu';
   static const editDevice = 'Edit device';
   static const cancel = 'Cancel';
   static const deviceWillBeDelete = 'Device will be delete!';
