@@ -1,4 +1,5 @@
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
+import 'package:manage_devices_app/bloc/home_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/pages/admin/dashboard_page.dart';
@@ -41,20 +42,25 @@ class _MainPageState extends State<MainPage> {
     return [
       currentUser!.role == Role.admin
           ? Provider<DashbroadBloc>(
-            create:(context) =>  DashbroadBloc(),
-            child: const DashboardPage(),
-            dispose: (context, prov) => prov.dispose(),)
+              create: (context) => DashbroadBloc(),
+              child: const DashboardPage(),
+              dispose: (context, prov) => prov.dispose(),
+            )
           // ? Container()
-          : const HomePage(),
+          : Provider<HomePageBloc>(
+              create: (context) => HomePageBloc(),
+              dispose: (_, prov) => prov.dispose(),
+              child: const HomePage(),
+            ),
       Provider<SearchBloc>(
         create: (context) => SearchBloc(),
         dispose: (_, prov) => prov.dispose(),
         child: const SearchPage(),
       ),
       Provider<RequestBloc>(
-        create: (context) =>  RequestBloc(),
-        dispose: (_, prov) => prov.dispose(),
-        child: const RequestPage()),
+          create: (context) => RequestBloc(),
+          dispose: (_, prov) => prov.dispose(),
+          child: const RequestPage()),
       const ProfilePage(),
     ];
   }
