@@ -23,13 +23,11 @@ class Indicator extends StatelessWidget {
         Container(
           width: size,
           height: size,
+          margin: const EdgeInsets.only(right: 4),
           decoration: BoxDecoration(
             shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
             color: color,
           ),
-        ),
-        const SizedBox(
-          width: 4,
         ),
         Text(
           text,
