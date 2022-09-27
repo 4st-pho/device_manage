@@ -37,20 +37,24 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<AppData>().currentUser;
     return Scaffold(
       appBar: _buildAppBar(),
       body: SafeArea(
-        child: ListView(
+        child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(8),
-          children: [
-            if (currentUser!.role != Role.admin) _buildUserWidget(context),
-            if (currentUser.role == Role.admin) _buildAdminWidget(context),
-          ],
+          child: _buildContent(),
         ),
       ),
     );
+  }
+
+  Widget _buildContent() {
+    final currentUser = context.read<AppData>().currentUser;
+    if (currentUser!.role == Role.admin) {
+      return _buildAdminWidget();
+    }
+    return _buildUserWidget();
   }
 
   AppBar _buildAppBar() {
@@ -74,7 +78,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget _buildAdminWidget(BuildContext context) {
+  Widget _buildAdminWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -94,7 +98,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget _buildUserWidget(BuildContext context) {
+  Widget _buildUserWidget() {
     return MenuItemBox(
       text: AppString.myDevice,
       icon: Icons.devices,
