@@ -1,11 +1,17 @@
 import 'dart:async';
 
+import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/error_type.dart';
+import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
+import 'package:manage_devices_app/model/team.dart';
+import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DetailRequestBloc {
@@ -30,15 +36,19 @@ class DetailRequestBloc {
 
   bool get isLoading => _loadController.value;
 
-  void toggleState() {
-    _loadController.add(!isLoading);
-  }
-
   void setLoadState(bool loadState) {
     _loadController.add(loadState);
   }
 
-  Future<Device> getDevice(String id) {
+  Future<User> getUser(String uid) {
+    return UserService().getUser(uid);
+  }
+
+  Future<Team> getTeam(String teamId) {
+    return TeamService().getTeam(teamId);
+  }
+
+  Future<Device?> getDevice(String id) {
     return DeviceService().getDevice(id);
   }
 
@@ -57,15 +67,24 @@ class DetailRequestBloc {
   Future<void> acceptRequest(Request request) async {
     try {
       setLoadState(true);
-      await RequestService()
-          .updateRequestStatus(request.id, RequestStatus.accept);
+      final device = await DeviceService().getDevice(request.deviceId);
+      if (device == null) {
+        await RequestService()
+            .updateRequestStatus(request.id, RequestStatus.reject);
+        throw AppString.deviceNotFound;
+      }
       if (request.errorType == ErrorType.noError) {
+        if (device.ownerId.isNotEmpty || device.ownerType != OwnerType.none) {
+          throw AppString.deviceHasOwned;
+        }
         await DeviceService().provideDevice(
           id: request.deviceId,
           ownerId: request.ownerId,
           ownerType: request.ownerType,
         );
       }
+      await RequestService()
+          .updateRequestStatus(request.id, RequestStatus.accept);
     } catch (e) {
       rethrow;
     } finally {
