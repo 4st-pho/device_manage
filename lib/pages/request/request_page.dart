@@ -2,6 +2,7 @@ import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/enums/tab_request.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
+import 'package:manage_devices_app/widgets/empty_list.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
@@ -86,6 +87,7 @@ class RequestPage extends StatelessWidget {
   }
 
   Widget _buildRequestContent(List<Request> requests) {
+    if (requests.isEmpty) return const EmptyList();
     return ListView.builder(
       padding: const EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 80),
       physics: const BouncingScrollPhysics(),

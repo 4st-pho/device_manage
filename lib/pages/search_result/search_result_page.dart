@@ -1,3 +1,4 @@
+import 'package:manage_devices_app/widgets/empty_list.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
@@ -37,6 +38,7 @@ class SearchResultPage extends StatelessWidget {
   }
 
   Widget _buildContent(List<Device> data) {
+    if (data.isEmpty) return const EmptyList();
     return Expanded(
         child: ListView.builder(
       physics: const BouncingScrollPhysics(),
