@@ -35,9 +35,10 @@ class DeviceOwnerInfoState extends State<DeviceOwnerInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const TextDivider(text: AppString.ownerInfo),
-        widget.ownerType == OwnerType.user
-            ? _buildUserInfo()
-            : _buildTeamInfo(),
+        if (widget.ownerType == OwnerType.user)
+          _buildUserInfo()
+        else
+          _buildTeamInfo(),
       ],
     );
   }
