@@ -3,6 +3,7 @@ import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/detail_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/manage_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/my_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
@@ -109,7 +110,11 @@ class RouteGenerator {
         );
       case Routes.myDevice:
         return MaterialPageRoute(
-          builder: (context) => const MyDevicePage(),
+          builder: (context) => Provider<MyDeviceBloc>(
+            create: (context) => MyDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: const MyDevicePage(),
+          ),
           settings: routeSettings,
         );
       case Routes.detailDeviceRoute:
