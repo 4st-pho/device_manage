@@ -1,6 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import 'package:manage_devices_app/model/user.dart' as model;
 import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
@@ -45,7 +43,7 @@ class AuthService {
         email: email.trim(), password: password.trim());
   }
 
-  Future<void> logOut(BuildContext context) async {
+  Future<void> logOut() async {
     await firebaseAuth.signOut();
   }
 }

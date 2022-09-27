@@ -13,25 +13,29 @@ class ProfileItem extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onPressed,
-    this.color = AppColor.lightBlue,
+    this.color = AppColor.backgroudNavigation,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          color: color,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Material(
+        borderRadius: BorderRadius.circular(16),
+        color: color.withOpacity(0.7),
+        child: InkWell(
           borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        child: Row(
-          children: [
-            Icon(icon, size: 32),
-            const SizedBox(width: 12),
-            Expanded(child: Text(text, style: AppStyle.whiteTitle)),
-          ],
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Row(
+              children: [
+                Icon(icon, size: 32),
+                const SizedBox(width: 12),
+                Expanded(child: Text(text, style: AppStyle.whiteText)),
+              ],
+            ),
+          ),
         ),
       ),
     );
