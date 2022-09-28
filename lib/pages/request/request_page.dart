@@ -1,5 +1,6 @@
 import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
+import 'package:manage_devices_app/enums/tab_request.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/widgets/empty_list.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +59,6 @@ class _RequestPageState extends State<RequestPage> {
   }
 
   Widget _buildContent(BuildContext context) {
-    // final currentUser = context.read<AppData>().currentUser!;
     final requestBloc = context.read<RequestBloc>();
     return DefaultTabController(
       length: 2,
@@ -67,7 +67,8 @@ class _RequestPageState extends State<RequestPage> {
           TabBar(
             tabs: requestTab,
             indicatorColor: AppColor.backgroudNavigation,
-            onTap: requestBloc.onTabChange,
+            onTap: (tabIndex) =>
+                requestBloc.onTabChange(TabRequest.values[tabIndex]),
           ),
           Expanded(
               child: StreamBuilder<List<Request>>(

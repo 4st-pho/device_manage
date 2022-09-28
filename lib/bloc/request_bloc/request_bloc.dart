@@ -34,20 +34,8 @@ class RequestBloc {
     });
   }
 
-  TabRequest defineTab(int index) {
-    switch (index) {
-      case 0:
-        return TabRequest.processing;
-      case 1:
-        return TabRequest.handled;
-
-      default:
-        return TabRequest.processing;
-    }
-  }
-
-  void onTabChange(int index) {
-    _currentTab = defineTab(index);
+  void onTabChange(TabRequest tabRequest) {
+    _currentTab = tabRequest;
     updateListRequest();
   }
 
