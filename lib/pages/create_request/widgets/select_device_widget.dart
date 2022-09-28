@@ -100,41 +100,49 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(AppString.device),
-        StreamBuilder<List<Device>>(
-          stream: _createRequestBloc.myDevicesStream,
-          builder: (context, snapshot) {
-            final myDevices = snapshot.data ?? [];
-            return DropdownButtonFormField<Device>(
-              value: _createRequestBloc.myDevice,
-              isExpanded: true,
-              isDense: false,
-              validator: FormValidate().selectOption,
-              decoration: AppDecoration.inputDecoration,
-              items: myDevices.map((device) {
-                final String healthStatus = device.healthyStatus.name;
-                return DropdownMenuItem(
-                  value: device,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(device.name, style: AppStyle.whiteText),
-                        Row(children: [
-                          Expanded(child: Text(healthStatus)),
-                          Text(DateFormat('dd MMM yyyy')
-                              .format(device.manufacturingDate))
-                        ]),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: _createRequestBloc.onChooseMyDevice,
-            );
-          },
-        ),
+        _buildDropdownListMyDevice(),
       ],
+    );
+  }
+
+  Widget _buildDropdownListMyDevice() {
+    return StreamBuilder<List<Device>>(
+      stream: _createRequestBloc.myDevicesStream,
+      builder: (context, snapshot) {
+        final myDevices = snapshot.data ?? [];
+        return DropdownButtonFormField<Device>(
+          value: _createRequestBloc.myDevice,
+          isExpanded: true,
+          isDense: false,
+          validator: FormValidate().selectOption,
+          decoration: AppDecoration.inputDecoration,
+          items: myDevices.map((device) {
+            final String healthStatus = device.healthyStatus.name;
+            return _buildDropdownMyDeviceItem(device, healthStatus);
+          }).toList(),
+          onChanged: _createRequestBloc.onChooseMyDevice,
+        );
+      },
+    );
+  }
+
+  DropdownMenuItem<Device> _buildDropdownMyDeviceItem(
+      Device device, String healthStatus) {
+    return DropdownMenuItem(
+      value: device,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(device.name, style: AppStyle.whiteText),
+            Row(children: [
+              Expanded(child: Text(healthStatus)),
+              Text(DateFormat('dd MMM yyyy').format(device.manufacturingDate))
+            ]),
+          ],
+        ),
+      ),
     );
   }
 
@@ -143,22 +151,26 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(AppString.errortype),
-        DropdownButtonFormField<ErrorType>(
-            isExpanded: true,
-            value: _createRequestBloc.deviceErrorType,
-            validator: FormValidate().selectOption,
-            decoration: const InputDecoration(
-                filled: true,
-                fillColor: AppColor.lightBlack,
-                border: OutlineInputBorder(),
-                enabledBorder: AppDecoration.outlineInputBorder,
-                focusedBorder: AppDecoration.focusOutlineInputBorder),
-            items: [ErrorType.software, ErrorType.hardware]
-                .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
-                .toList(),
-            onChanged: _createRequestBloc.onChangeErrorType),
+        _buildDropdownErrorType(),
       ],
     );
+  }
+
+  Widget _buildDropdownErrorType() {
+    return DropdownButtonFormField<ErrorType>(
+        isExpanded: true,
+        value: _createRequestBloc.deviceErrorType,
+        validator: FormValidate().selectOption,
+        decoration: const InputDecoration(
+            filled: true,
+            fillColor: AppColor.lightBlack,
+            border: OutlineInputBorder(),
+            enabledBorder: AppDecoration.outlineInputBorder,
+            focusedBorder: AppDecoration.focusOutlineInputBorder),
+        items: [ErrorType.software, ErrorType.hardware]
+            .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
+            .toList(),
+        onChanged: _createRequestBloc.onChangeErrorType);
   }
 
   Widget _buildSelectAvailbleDevice() {
