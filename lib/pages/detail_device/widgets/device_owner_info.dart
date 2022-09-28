@@ -35,15 +35,17 @@ class DeviceOwnerInfoState extends State<DeviceOwnerInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const TextDivider(text: AppString.ownerInfo),
-        if (widget.ownerType == OwnerType.user)
-          _buildUserInfo()
-        else
-          _buildTeamInfo(),
+        _buildOwnerInfo()
       ],
     );
   }
 
-  FutureBuilder<User> _buildUserInfo() {
+  Widget _buildOwnerInfo() {
+    if (widget.ownerType == OwnerType.user) return _buildUserInfo();
+    return _buildTeamInfo();
+  }
+
+  Widget _buildUserInfo() {
     return FutureBuilder<User>(
       future: _detailDeviceBloc.getUser(widget.ownerId),
       builder: (context, snapshot) {
@@ -67,7 +69,7 @@ class DeviceOwnerInfoState extends State<DeviceOwnerInfo> {
     );
   }
 
-  FutureBuilder<Team> _buildTeamInfo() {
+  Widget _buildTeamInfo() {
     return FutureBuilder<Team>(
       future: _detailDeviceBloc.getTeam(widget.ownerId),
       builder: (context, snapshot) {

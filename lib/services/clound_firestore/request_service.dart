@@ -36,9 +36,10 @@ class RequestService {
         .get();
     for (var requestMap in requestDoc.docs) {
       final request = Request.fromMap(requestMap.data());
-      if (request.requestStatus != RequestStatus.accept &&
-          request.requestStatus != RequestStatus.reject &&
-          request.requestStatus != RequestStatus.disapproved) {
+      bool isUnprocessedRequest =
+          request.requestStatus == RequestStatus.pending ||
+              request.requestStatus == RequestStatus.approved;
+      if (isUnprocessedRequest) {
         await updateRequestStatus(request.id, RequestStatus.reject);
       }
     }
