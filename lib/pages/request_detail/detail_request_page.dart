@@ -17,7 +17,6 @@ import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
-import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 import 'package:manage_devices_app/widgets/custom_button.dart';
 import 'package:manage_devices_app/widgets/text_divider.dart';
 
@@ -256,27 +255,28 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const TextDivider(text: AppString.deviceInfo),
-        FutureBuilder<Device?>(
-          future: _detailRequestBloc.getDevice(widget.request.deviceId),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) {
-              return const NotFound();
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            } else if (snapshot.hasData) {
-              final device = snapshot.data!;
-              return BaseInfo(
-                  imagePath: device.imagePaths[0],
-                  title: 'Name: ${device.name}',
-                  subtitle: 'Type: ${device.deviceType.name}',
-                  info: 'Healthy status : ${device.healthyStatus.name}');
-            }
-            return ShimmerList.requestInfo;
-          },
-        ),
+        _buildDeviceInfoContent(),
       ],
+    );
+  }
+
+  Widget _buildDeviceInfoContent() {
+    return FutureBuilder<Device?>(
+      future: _detailRequestBloc.getDevice(widget.request.deviceId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          final String error = snapshot.error.toString();
+          return Center(child: Text(error));
+        }
+        if (!snapshot.hasData) return const NotFound();
+        final device = snapshot.data!;
+        return BaseInfo(
+          imagePath: device.imagePaths[0],
+          title: 'Name: ${device.name}',
+          subtitle: 'Type: ${device.deviceType.name}',
+          info: 'Healthy status : ${device.healthyStatus.name}',
+        );
+      },
     );
   }
 

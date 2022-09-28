@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_style.dart';
 
-class ProfileItem extends StatelessWidget {
+class MenuItemBox extends StatelessWidget {
   final String text;
   final IconData icon;
   final VoidCallback onPressed;
   final Color color;
 
-  const ProfileItem({
+  const MenuItemBox({
     Key? key,
     required this.text,
     required this.icon,

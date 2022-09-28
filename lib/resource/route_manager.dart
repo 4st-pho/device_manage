@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/create_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/detail_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/edit_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/manage_device_bloc.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/my_device_bloc.dart';
 import 'package:manage_devices_app/bloc/devices_bloc/provide_device_bloc.dart';
 import 'package:manage_devices_app/bloc/main_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
@@ -13,18 +13,15 @@ import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/main.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/model/request.dart';
-import 'package:manage_devices_app/pages/admin/dashboard_page.dart';
 import 'package:manage_devices_app/pages/create_device/create_device_page.dart';
 import 'package:manage_devices_app/pages/create_request/create_request_page.dart';
 import 'package:manage_devices_app/pages/create_user/create_user_page.dart';
 import 'package:manage_devices_app/pages/detail_device/detail_device_page.dart';
 import 'package:manage_devices_app/pages/edit_device/edit_device_page.dart';
-import 'package:manage_devices_app/pages/login/login_page.dart';
 import 'package:manage_devices_app/pages/main_page/main_page.dart';
 import 'package:manage_devices_app/pages/manage_device/manage_device_page.dart';
 import 'package:manage_devices_app/pages/my_device/my_device_page.dart';
 import 'package:manage_devices_app/pages/provide_device/provide_device_page.dart';
-import 'package:manage_devices_app/pages/request/request_page.dart';
 import 'package:manage_devices_app/pages/request_detail/detail_request_page.dart';
 import 'package:manage_devices_app/pages/search_result/search_result_page.dart';
 import 'package:manage_devices_app/services/splash/splash_page.dart';
@@ -32,7 +29,6 @@ import 'package:provider/provider.dart';
 
 class Routes {
   static const String splashRoute = "/";
-  static const String loginRoute = "/loginRoute";
   static const String myDevice = "/myDevice";
   static const String requestRoute = "/requestRoute";
   static const String searchResultRoute = "/searchResultRoute";
@@ -47,8 +43,6 @@ class Routes {
   static const String manageDeviceRoute = "/manageDeviceRoute ";
   static const String editDeviceRoute = "/editDeviceRoute ";
   static const String provideDeviceRoute = "/provideDeviceRoute ";
-  static const String dashboardPage = "/dashboardPage ";
-  static const String showErrorRoute = "/showErrorRoute ";
 }
 
 class RouteGenerator {
@@ -62,11 +56,7 @@ class RouteGenerator {
                   child: const MainPage(),
                 ),
             settings: routeSettings);
-      case Routes.loginRoute:
-        return MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-          settings: routeSettings,
-        );
+
       case Routes.createRequestRoute:
         return MaterialPageRoute(
           builder: (context) => MultiProvider(
@@ -120,7 +110,11 @@ class RouteGenerator {
         );
       case Routes.myDevice:
         return MaterialPageRoute(
-          builder: (context) => const MyDevicePage(),
+          builder: (context) => Provider<MyDeviceBloc>(
+            create: (context) => MyDeviceBloc(),
+            dispose: (_, prov) => prov.dispose(),
+            child: const MyDevicePage(),
+          ),
           settings: routeSettings,
         );
       case Routes.detailDeviceRoute:
@@ -168,20 +162,6 @@ class RouteGenerator {
       case Routes.initRoute:
         return MaterialPageRoute(
           builder: (context) => const SplashPage(),
-          settings: routeSettings,
-        );
-      case Routes.requestRoute:
-        return MaterialPageRoute(
-          builder: (context) => const RequestPage(),
-          settings: routeSettings,
-        );
-      case Routes.dashboardPage:
-        return MaterialPageRoute(
-          builder: (context) => Provider<DashbroadBloc>(
-            create: (context) => DashbroadBloc(),
-            child: const DashboardPage(),
-            dispose: (context, prov) => prov.dispose(),
-          ),
           settings: routeSettings,
         );
       default:

@@ -21,11 +21,14 @@ class _LoginGogolePageState extends State<LoginPage> {
   late final LoginBloc _loginBloc;
   final _formKey = GlobalKey<FormState>();
   void login() {
-    _loginBloc
-        .login(_emailController.text, _passwordController.text)
-        .catchError((e) {
-      showCustomSnackBar(context: context, content: e.toString(), error: true);
-    });
+    if (_formKey.currentState!.validate()) {
+      _loginBloc
+          .login(_emailController.text, _passwordController.text)
+          .catchError((e) {
+        showCustomSnackBar(
+            context: context, content: e.toString(), error: true);
+      });
+    }
   }
 
   @override
@@ -53,28 +56,36 @@ class _LoginGogolePageState extends State<LoginPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 100),
-              child: Image.asset(AppIcon.logo, width: size.width / 2),
-            ),
+            _buildLogo(size),
             _buildForm(),
-            Padding(
-              padding: const EdgeInsets.only(top: 40, bottom: 60),
-              child: StreamBuilder<bool>(
-                stream: _loginBloc.loadStream,
-                initialData: false,
-                builder: (context, snapshot) {
-                  final isLoading = snapshot.requireData;
-                  return CustomButton(
-                    text: AppString.login,
-                    onPressed: isLoading ? null : () => login(),
-                  );
-                },
-              ),
-            ),
+            _buildLoginButton(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40, bottom: 60),
+      child: StreamBuilder<bool>(
+        stream: _loginBloc.loadStream,
+        initialData: false,
+        builder: (context, snapshot) {
+          final isLoading = snapshot.requireData;
+          return CustomButton(
+            text: AppString.login,
+            onPressed: isLoading ? null : () => login(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLogo(Size size) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 100),
+      child: Image.asset(AppIcon.logo, width: size.width / 2),
     );
   }
 

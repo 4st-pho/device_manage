@@ -27,71 +27,66 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: CustomScrollView(
+      child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        slivers: [
-          _buildTitle(),
-          _buildListTeamDevice(context),
-        ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitle(),
+            _buildListTeamDevice(context),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildListTeamDevice(BuildContext ctx) {
-    final size = MediaQuery.of(ctx).size;
-    return SliverToBoxAdapter(
-      child: FutureBuilder<List<Device>>(
-        future: _homePageBloc.getTeamDevices(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final userDevices = snapshot.data as List<Device>;
-            if (userDevices.isEmpty) {
+  Widget _buildListTeamDevice(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return FutureBuilder<List<Device>>(
+      future: _homePageBloc.getTeamDevices(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final userDevices = snapshot.data as List<Device>;
+          if (userDevices.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.only(top: size.height / 5),
+              child: const EmptyList(),
+            );
+          }
+          return ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(8),
+            shrinkWrap: true,
+            primary: false,
+            itemCount: userDevices.length,
+            itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.only(top: size.height / 5),
-                child: const EmptyList(),
+                padding: const EdgeInsets.only(bottom: 16),
+                child: DeviceCard(device: userDevices[index]),
               );
-            }
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(8),
-              shrinkWrap: true,
-              primary: false,
-              itemCount: userDevices.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: DeviceCard(device: userDevices[index]),
-                );
-              },
-            );
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-          return ShimmerList.deviceCard;
-        },
-      ),
+            },
+          );
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+        return ShimmerList.deviceCard;
+      },
     );
   }
 
   Widget _buildTitle() {
-    return SliverToBoxAdapter(
-      child: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(width: 4, color: AppColor.dartBlue),
-              ),
-            ),
-            child: const Text(AppString.teamDevices, style: AppStyle.blueTitle),
-          ),
-        ],
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 4, color: AppColor.dartBlue),
+        ),
       ),
+      child: const Text(AppString.teamDevices, style: AppStyle.blueTitle),
     );
   }
 }

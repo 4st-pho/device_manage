@@ -1,28 +1,27 @@
-import 'package:manage_devices_app/bloc/profile_bloc.dart';
+import 'package:manage_devices_app/bloc/menu_page_bloc.dart';
 import 'package:manage_devices_app/constants/app_color.dart';
-import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/helper/show_custom_snackbar.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/role.dart';
-import 'package:manage_devices_app/pages/profile/widgets/profile_item.dart';
+import 'package:manage_devices_app/pages/menu/widgets/menu_item_box.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class MenuPage extends StatefulWidget {
+  const MenuPage({Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<MenuPage> createState() => _MenuPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  late final ProfileBloc _profileBloc;
+class _MenuPageState extends State<MenuPage> {
+  late final MenuPageBloc _profileBloc;
   @override
   void initState() {
     super.initState();
-    _profileBloc = context.read<ProfileBloc>();
+    _profileBloc = context.read<MenuPageBloc>();
   }
 
   void logOut() {
@@ -38,30 +37,30 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<AppData>().currentUser;
     return Scaffold(
       appBar: _buildAppBar(),
       body: SafeArea(
-        child: ListView(
+        child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(8),
-          children: [
-            if (currentUser!.role != Role.admin) _buildUserWidget(context),
-            if (currentUser.role == Role.admin) _buildAdminWidget(context),
-          ],
+          child: _buildContent(),
         ),
       ),
     );
   }
 
+  Widget _buildContent() {
+    final currentUser = context.read<AppData>().currentUser;
+    if (currentUser!.role == Role.admin) {
+      return _buildAdminWidget();
+    }
+    return _buildUserWidget();
+  }
+
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.black,
       elevation: 0,
-      title: const Text(
-        AppString.deviceManage,
-        style: AppStyle.blueTitle,
-      ),
+      title: const Text(AppString.devicesManagement),
       actions: [
         Container(
           decoration: BoxDecoration(
@@ -79,17 +78,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildAdminWidget(BuildContext context) {
+  Widget _buildAdminWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ProfileItem(
+        MenuItemBox(
           text: AppString.deviceManage,
           icon: Icons.devices_sharp,
           onPressed: () =>
               Navigator.of(context).pushNamed(Routes.manageDeviceRoute),
         ),
-        ProfileItem(
+        MenuItemBox(
           text: AppString.createDevice,
           icon: Icons.add_circle_outline,
           onPressed: () =>
@@ -99,10 +98,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildUserWidget(BuildContext context) {
-    return ProfileItem(
+  Widget _buildUserWidget() {
+    return MenuItemBox(
       text: AppString.myDevice,
-      icon: Icons.my_library_books,
+      icon: Icons.devices,
       onPressed: () => Navigator.of(context).pushNamed(Routes.myDevice),
     );
   }
