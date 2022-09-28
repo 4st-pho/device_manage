@@ -1,5 +1,6 @@
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 import 'package:manage_devices_app/bloc/home_page_bloc.dart';
+import 'package:manage_devices_app/bloc/profile_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/pages/admin/dashboard_page.dart';
@@ -46,7 +47,6 @@ class _MainPageState extends State<MainPage> {
               child: const DashboardPage(),
               dispose: (context, prov) => prov.dispose(),
             )
-          // ? Container()
           : Provider<HomePageBloc>(
               create: (context) => HomePageBloc(),
               dispose: (_, prov) => prov.dispose(),
@@ -58,10 +58,15 @@ class _MainPageState extends State<MainPage> {
         child: const SearchPage(),
       ),
       Provider<RequestBloc>(
-          create: (context) => RequestBloc(),
-          dispose: (_, prov) => prov.dispose(),
-          child: const RequestPage()),
-      const ProfilePage(),
+        create: (context) => RequestBloc(),
+        dispose: (_, prov) => prov.dispose(),
+        child: const RequestPage(),
+      ),
+      Provider<ProfileBloc>(
+        create: (context) => ProfileBloc(),
+        dispose: (_, prov) => prov.dispose(),
+        child: const ProfilePage(),
+      ),
     ];
   }
 

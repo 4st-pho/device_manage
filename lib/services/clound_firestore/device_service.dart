@@ -72,9 +72,10 @@ class DeviceService {
     await deviceDoc.delete();
   }
 
-  Future<Device> getDevice(String deviceId) async {
+  Future<Device?> getDevice(String deviceId) async {
     final deviceDoc = deviceCollection.doc(deviceId.trim());
     final snapshot = await deviceDoc.get();
+    if (snapshot.data() == null) return null;
     return Device.fromMap(snapshot.data()!);
   }
 
