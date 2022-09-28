@@ -55,7 +55,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Expanded(child: _buildEditDeviceDevice(context)),
+          Expanded(child: _buildEditDeviceDevice()),
           const SizedBox(width: 16),
           if (isOwner)
             Expanded(child: _buildRecallButton())
@@ -86,7 +86,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
     );
   }
 
-  Widget _buildEditDeviceDevice(BuildContext context) {
+  Widget _buildEditDeviceDevice() {
     return CustomButton(
       text: AppString.edit,
       onPressed: () => Navigator.of(context)
