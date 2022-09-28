@@ -12,15 +12,24 @@ import 'package:manage_devices_app/pages/request/widgets/request_item.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
 
-class RequestPage extends StatelessWidget {
+class RequestPage extends StatefulWidget {
   const RequestPage({Key? key}) : super(key: key);
 
+  @override
+  State<RequestPage> createState() => _RequestPageState();
+}
+
+class _RequestPageState extends State<RequestPage> {
+  final requestTab = const [
+    Tab(child: Text(AppString.processing)),
+    Tab(child: Text(AppString.handled)),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppbar(context),
       body: DefaultTabController(
-        length: 2,
+        length: requestTab.length,
         child: _buildContent(context),
       ),
     );
@@ -30,12 +39,15 @@ class RequestPage extends StatelessWidget {
     final currentUser = context.read<AppData>().currentUser;
     return AppBar(
       title: const Text(AppString.allrequest),
-      backgroundColor: Colors.black.withOpacity(0.6),
       elevation: 0,
       actions: [
         if (currentUser!.role != Role.admin)
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: AppColor.backgroudNavigation.withOpacity(0.5),
+            ),
+            margin: const EdgeInsets.all(8),
             child: IconButton(
               onPressed: () =>
                   Navigator.pushNamed(context, Routes.createRequestRoute),
@@ -47,25 +59,16 @@ class RequestPage extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    // final currentUser = context.read<AppData>().currentUser!;
     final requestBloc = context.read<RequestBloc>();
     return DefaultTabController(
       length: 2,
       child: Column(
         children: [
           TabBar(
-            tabs: const [
-              Tab(child: Text(AppString.processing)),
-              Tab(child: Text(AppString.handled)),
-            ],
-            indicatorColor: AppColor.dartBlue,
-            onTap: (tabIndex) {
-              if (tabIndex == 0) {
-                requestBloc.onTabChange(TabRequest.processing);
-              } else {
-                requestBloc.onTabChange(TabRequest.handled);
-              }
-            },
+            tabs: requestTab,
+            indicatorColor: AppColor.backgroudNavigation,
+            onTap: (tabIndex) =>
+                requestBloc.onTabChange(TabRequest.values[tabIndex]),
           ),
           Expanded(
               child: StreamBuilder<List<Request>>(
