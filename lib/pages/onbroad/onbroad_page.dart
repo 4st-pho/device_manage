@@ -28,16 +28,16 @@ class _OnbroadPageState extends State<OnbroadPage> {
   final List<OnroadItem> _listOnbroadItem = [
     const OnroadItem(
         image: AppImage.onbroad1,
-        title: AppString.onbroadTitle1,
-        content: AppString.onbroadContent1),
+        title: AppString.welcome,
+        content: AppString.welcomeContent),
     const OnroadItem(
         image: AppImage.onbroad2,
-        title: AppString.onbroadTitle2,
-        content: AppString.onbroadContent1),
+        title: AppString.support,
+        content: AppString.welcomeContent),
     const OnroadItem(
         image: AppImage.onbroad3,
-        title: AppString.onbroadTitle3,
-        content: AppString.onbroadContent1),
+        title: AppString.explore,
+        content: AppString.welcomeContent),
   ];
   @override
   void dispose() {

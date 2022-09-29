@@ -98,7 +98,7 @@ class AppString {
   static const imageIsRequired = 'Image is required';
   static const dateIsRequired = 'Date is required';
   static const plsChooseTime = 'Please choose device manufacturing date!';
-  static const  plsPickImage= 'Please pick device image!';
+  static const plsPickImage = 'Please pick device image!';
   static const nameU = 'NAME';
   static const namel = 'name';
   static const name = 'Name';
@@ -137,16 +137,11 @@ class AppString {
   static const exceed1000 = 'Do not exceed 1000 characters when entering!';
   static const exceed3000 = 'Do not exceed 3000 characters when entering!';
 
-  static const onbroadTitle1 =
-      'Welcome';
-  static const onbroadTitle2 =
-      'Support';
-  static const onbroadTitle3 =
-      'Expolre';
-  static const onbroadContent1 =
-      'Welcome to devices management!';
-  static const onbroadContent2 =
+  static const welcome = 'Welcome';
+  static const support = 'Support';
+  static const explore = 'Expolre';
+  static const welcomeContent = 'Welcome to devices management!';
+  static const supportContent =
       'Send error message and request provide new device to admin!';
-  static const onbroadContent3 =
-      'Manage my device and team device in company.';
+  static const exploreContent = 'Manage my device and team device in company.';
 }
