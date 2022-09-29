@@ -24,7 +24,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   Future<void> sendRequest() async {
     if (_formKey.currentState!.validate()) {
       _createRequestBloc.sendRequest().then((value) {
-        showCustomSnackBar(context: context, content: AppString.createSuccess);
+        showCustomSnackBar(context: context, content: AppString.sendSucces);
         Navigator.of(context).pop();
       }).catchError(
         (error) {
