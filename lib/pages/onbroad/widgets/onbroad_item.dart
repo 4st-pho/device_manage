@@ -49,7 +49,7 @@ class OnroadItem extends StatelessWidget {
                         child: Text(
                           content,
                           style: AppStyle.whiteText,
-                          textAlign: TextAlign.justify,
+                          textAlign: TextAlign.center,
                         ),
                       )
                     ],
