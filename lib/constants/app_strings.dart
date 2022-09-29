@@ -132,8 +132,10 @@ class AppString {
   static const enterSomeText = 'Please enter some text!';
   static const emailRequired = 'Email required "@" ';
   static const exceed100 = 'Do not exceed 100 characters when entering!';
+  static const exceed150 = 'Do not exceed 150 characters when entering!';
   static const exceed30 = 'Do not exceed 30 characters when entering!';
   static const exceed1000 = 'Do not exceed 1000 characters when entering!';
+  static const exceed3000 = 'Do not exceed 3000 characters when entering!';
 
   static const onbroadTitle1 =
       'Welcome';
