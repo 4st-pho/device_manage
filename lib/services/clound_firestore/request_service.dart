@@ -29,15 +29,20 @@ class RequestService {
     await requestDoc.update({'requestStatus': status.name});
   }
 
-  /// delete requests for device
-  Future<void> deleteRequestsForDevice(String deviceId) async {
+  /// update requestStatus when device was deleted
+  Future<void> updateRequestWhenDeleteDevice(String deviceId) async {
     final requestDoc = await requestCollection
         .where('deviceId', isEqualTo: deviceId.trim())
         .get();
-    requestDoc.docs.map((e) {
-      e.data()['id'];
-      requestCollection.doc(e.data()['id']).delete();
-    });
+    for (var requestMap in requestDoc.docs) {
+      final request = Request.fromMap(requestMap.data());
+      bool isUnprocessedRequest =
+          request.requestStatus == RequestStatus.pending ||
+              request.requestStatus == RequestStatus.approved;
+      if (isUnprocessedRequest) {
+        await updateRequestStatus(request.id, RequestStatus.reject);
+      }
+    }
   }
 
   /// stream list request by name

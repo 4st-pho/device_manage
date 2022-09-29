@@ -1,7 +1,7 @@
 import 'package:manage_devices_app/bloc/devices_bloc/detail_device_bloc.dart';
 import 'package:manage_devices_app/pages/detail_device/widgets/detail_device_button.dart';
+import 'package:manage_devices_app/pages/detail_device/widgets/device_owner_info.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
-import 'package:manage_devices_app/widgets/owner_info.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ class _DetailDevicePageState extends State<DetailDevicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(),
       body: StreamBuilder<Device>(
         stream: _detailDeviceBloc.deviceStream,
         initialData: widget.device,
@@ -92,7 +92,7 @@ class _DetailDevicePageState extends State<DetailDevicePage> {
                             .format(device.manufacturingDate),
                       ),
                       if (device.ownerId.isNotEmpty)
-                        OwnerInfo(
+                        DeviceOwnerInfo(
                           ownerId: device.ownerId,
                           ownerType: device.ownerType,
                         ),
@@ -109,7 +109,7 @@ class _DetailDevicePageState extends State<DetailDevicePage> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,

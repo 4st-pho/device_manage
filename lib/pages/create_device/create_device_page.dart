@@ -34,7 +34,7 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
         Navigator.of(context).pop();
       }).catchError((error) {
         showCustomSnackBar(
-            context: context, content: error.toString(), error: true);
+            context: context, content: error.toString(), isError: true);
       });
     }
   }
@@ -166,6 +166,10 @@ class _CreateDevicePageState extends State<CreateDevicePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
       title: const Text(AppString.createDevice),
       centerTitle: true,
       elevation: 0,

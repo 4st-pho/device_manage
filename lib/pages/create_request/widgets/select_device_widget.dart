@@ -8,7 +8,6 @@ import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/helper/form_validate.dart';
 import 'package:manage_devices_app/model/device.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
-import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:manage_devices_app/bloc/request_bloc/create_request_bloc.dart';
@@ -32,7 +31,6 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
       stream: _createRequestBloc.isRequestNewDeviceStream,
-      // initialData: _createRequestBloc.isRequestNewDevice,
       builder: (context, snapshot) {
         final isChooseNewDevice = snapshot.data ?? false;
         final isLeaderChooseNewDevice = isChooseNewDevice &&
@@ -42,17 +40,19 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
           children: [
             _buildCheckBoxNewDevice(isChooseNewDevice),
             if (isLeaderChooseNewDevice) _buildCheckBoxCreateRequestForTeam(),
-            if (isChooseNewDevice)
-              _buildSelectAvailbleDevice()
-            else
-              _buildSelectMyDevice(),
+            buildSelectDevice(isChooseNewDevice)
           ],
         );
       },
     );
   }
 
-  StreamBuilder<bool> _buildCheckBoxCreateRequestForTeam() {
+  Widget buildSelectDevice(bool isChooseNewDevice) {
+    if (isChooseNewDevice) return _buildSelectAvailbleDevice();
+    return _buildSelectMyDevice();
+  }
+
+  Widget _buildCheckBoxCreateRequestForTeam() {
     return StreamBuilder<bool>(
       stream: _createRequestBloc.isRequestFromTeamStream,
       initialData: false,
@@ -72,7 +72,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
-  Row _buildCheckBoxNewDevice(bool isChooseNewDevice) {
+  Widget _buildCheckBoxNewDevice(bool isChooseNewDevice) {
     return Row(
       children: [
         const Text(AppString.requestNewDevices),
@@ -89,44 +89,36 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel(AppString.errortype),
         _buildDropdownButtonErrorType(),
-        _buildLabel(AppString.device),
         _buildDropdownButtonSelectMyDeviceManage(),
       ],
     );
   }
 
   Widget _buildDropdownButtonSelectMyDeviceManage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.device),
+        _buildDropdownListMyDevice(),
+      ],
+    );
+  }
+
+  Widget _buildDropdownListMyDevice() {
     return StreamBuilder<List<Device>>(
       stream: _createRequestBloc.myDevicesStream,
       builder: (context, snapshot) {
         final myDevices = snapshot.data ?? [];
         return DropdownButtonFormField<Device>(
-          value: _createRequestBloc.myDevide,
+          value: _createRequestBloc.myDevice,
           isExpanded: true,
           isDense: false,
           validator: FormValidate().selectOption,
           decoration: AppDecoration.inputDecoration,
           items: myDevices.map((device) {
             final String healthStatus = device.healthyStatus.name;
-            return DropdownMenuItem(
-              value: device,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(device.name, style: AppStyle.whiteText),
-                    Row(children: [
-                      Expanded(child: Text(healthStatus)),
-                      Text(DateFormat('dd MMM yyyy')
-                          .format(device.manufacturingDate))
-                    ]),
-                  ],
-                ),
-              ),
-            );
+            return _buildDropdownMyDeviceItem(device, healthStatus);
           }).toList(),
           onChanged: _createRequestBloc.onChooseMyDevice,
         );
@@ -134,7 +126,37 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
+  DropdownMenuItem<Device> _buildDropdownMyDeviceItem(
+      Device device, String healthStatus) {
+    return DropdownMenuItem(
+      value: device,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(device.name, style: AppStyle.whiteText),
+            Row(children: [
+              Expanded(child: Text(healthStatus)),
+              Text(DateFormat('dd MMM yyyy').format(device.manufacturingDate))
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDropdownButtonErrorType() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(AppString.errortype),
+        _buildDropdownErrorType(),
+      ],
+    );
+  }
+
+  Widget _buildDropdownErrorType() {
     return DropdownButtonFormField<ErrorType>(
         isExpanded: true,
         value: _createRequestBloc.deviceErrorType,
@@ -166,21 +188,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
             decoration: AppDecoration.boxDecoration,
             child: Row(
               children: [
-                StreamBuilder<String?>(
-                    initialData: null,
-                    stream: _createRequestBloc.availbleDeviceStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        final String error = snapshot.error.toString();
-                        return Center(child: Text(error));
-                      }
-                      final deviceName = snapshot.data;
-                      if (deviceName == null) return const Spacer();
-                      return Expanded(
-                        child:
-                            Text(deviceName, overflow: TextOverflow.ellipsis),
-                      );
-                    }),
+                _buildNameDeviceSelected(),
                 const SizedBox(width: 14),
                 const Icon(Icons.unfold_more),
               ],
@@ -189,6 +197,23 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
         ),
       ],
     );
+  }
+
+  Widget _buildNameDeviceSelected() {
+    return StreamBuilder<Device?>(
+        initialData: null,
+        stream: _createRequestBloc.availbleDeviceStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            final String error = snapshot.error.toString();
+            return Center(child: Text(error));
+          }
+          final device = snapshot.data;
+          if (device == null) return const Spacer();
+          return Expanded(
+            child: Text(device.name, overflow: TextOverflow.ellipsis),
+          );
+        });
   }
 
   Future<void> _showBottomSheetChooseValue() {
@@ -203,7 +228,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
           ),
           child: FutureBuilder<List<Device>>(
             initialData: const [],
-            future: DeviceService().getAvailableDevice(),
+            future: _createRequestBloc.getAvailableDevice(),
             builder: (context, snapshot) {
               final availableDevices = snapshot.data ?? [];
               return ListView.builder(
@@ -212,7 +237,6 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
                 itemCount: availableDevices.length,
                 itemBuilder: (ctx, index) {
                   final device = availableDevices[index];
-
                   return _buildSelectAvailbleItem(device);
                 },
               );
@@ -223,7 +247,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
     );
   }
 
-  InkWell _buildSelectAvailbleItem(Device device) {
+  Widget _buildSelectAvailbleItem(Device device) {
     final healthStatus = device.healthyStatus.name;
     return InkWell(
       onTap: () {
@@ -251,7 +275,7 @@ class _SelectDeviceWidgetState extends State<SelectDeviceWidget> {
   Widget _buildLabel(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(label, style: AppStyle.whiteText),
+      child: Text(label),
     );
   }
 }

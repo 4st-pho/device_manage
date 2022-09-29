@@ -4,7 +4,7 @@ void showCustomSnackBar({
   required BuildContext context,
   required String content,
   String title = '',
-  bool error = false,
+  bool isError = false,
   int milisecond = 2000,
 }) {
   final snackBar = SnackBar(
@@ -16,7 +16,7 @@ void showCustomSnackBar({
             Expanded(
               child: Text(
                 title.trim().toUpperCase(),
-                style: error ? AppStyle.redText : AppStyle.whiteText,
+                style: isError ? AppStyle.redText : AppStyle.whiteText,
               ),
             ),
           ]),
@@ -26,7 +26,7 @@ void showCustomSnackBar({
             Expanded(
               child: Text(
                 content.trim(),
-                style: error ? AppStyle.redText : AppStyle.whiteText,
+                style: isError ? AppStyle.redText : AppStyle.whiteText,
               ),
             ),
           ],

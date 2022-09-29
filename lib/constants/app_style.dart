@@ -10,6 +10,10 @@ class AppStyle {
     color: Colors.blue,
     fontSize: TextSize.large,
   );
+  static const blueHeadline = TextStyle(
+    color: Colors.blue,
+    fontSize: TextSize.verylarge,
+  );
   static const whiteSubtitle = TextStyle(
     color: Colors.white,
     fontSize: TextSize.small,

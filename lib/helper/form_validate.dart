@@ -43,4 +43,35 @@ class FormValidate {
     }
     return null;
   }
+
+  String? passworkValidate(String? value) {
+    value = value ?? '';
+    if ((value).isEmpty) {
+      return AppString.enterSomeText;
+    }
+    if (value.length < 6) {
+      return AppString.lessThan6;
+    }
+    if (value.length > 30) {
+      return AppString.exceed30;
+    }
+    return null;
+  }
+
+  String? emailValidate(String? value) {
+    value = value ?? '';
+    if ((value).isEmpty) {
+      return AppString.enterSomeText;
+    }
+    if (value.length < 6) {
+      return AppString.lessThan6;
+    }
+    if (value.length > 30) {
+      return AppString.exceed30;
+    }
+    if (!value.contains('@')) {
+      return AppString.emailRequired;
+    }
+    return null;
+  }
 }

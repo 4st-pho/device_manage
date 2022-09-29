@@ -1,8 +1,10 @@
 import 'package:manage_devices_app/bloc/dashbroad_bloc.dart';
 import 'package:manage_devices_app/bloc/home_page_bloc.dart';
+import 'package:manage_devices_app/bloc/menu_page_bloc.dart';
 import 'package:manage_devices_app/bloc/request_bloc/request_bloc.dart';
 import 'package:manage_devices_app/bloc/search_bloc/search_bloc.dart';
 import 'package:manage_devices_app/pages/admin/dashboard_page.dart';
+import 'package:manage_devices_app/pages/menu/menu_page.dart';
 import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,6 @@ import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/role.dart';
 import 'package:manage_devices_app/pages/home/home_page.dart';
-import 'package:manage_devices_app/pages/profile/profile_page.dart';
 import 'package:manage_devices_app/pages/request/request_page.dart';
 import 'package:manage_devices_app/pages/search/search_page.dart';
 
@@ -46,7 +47,6 @@ class _MainPageState extends State<MainPage> {
               child: const DashboardPage(),
               dispose: (context, prov) => prov.dispose(),
             )
-          // ? Container()
           : Provider<HomePageBloc>(
               create: (context) => HomePageBloc(),
               dispose: (_, prov) => prov.dispose(),
@@ -58,10 +58,15 @@ class _MainPageState extends State<MainPage> {
         child: const SearchPage(),
       ),
       Provider<RequestBloc>(
-          create: (context) => RequestBloc(),
-          dispose: (_, prov) => prov.dispose(),
-          child: const RequestPage()),
-      const ProfilePage(),
+        create: (context) => RequestBloc(),
+        dispose: (_, prov) => prov.dispose(),
+        child: const RequestPage(),
+      ),
+      Provider<MenuPageBloc>(
+        create: (context) => MenuPageBloc(),
+        dispose: (_, prov) => prov.dispose(),
+        child: const MenuPage(),
+      ),
     ];
   }
 
@@ -71,7 +76,7 @@ class _MainPageState extends State<MainPage> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       body: StreamBuilder<int>(
-        stream: _mainPageBloc.stream,
+        stream: _mainPageBloc.pageIndexStream,
         initialData: 0,
         builder: (context, snapshot) {
           return pages(context)[snapshot.data!];
@@ -104,8 +109,8 @@ class _MainPageState extends State<MainPage> {
               text: AppString.request,
             ),
             GButton(
-              icon: Icons.settings,
-              text: AppString.profile,
+              icon: Icons.menu,
+              text: AppString.menu,
             ),
           ],
         ),

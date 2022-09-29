@@ -3,18 +3,20 @@ import 'package:flutter/material.dart';
 
 import 'package:manage_devices_app/constants/app_color.dart';
 import 'package:manage_devices_app/enums/error_type.dart';
-import 'package:manage_devices_app/model/request_chart.dart';
 import 'package:manage_devices_app/pages/admin/widgets/indicator.dart';
 
-class PieChartRequest extends StatelessWidget {
+class PieChartRequest extends StatefulWidget {
   final Map<ErrorType, double> preChartPercent;
-  final List<RequestChart> requestChart;
   const PieChartRequest({
     Key? key,
     required this.preChartPercent,
-    required this.requestChart,
   }) : super(key: key);
 
+  @override
+  State<PieChartRequest> createState() => _PieChartRequestState();
+}
+
+class _PieChartRequestState extends State<PieChartRequest> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -54,13 +56,13 @@ class PieChartRequest extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: requestChart.map(
-          (r) {
+        children: ErrorType.values.map(
+          (errorType) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Indicator(
-                color: r.color,
-                text: r.alias,
+                color: errorType.getColor,
+                text: errorType.getAlias,
                 isSquare: true,
               ),
             );
@@ -74,25 +76,11 @@ class PieChartRequest extends StatelessWidget {
     return List.generate(
       ErrorType.values.length,
       (i) {
-        final key = ErrorType.values[i];
-        for (var rc in requestChart) {
-          if (rc.errorType == key) {
-            return PieChartSectionData(
-              color: rc.color,
-              value: preChartPercent[key],
-              title: '${preChartPercent[key]}%',
-              radius: radius,
-              titleStyle: const TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xffffffff)),
-            );
-          }
-        }
+        final errorType = ErrorType.values[i];
         return PieChartSectionData(
-          color: Colors.blueGrey.shade800,
-          value: 0,
-          title: '',
+          color: errorType.getColor,
+          value: widget.preChartPercent[errorType],
+          title: '${widget.preChartPercent[errorType]}%',
           radius: radius,
           titleStyle: const TextStyle(
               fontSize: fontSize,

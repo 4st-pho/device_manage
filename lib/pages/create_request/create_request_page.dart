@@ -21,24 +21,16 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   late final CreateRequestBloc _createRequestBloc;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> onHandled() async {
-    bool isvalidData = _formKey.currentState!.validate() &&
-        _createRequestBloc.validateAvailbleDevice();
-    if (isvalidData) {
+  Future<void> sendRequest() async {
+    if (_formKey.currentState!.validate()) {
       _createRequestBloc.sendRequest().then((value) {
         showCustomSnackBar(context: context, content: AppString.createSuccess);
         Navigator.of(context).pop();
       }).catchError(
         (error) {
           showCustomSnackBar(
-              context: context, content: error.toString(), error: true);
+              context: context, content: error.toString(), isError: true);
         },
-      );
-    } else {
-      showCustomSnackBar(
-        context: context,
-        content: AppString.pleaseEnterFullData,
-        error: true,
       );
     }
   }
@@ -61,52 +53,61 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppString.createRequest),
-        centerTitle: true,
-        elevation: 1,
-        backgroundColor: Colors.transparent,
-      ),
+      appBar: _buildAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(8),
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      CustomTextFormField(
-                        laber: AppString.title,
-                        controller: _titleController,
-                        type: TextInputType.multiline,
-                        validator: FormValidate().titleValidate,
-                        onChanged: _createRequestBloc.onTitleChange,
-                      ),
-                      CustomTextFormField(
-                        laber: AppString.content,
-                        controller: _contentController,
-                        type: TextInputType.multiline,
-                        validator: FormValidate().contentValidate,
-                        onChanged: _createRequestBloc.onContentChange,
-                      ),
-                      const SelectDeviceWidget(),
-                      const SizedBox(height: 40),
-                    ]),
-              ),
-            ),
+            child: _buildForm(),
           ),
-          _buildButton(context),
+          _buildSendRequestButton(context),
         ],
       ),
     );
   }
 
-  Widget _buildButton(BuildContext context) {
+  Widget _buildForm() {
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(8),
+        physics: const BouncingScrollPhysics(),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const SizedBox(height: 16),
+          CustomTextFormField(
+            laber: AppString.title,
+            controller: _titleController,
+            type: TextInputType.multiline,
+            validator: FormValidate().titleValidate,
+            onChanged: _createRequestBloc.onTitleChange,
+          ),
+          CustomTextFormField(
+            laber: AppString.content,
+            controller: _contentController,
+            type: TextInputType.multiline,
+            validator: FormValidate().contentValidate,
+            onChanged: _createRequestBloc.onContentChange,
+          ),
+          const SelectDeviceWidget(),
+          const SizedBox(height: 40),
+        ]),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: const Text(AppString.createRequest),
+      centerTitle: true,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
+    );
+  }
+
+  Widget _buildSendRequestButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: StreamBuilder<bool>(
@@ -116,7 +117,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
           final isLoading = snapshot.data ?? false;
           return CustomButton(
             text: AppString.send,
-            onPressed: isLoading ? null : () => onHandled(),
+            onPressed: isLoading ? null : () => sendRequest(),
           );
         },
       ),

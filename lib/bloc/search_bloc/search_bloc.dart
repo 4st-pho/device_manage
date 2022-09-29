@@ -22,7 +22,7 @@ class SearchBloc {
   List<Device> _seachDevicesResult = [];
 
   /// show device when search
-  final _searchDevicesResultController = StreamController<List<Device>>();
+  final _searchDevicesResultController = BehaviorSubject<List<Device>>();
   Stream<List<Device>> get searchDevicesResultStream =>
       _searchDevicesResultController.stream;
 
@@ -47,7 +47,8 @@ class SearchBloc {
   /// get data from behavierSubject
   User? get _user => _userController.value;
   Team? get _team => _teamController.value;
-  SearchFilter? get searchFilterz => _filterSwitchAdapterController.value;
+  SearchFilter? get searchFilter => _filterSwitchAdapterController.value;
+
   Future<void> getAndSetAlldevice() async {
     _allDevice = await DeviceService().getAllDevice();
   }
@@ -68,10 +69,10 @@ class SearchBloc {
   Future<List<Team>> getAllTeam() => TeamService().getAllTeam();
 
   void updateSearchResult() {
-    if (searchFilterz == null) {
+    if (searchFilter == null) {
       _seachDevicesResult = searchDevice();
     } else {
-      switch (searchFilterz) {
+      switch (searchFilter) {
         case SearchFilter.avalbleDevice:
           _seachDevicesResult = searchAvailableDevice();
           break;

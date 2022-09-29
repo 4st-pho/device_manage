@@ -172,7 +172,7 @@ class _SearchPageState extends State<SearchPage> {
               searchFilter: searchFilter,
               valueFilter: SearchFilter.teamDevice,
               onChanged: _searchBloc.teamFilter,
-              title: AppString.searchAvalbleDevices,
+              title: AppString.searchTeamDevices,
             ),
 
             if (searchFilter == SearchFilter.teamDevice)
@@ -205,6 +205,7 @@ class _SearchPageState extends State<SearchPage> {
       required void Function(bool) onChanged,
       required String title}) {
     return SwitchListTile.adaptive(
+      contentPadding: const EdgeInsets.all(0),
       value: searchFilter == valueFilter,
       onChanged: onChanged,
       title: Text(title),

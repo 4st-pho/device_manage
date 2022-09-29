@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:manage_devices_app/model/device.dart';
+import 'package:manage_devices_app/model/team.dart';
+import 'package:manage_devices_app/model/user.dart';
 import 'package:manage_devices_app/services/clound_firestore/device_service.dart';
 import 'package:manage_devices_app/services/clound_firestore/request_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
+import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DetailDeviceBloc {
@@ -33,6 +37,13 @@ class DetailDeviceBloc {
     _loadController.add(loadState);
   }
 
+  Future<User> getUser(String uid) {
+    return UserService().getUser(uid);
+  }
+  Future<Team> getTeam(String teamId) {
+    return TeamService().getTeam(teamId);
+  }
+
   Future<void> recallDevice(String id) async {
     try {
       setLoadState(true);
@@ -48,7 +59,7 @@ class DetailDeviceBloc {
     try {
       setLoadState(true);
       _updateRealtimeDevice.cancel();
-      await RequestService().deleteRequestsForDevice(deviceId);
+      await RequestService().updateRequestWhenDeleteDevice(deviceId);
       await DeviceService().deleteDevice(deviceId);
     } catch (error) {
       rethrow;

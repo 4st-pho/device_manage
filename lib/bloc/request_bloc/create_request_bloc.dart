@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/enums/request_status.dart';
 import 'package:manage_devices_app/enums/role.dart';
@@ -16,7 +17,6 @@ class CreateRequestBloc {
     getAndAddMyDevice();
   }
   Device? _myDevice;
-  Device? _availableDevice;
   String _title = '';
   String _content = '';
   ErrorType _errortype = ErrorType.software;
@@ -38,28 +38,30 @@ class CreateRequestBloc {
   /// control load state
   final _loadController = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get loadStream => _loadController.stream;
-  bool get isLoading => _loadController.value;
 
-  void toggleState() {
-    _loadController.add(!isLoading);
-  }
+  ///  choose available device for request new device
+  final _availbleDeviceController = BehaviorSubject<Device?>.seeded(null);
+  Stream<Device?> get availbleDeviceStream => _availbleDeviceController.stream;
+
+  /// get data from behaviorSubject
+  Device? get availableDevice => _availbleDeviceController.value;
+  bool get isLoading => _loadController.value;
+  bool get isRequestNewDevice =>
+      _isRequestNewDeviceController.valueOrNull ?? false;
+  bool get isRequestFromTeam =>
+      _isRequestFromTeamController.valueOrNull ?? false;
+
+  ErrorType? get deviceErrorType => _errortype;
+  Device? get myDevice => _myDevice;
 
   void setLoadState(bool loadState) {
     _loadController.add(loadState);
   }
 
-  final _nameAvailbleDeviceController = BehaviorSubject<String?>.seeded(null);
-  Stream<String?> get availbleDeviceStream =>
-      _nameAvailbleDeviceController.stream;
+  Future<List<Device>> getAvailableDevice() {
+    return DeviceService().getAvailableDevice();
+  }
 
-  Device? get myDevide => _myDevice;
-  ErrorType? get deviceErrorType => _errortype;
-
-  bool get isRequestNewDevice =>
-      _isRequestNewDeviceController.valueOrNull ?? false;
-
-  bool get isRequestFromTeam =>
-      _isRequestFromTeamController.valueOrNull ?? false;
   void onTitleChange(String? title) {
     if (title != null) {
       _title = title.trim();
@@ -91,8 +93,7 @@ class CreateRequestBloc {
 
   void onChooseAvailbleDevice(Device? device) {
     if (device != null) {
-      _availableDevice = device;
-      _nameAvailbleDeviceController.add(device.name);
+      _availbleDeviceController.add(device);
     }
   }
 
@@ -108,48 +109,46 @@ class CreateRequestBloc {
     }
   }
 
-  bool validateAvailbleDevice() {
-    final isNotValidAvailbleDevice =
-        isRequestNewDevice && _availableDevice == null;
-    if (isNotValidAvailbleDevice) {
-      return false;
-    }
-    return true;
-  }
-
   Future<void> sendRequest() async {
-    setLoadState(true);
-    User currentUser = await SharedPreferencesMethod.getCurrentUserFromLocal();
-    final request = Request(
-      ownerId: currentUser.id,
-      title: _title,
-      content: _content,
-      errorType: _errortype,
-      ownerType: OwnerType.user,
-    );
-    if (currentUser.role == Role.leader) {
-      request.requestStatus = RequestStatus.approved;
-    }
-    if (isRequestNewDevice) {
-      request.errorType = ErrorType.noError;
-      request.deviceId = _availableDevice!.id;
-    } else {
-      request.deviceId = _myDevice!.id;
-    }
-    if (isRequestFromTeam && isRequestNewDevice) {
-      request.ownerId = currentUser.teamId;
-      request.ownerType = OwnerType.team;
-    }
-    await RequestService().createRequest(request).catchError((error) {
+    try {
+      setLoadState(true);
+      if (isRequestNewDevice && availableDevice == null) {
+        throw AppString.pleaseChooseDevice;
+      }
+      User currentUser =
+          await SharedPreferencesMethod.getCurrentUserFromLocal();
+      final request = Request(
+        ownerId: currentUser.id,
+        title: _title,
+        content: _content,
+        errorType: _errortype,
+        ownerType: OwnerType.user,
+      );
+      if (currentUser.role == Role.leader) {
+        request.requestStatus = RequestStatus.approved;
+      }
+      if (isRequestNewDevice) {
+        request.errorType = ErrorType.noError;
+        request.deviceId = availableDevice!.id;
+      } else {
+        request.deviceId = _myDevice!.id;
+      }
+      if (isRequestFromTeam && isRequestNewDevice) {
+        request.ownerId = currentUser.teamId;
+        request.ownerType = OwnerType.team;
+      }
+      await RequestService().createRequest(request);
+    } catch (e) {
+      rethrow;
+    } finally {
       setLoadState(false);
-      throw error;
-    });
+    }
   }
 
   void dispose() {
     _loadController.close();
     _isRequestFromTeamController.close();
-    _nameAvailbleDeviceController.close();
+    _availbleDeviceController.close();
     _isRequestNewDeviceController.close();
     _myDevicesController.close();
   }

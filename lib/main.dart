@@ -9,12 +9,14 @@ import 'package:manage_devices_app/provider/app_data.dart';
 import 'package:manage_devices_app/resource/route_manager.dart';
 import 'package:manage_devices_app/resource/theme_manager.dart';
 import 'package:manage_devices_app/services/load/firebase_load.dart';
+import 'package:manage_devices_app/services/load/load_app_setting.dart';
 import 'package:manage_devices_app/services/splash/splash_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   await firebaseLoad();
   final skipOnbroad = await SharedPreferencesMethod.getSkipOnbroading();
+  loadAppSetting();
   runApp(MyApp(skipOnbroading: skipOnbroad));
 }
 

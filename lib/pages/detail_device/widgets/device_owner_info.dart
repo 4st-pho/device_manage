@@ -1,27 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:manage_devices_app/bloc/devices_bloc/detail_device_bloc.dart';
+import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/owner_type.dart';
 import 'package:manage_devices_app/model/team.dart';
 import 'package:manage_devices_app/model/user.dart';
-import 'package:manage_devices_app/services/clound_firestore/team_service.dart';
-import 'package:manage_devices_app/services/clound_firestore/user_service.dart';
 import 'package:manage_devices_app/widgets/base_info.dart';
 import 'package:manage_devices_app/widgets/common/shimmer_list.dart';
+import 'package:manage_devices_app/widgets/text_divider.dart';
+import 'package:provider/provider.dart';
 
-class OwnerInfo extends StatelessWidget {
+class DeviceOwnerInfo extends StatefulWidget {
   final String ownerId;
   final OwnerType ownerType;
 
-  const OwnerInfo({Key? key, required this.ownerId, required this.ownerType})
+  const DeviceOwnerInfo(
+      {Key? key, required this.ownerId, required this.ownerType})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ownerType == OwnerType.user ? _buildUserInfo() : _buildTeamInfo();
+  State<DeviceOwnerInfo> createState() => DeviceOwnerInfoState();
+}
+
+class DeviceOwnerInfoState extends State<DeviceOwnerInfo> {
+  late final DetailDeviceBloc _detailDeviceBloc;
+  @override
+  void initState() {
+    super.initState();
+    _detailDeviceBloc = context.read<DetailDeviceBloc>();
   }
 
-  FutureBuilder<User> _buildUserInfo() {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TextDivider(text: AppString.ownerInfo),
+        _buildOwnerInfo()
+      ],
+    );
+  }
+
+  Widget _buildOwnerInfo() {
+    if (widget.ownerType == OwnerType.user) return _buildUserInfo();
+    return _buildTeamInfo();
+  }
+
+  Widget _buildUserInfo() {
     return FutureBuilder<User>(
-      future: UserService().getUser(ownerId),
+      future: _detailDeviceBloc.getUser(widget.ownerId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final user = snapshot.data!;
@@ -40,9 +66,9 @@ class OwnerInfo extends StatelessWidget {
     );
   }
 
-  FutureBuilder<Team> _buildTeamInfo() {
+  Widget _buildTeamInfo() {
     return FutureBuilder<Team>(
-      future: TeamService().getTeam(ownerId),
+      future: _detailDeviceBloc.getTeam(widget.ownerId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final team = snapshot.data!;

@@ -52,11 +52,7 @@ class _ManageDevicePageState extends State<ManageDevicePage>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text(AppString.deviceManage),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: _buildAppBar(),
       body: MultiProvider(
         providers: [
           Provider<ManageUserDeviceBloc>(
@@ -86,6 +82,18 @@ class _ManageDevicePageState extends State<ManageDevicePage>
           );
         },
       ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
+      title: const Text(AppString.manageDevice),
+      centerTitle: true,
+      elevation: 0,
     );
   }
 
@@ -119,7 +127,7 @@ class _ManageDevicePageState extends State<ManageDevicePage>
   Widget _buildtabBarView() {
     return TabBarView(
       controller: _tabController,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       children: const [
         ManageUserDevicePage(),
         ManageTeamDevicePage(),

@@ -51,12 +51,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          AppString.createUser,
-        ),
-        centerTitle: true,
-      ),
+      appBar: _buildAppbar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(8),
         physics: const BouncingScrollPhysics(),
@@ -119,8 +114,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
                     validator: FormValidate().selectOption,
                     decoration: AppDecoration.inputDecoration,
                     items: allTeam
-                        .map((e) => DropdownMenuItem(
-                            value: e.id, child: Text(e.name)))
+                        .map((e) =>
+                            DropdownMenuItem(value: e.id, child: Text(e.name)))
                         .toList(),
                     onChanged: (_) {},
                   );
@@ -144,6 +139,17 @@ class _CreateUserPageState extends State<CreateUserPage> {
           ],
         ),
       ),
+    );
+  }
+
+  AppBar _buildAppbar() {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
+      title: const Text(AppString.createUser),
+      centerTitle: true,
     );
   }
 
