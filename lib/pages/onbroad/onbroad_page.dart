@@ -33,11 +33,11 @@ class _OnbroadPageState extends State<OnbroadPage> {
     const OnroadItem(
         image: AppImage.onbroad2,
         title: AppString.support,
-        content: AppString.welcomeContent),
+        content: AppString.supportContent),
     const OnroadItem(
         image: AppImage.onbroad3,
         title: AppString.explore,
-        content: AppString.welcomeContent),
+        content: AppString.exploreContent),
   ];
   @override
   void dispose() {
