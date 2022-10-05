@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/app_style.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 
 class OnroadItem extends StatelessWidget {
   final String image;
@@ -34,19 +34,19 @@ class OnroadItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: AppStyle.blueTitle,
+                        style: AppStyle.blueHeadline,
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         content,
-                        style: AppStyle.whiteText,
+                        style: AppStyle.whiteTitle,
                         textAlign: TextAlign.center,
                       ),
                     )
