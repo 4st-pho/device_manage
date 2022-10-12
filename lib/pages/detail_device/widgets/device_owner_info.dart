@@ -49,9 +49,6 @@ class DeviceOwnerInfoState extends State<DeviceOwnerInfo> {
     return FutureBuilder<User>(
       future: _detailDeviceBloc.getUser(widget.ownerId),
       builder: (context, snapshot) {
-        // if (snapshot.data == null) {
-        //   return const NotFound();
-        // } else
         if (snapshot.hasData) {
           final user = snapshot.data!;
           return BaseInfo(
@@ -73,10 +70,6 @@ class DeviceOwnerInfoState extends State<DeviceOwnerInfo> {
     return FutureBuilder<Team>(
       future: _detailDeviceBloc.getTeam(widget.ownerId),
       builder: (context, snapshot) {
-        // if (snapshot.data == null) {
-        //   return const NotFound();
-        // } else
-
         if (snapshot.hasData) {
           final team = snapshot.data!;
           return BaseInfo(

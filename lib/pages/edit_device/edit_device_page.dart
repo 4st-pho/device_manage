@@ -38,7 +38,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
       }).catchError(
         (error) {
           showCustomSnackBar(
-              context: context, content: error.toString(), error: true);
+              context: context, content: error.toString(), isError: true);
         },
       );
     }
@@ -62,10 +62,7 @@ class _EditDevicePageState extends State<EditDevicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppString.editDevice),
-        elevation: 0,
-      ),
+      appBar: _buildAppBar(),
       body: Column(
         children: [
           Expanded(
@@ -94,6 +91,17 @@ class _EditDevicePageState extends State<EditDevicePage> {
           _buildActionButton()
         ],
       ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
+      title: const Text(AppString.editDevice),
+      elevation: 0,
     );
   }
 

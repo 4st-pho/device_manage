@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       body: StreamBuilder<int>(
-        stream: _mainPageBloc.stream,
+        stream: _mainPageBloc.pageIndexStream,
         initialData: 0,
         builder: (context, snapshot) {
           return pages(context)[snapshot.data!];

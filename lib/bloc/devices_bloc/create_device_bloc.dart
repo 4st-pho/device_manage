@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:manage_devices_app/constants/app_collection_path.dart';
+import 'package:manage_devices_app/constants/app_strings.dart';
 import 'package:manage_devices_app/enums/device_type.dart';
 import 'package:manage_devices_app/enums/healthy_status.dart';
 import 'package:manage_devices_app/model/device.dart';
@@ -71,8 +72,11 @@ class CreateDeviceBloc {
   Future<void> createDevice() async {
     try {
       setLoadState(true);
-      if (datePicked == null || deviceImageFiles == null) {
-        throw 'Date or images is not empty!';
+      if (datePicked == null) {
+        throw AppString.plsChooseTime;
+      }
+      if (deviceImageFiles == null) {
+        throw AppString.plsPickImage;
       }
       device.manufacturingDate = datePicked!;
       final imagesLink = await StorageService()

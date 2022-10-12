@@ -2,14 +2,14 @@ import 'dart:async';
 
 class MainPageBloc {
 
-  final StreamController<int> _controller = StreamController<int>();
-  Stream<int> get stream => _controller.stream;
+  final StreamController<int> _pageIndexController = StreamController<int>();
+  Stream<int> get pageIndexStream => _pageIndexController.stream;
 
   void onPageChange(int index) {
-    _controller.sink.add(index);
+    _pageIndexController.sink.add(index);
   }
 
   void dispose() {
-    _controller.close();
+    _pageIndexController.close();
   }
 }

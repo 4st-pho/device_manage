@@ -24,12 +24,12 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
   Future<void> sendRequest() async {
     if (_formKey.currentState!.validate()) {
       _createRequestBloc.sendRequest().then((value) {
-        showCustomSnackBar(context: context, content: AppString.createSuccess);
+        showCustomSnackBar(context: context, content: AppString.sendSucces);
         Navigator.of(context).pop();
       }).catchError(
         (error) {
           showCustomSnackBar(
-              context: context, content: error.toString(), error: true);
+              context: context, content: error.toString(), isError: true);
         },
       );
     }
@@ -99,8 +99,11 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
     return AppBar(
       title: const Text(AppString.createRequest),
       centerTitle: true,
-      elevation: 1,
-      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
     );
   }
 

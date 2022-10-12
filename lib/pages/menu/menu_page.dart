@@ -31,7 +31,7 @@ class _MenuPageState extends State<MenuPage> {
             Navigator.of(context).pushReplacementNamed(Routes.authWrapper))
         .catchError((error) {
       showCustomSnackBar(
-          context: context, content: error.toString(), error: true);
+          context: context, content: error.toString(), isError: true);
     });
   }
 
@@ -83,7 +83,7 @@ class _MenuPageState extends State<MenuPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MenuItemBox(
-          text: AppString.deviceManage,
+          text: AppString.manageDevice,
           icon: Icons.devices_sharp,
           onPressed: () =>
               Navigator.of(context).pushNamed(Routes.manageDeviceRoute),

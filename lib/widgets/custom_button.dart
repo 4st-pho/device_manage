@@ -10,7 +10,7 @@ class CustomButton extends StatelessWidget {
       {Key? key,
       required this.text,
       required this.onPressed,
-      this.color = AppColor.dartBlue})
+      this.color = AppColor.lightBlue})
       : super(key: key);
 
   @override

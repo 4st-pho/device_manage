@@ -1,6 +1,6 @@
 class AppString {
   static const email = 'Email';
-  static const createRequest = 'Create Request';
+  static const createRequest = 'Create request';
   static const password = 'Password';
   static const dontHaveAnAccount = 'You don\'t have an account?';
   static const haveAnAccount = 'You have an account?';
@@ -12,7 +12,7 @@ class AppString {
   static const title = 'Title';
   static const status = 'Status';
   static const yes = 'Yes';
-  static const errortype = 'Error Type';
+  static const errortype = 'Error type';
   static const deviceHasOwned = 'The device is already owned';
   static const sender = 'Sender';
   static const device = 'Device';
@@ -37,6 +37,7 @@ class AppString {
   static const hardware = 'Hardware';
   static const newDevice = 'New device';
   static const createSuccess = 'Create success!';
+  static const sendSucces = 'Send success!';
   static const selectAvailbleDevice = 'Please select availble device!';
   static const deviceWillbeRecall = 'Device will be recall!';
   static const theProcessWillContinue = 'The process will continue';
@@ -85,7 +86,8 @@ class AppString {
   static const availableDevices = 'Available devices';
   static const request = 'Request';
   static const deviceRecall = 'Device recall';
-  static const deviceManage = 'Device manage';
+  static const manageDevice = 'Manage device';
+  static const deviceManagement = 'Device management';
   static const createUser = 'Create user';
   static const createDevice = 'Create device';
   static const availbleDevice = 'Availble device';
@@ -95,7 +97,8 @@ class AppString {
       'Search name of user, team or device';
   static const imageIsRequired = 'Image is required';
   static const dateIsRequired = 'Date is required';
-  static const profile = 'Profile';
+  static const plsChooseTime = 'Please choose device manufacturing date!';
+  static const plsPickImage = 'Please pick device image!';
   static const nameU = 'NAME';
   static const namel = 'name';
   static const name = 'Name';
@@ -129,19 +132,16 @@ class AppString {
   static const enterSomeText = 'Please enter some text!';
   static const emailRequired = 'Email required "@" ';
   static const exceed100 = 'Do not exceed 100 characters when entering!';
+  static const exceed150 = 'Do not exceed 150 characters when entering!';
   static const exceed30 = 'Do not exceed 30 characters when entering!';
   static const exceed1000 = 'Do not exceed 1000 characters when entering!';
+  static const exceed3000 = 'Do not exceed 3000 characters when entering!';
 
-  static const onbroadTitle1 =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry';
-  static const onbroadTitle2 =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry';
-  static const onbroadTitle3 =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry';
-  static const onbroadContent1 =
-      'Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the ';
-  static const onbroadContent2 =
-      'Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the ';
-  static const onbroadContent3 =
-      'Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the ';
+  static const welcome = 'Welcome';
+  static const support = 'Support';
+  static const explore = 'Expolre';
+  static const welcomeContent = 'Welcome to devices management!';
+  static const supportContent =
+      'Send error message and request provide new device to admin!';
+  static const exploreContent = 'Manage my device and team device in company.';
 }

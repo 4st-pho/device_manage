@@ -28,7 +28,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
       );
     }).catchError((error) {
       showCustomSnackBar(
-          context: context, content: error.toString(), error: true);
+          context: context, content: error.toString(), isError: true);
     });
   }
 
@@ -38,7 +38,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
         .then((_) => Navigator.of(context).pop())
         .catchError((error) {
       showCustomSnackBar(
-          context: context, content: error.toString(), error: true);
+          context: context, content: error.toString(), isError: true);
     });
   }
 
@@ -70,6 +70,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
     return _buildDeviceActionButton(
       text: AppString.delete,
       color: Colors.red,
+      dialogColor: Colors.red,
       voidCallback: () => deleteDevice(widget.device.id),
       dialogTitle: AppString.confirm,
       dialogContent: AppString.deviceWillBeDelete,
@@ -80,6 +81,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
     return _buildDeviceActionButton(
       text: AppString.recall,
       color: Colors.orange,
+      dialogColor: Colors.orange,
       voidCallback: () => recallDevice(widget.device.id),
       dialogTitle: AppString.confirm,
       dialogContent: AppString.deviceWillbeRecall,
@@ -99,6 +101,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
     required Color color,
     required VoidCallback voidCallback,
     required String dialogTitle,
+    required Color dialogColor,
     required String dialogContent,
   }) {
     return CustomButton(
@@ -107,6 +110,7 @@ class _DetailDeviceButtonState extends State<DetailDeviceButton> {
       onPressed: () => showCustomDialog(
         context: context,
         title: dialogTitle,
+        color: dialogColor,
         content: dialogContent,
         onAgree: voidCallback,
       ),

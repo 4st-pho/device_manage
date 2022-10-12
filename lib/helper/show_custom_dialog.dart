@@ -26,7 +26,7 @@ void showCustomDialog(
             child: const Text(AppString.cancel)),
         if (!isShowOnlyCancelbutton)
           ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: AppColor.dartBlue),
+            style: ElevatedButton.styleFrom(primary: AppColor.lightBlue),
             onPressed: onAgree,
             child: const Text(
               AppString.ok,

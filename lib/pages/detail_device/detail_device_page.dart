@@ -33,7 +33,7 @@ class _DetailDevicePageState extends State<DetailDevicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(),
       body: StreamBuilder<Device>(
         stream: _detailDeviceBloc.deviceStream,
         initialData: widget.device,
@@ -109,7 +109,7 @@ class _DetailDevicePageState extends State<DetailDevicePage> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,

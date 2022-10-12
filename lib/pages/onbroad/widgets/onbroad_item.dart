@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/app_style.dart';
+import 'package:manage_devices_app/constants/app_style.dart';
 
 class OnroadItem extends StatelessWidget {
   final String image;
@@ -24,38 +24,35 @@ class OnroadItem extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(10),
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: AppStyle.blueTitle,
-                          textAlign: TextAlign.center,
-                        ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: AppStyle.blueHeadline,
+                        textAlign: TextAlign.center,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          content,
-                          style: AppStyle.whiteText,
-                          textAlign: TextAlign.justify,
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        content,
+                        style: AppStyle.whiteTitle,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
         ),

@@ -27,7 +27,7 @@ class _RequestPageState extends State<RequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppbar(context),
+      appBar: _buildAppbar(),
       body: DefaultTabController(
         length: requestTab.length,
         child: _buildContent(context),
@@ -35,7 +35,7 @@ class _RequestPageState extends State<RequestPage> {
     );
   }
 
-  AppBar _buildAppbar(BuildContext context) {
+  AppBar _buildAppbar() {
     final currentUser = context.read<AppData>().currentUser;
     return AppBar(
       title: const Text(AppString.allrequest),

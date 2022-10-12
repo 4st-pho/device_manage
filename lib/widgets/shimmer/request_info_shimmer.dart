@@ -9,7 +9,7 @@ class RequestInfoShimmer extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: const ShimmerWidget(
-        height: 150,
+        height: 100,
       ),
     );
   }

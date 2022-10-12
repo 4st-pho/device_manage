@@ -26,7 +26,7 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
       Navigator.of(context).pop();
     }).catchError((error) {
       showCustomSnackBar(
-          context: context, content: error.toString(), error: true);
+          context: context, content: error.toString(), isError: true);
     });
   }
 
@@ -45,6 +45,7 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
         children: [
           Expanded(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,8 +115,9 @@ class _ProvideDevicePageState extends State<ProvideDevicePage> {
   AppBar _buildAppbar() {
     return AppBar(
       leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.keyboard_backspace_rounded)),
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
       title: const Text(AppString.provideDevice),
       centerTitle: true,
       elevation: 0,

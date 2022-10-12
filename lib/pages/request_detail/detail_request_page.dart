@@ -66,7 +66,7 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
             showCustomSnackBar(
               context: context,
               content: error.toString(),
-              error: true,
+              isError: true,
             );
           },
         );
@@ -78,8 +78,8 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
     showCustomDialog(
       context: context,
       title: AppString.confirm,
-      content: AppString.deviceWillbeRecall,
-      color: Colors.red,
+      content: AppString.requestWillBeReject,
+      color: Colors.redAccent,
       onAgree: () {
         _detailRequestBloc
             .updateRequestStatus(widget.request.id, RequestStatus.reject)
@@ -88,7 +88,7 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
             .catchError(
           (error) {
             showCustomSnackBar(
-                context: context, content: error.toString(), error: true);
+                context: context, content: error.toString(), isError: true);
           },
         );
       },
@@ -154,6 +154,10 @@ class _DetailRequestPageState extends State<DetailRequestPage> {
 
   AppBar _buildAppBar() {
     return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
       title: const Text(AppString.requestDetail),
       centerTitle: true,
       elevation: 0,

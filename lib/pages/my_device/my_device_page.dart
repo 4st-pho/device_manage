@@ -27,16 +27,24 @@ class _MyDevicePageState extends State<MyDevicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppString.myDevice),
-        centerTitle: true,
-      ),
+      appBar: _buildAppBar(),
       body: _buildListMyDevice(),
     );
   }
 
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.keyboard_backspace),
+      ),
+      title: const Text(AppString.myDevice),
+      centerTitle: true,
+      elevation: 0,
+    );
+  }
+
   Widget _buildListMyDevice() {
-    final size = MediaQuery.of(context).size;
     final currentUser = context.read<AppData>().currentUser;
     return FutureBuilder<List<Device>>(
       future: _myDeviceBloc.getOwnerDevices(currentUser!.id),
@@ -44,10 +52,7 @@ class _MyDevicePageState extends State<MyDevicePage> {
         if (snapshot.hasData) {
           final userDevices = snapshot.data as List<Device>;
           if (userDevices.isEmpty) {
-            return Padding(
-              padding: EdgeInsets.only(top: size.height / 5),
-              child: const EmptyList(),
-            );
+            return const EmptyList();
           }
           return ListView.builder(
             physics: const BouncingScrollPhysics(),

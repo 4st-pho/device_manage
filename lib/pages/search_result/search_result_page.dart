@@ -1,3 +1,4 @@
+import 'package:manage_devices_app/constants/app_style.dart';
 import 'package:manage_devices_app/widgets/empty_list.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -36,10 +37,12 @@ class _SearchResultPageState extends State<SearchResultPage> {
         onPressed: () => Navigator.of(context).pop(),
         icon: const Icon(Icons.keyboard_backspace),
       ),
-      title: Text('Result for " ${_searchBloc.keywork}"'),
+      title: Text(
+        'Result for " ${_searchBloc.keywork}"',
+        style: AppStyle.whiteTitle,
+      ),
       centerTitle: true,
-      backgroundColor: Colors.transparent,
-      elevation: 2,
+      elevation: 0,
     );
   }
 

@@ -35,20 +35,20 @@ class _RequestOwnerInfoState extends State<RequestOwnerInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const TextDivider(text: AppString.ownerInfo),
-        widget.ownerType == OwnerType.user
-            ? _buildUserInfo()
-            : _buildTeamInfo(),
+        _buildOwnerInfo(),
       ],
     );
   }
 
-  FutureBuilder<User> _buildUserInfo() {
+  Widget _buildOwnerInfo() {
+    if (widget.ownerType == OwnerType.user) return _buildUserInfo();
+    return _buildTeamInfo();
+  }
+
+  Widget _buildUserInfo() {
     return FutureBuilder<User>(
       future: _detailRequestBloc.getUser(widget.ownerId),
       builder: (context, snapshot) {
-        // if (snapshot.data == null) {
-        //   return const NotFound();
-        // } else
         if (snapshot.hasData) {
           final user = snapshot.data!;
           return BaseInfo(
@@ -66,14 +66,10 @@ class _RequestOwnerInfoState extends State<RequestOwnerInfo> {
     );
   }
 
-  FutureBuilder<Team> _buildTeamInfo() {
+  Widget _buildTeamInfo() {
     return FutureBuilder<Team>(
       future: _detailRequestBloc.getTeam(widget.ownerId),
       builder: (context, snapshot) {
-        // if (snapshot.data == null) {
-        //   return const NotFound();
-        // } else
-
         if (snapshot.hasData) {
           final team = snapshot.data!;
           return BaseInfo(

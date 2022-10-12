@@ -26,7 +26,7 @@ class _LoginGogolePageState extends State<LoginPage> {
           .login(_emailController.text, _passwordController.text)
           .catchError((e) {
         showCustomSnackBar(
-            context: context, content: e.toString(), error: true);
+            context: context, content: e.toString(), isError: true);
       });
     }
   }
